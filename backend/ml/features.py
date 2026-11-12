@@ -146,16 +146,16 @@ def build_features_dataframe(
                 f_price_ratio[orig_idx] = round(curr_price / median_price, 3) if median_price > 0 else 1.0
 
                 # 7d / 14d / 28d windows
-                d7_mask = past_dates >= (curr_date - pd.Timedelta(days=7))
-                d14_mask = past_dates >= (curr_date - pd.Timedelta(days=14))
-                d28_mask = past_dates >= (curr_date - pd.Timedelta(days=28))
+                d7_mask = (past_dates >= (curr_date - pd.Timedelta(days=7))).values
+                d14_mask = (past_dates >= (curr_date - pd.Timedelta(days=14))).values
+                d28_mask = (past_dates >= (curr_date - pd.Timedelta(days=28))).values
 
                 f_mean_7d[orig_idx] = past_sold[d7_mask].mean() if np.any(d7_mask) else past_sold[-3:].mean()
                 f_mean_14d[orig_idx] = past_sold[d14_mask].mean() if np.any(d14_mask) else past_sold.mean()
                 f_mean_28d[orig_idx] = past_sold[d28_mask].mean() if np.any(d28_mask) else past_sold.mean()
 
                 # Same weekday history (last 4 occurrences)
-                dow_mask = valid_past["day_of_week"] == curr_dow
+                dow_mask = (valid_past["day_of_week"] == curr_dow).values
                 same_dow_sold = past_sold[dow_mask]
                 f_same_dow[orig_idx] = same_dow_sold[-4:].mean() if len(same_dow_sold) > 0 else f_mean_28d[orig_idx]
 

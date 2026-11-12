@@ -1,0 +1,153 @@
+{
+  "model_version": "v3.202611122203",
+  "model_class": "RidgeRegressor (log1p)",
+  "trained_at": "2026-11-12T22:03:09.268798+00:00",
+  "training_records": 3019,
+  "validation_records": 799,
+  "test_records": 616,
+  "validation_start": "2026-09-10",
+  "validation_end": "2026-10-15",
+  "test_start": "2026-10-16",
+  "test_end": "2026-11-11",
+  "mae": 14.44,
+  "rmse": 17.92,
+  "wape": 0.2712,
+  "bias": 0.79,
+  "baseline_mae": 18.13,
+  "baseline_wape": 0.3405,
+  "coverage_80": 0.8149,
+  "theoretical_floor_wape": 0.065,
+  "censoring_strategy": "exclude",
+  "features": [
+    "item_id",
+    "category",
+    "service_period",
+    "day_of_week",
+    "weather",
+    "price",
+    "price_ratio",
+    "is_weekend",
+    "month",
+    "campus_event",
+    "exam_week",
+    "holiday",
+    "menu_item_count",
+    "menu_cat_count",
+    "item_recent_mean_7d",
+    "item_recent_mean_14d",
+    "item_recent_mean_28d",
+    "same_weekday_mean",
+    "ewm_mean",
+    "rolling_std",
+    "last_observed_sold",
+    "days_since_last_served",
+    "days_since_introduced",
+    "sell_through_trailing_mean",
+    "history_depth",
+    "category_period_trailing_mean"
+  ],
+  "breakdowns": {
+    "period_breakdown": {
+      "breakfast": {
+        "mae": 14.17,
+        "rmse": 17.42,
+        "wape": 0.2805,
+        "bias": 0.45
+      },
+      "dinner": {
+        "mae": 13.76,
+        "rmse": 16.98,
+        "wape": 0.266,
+        "bias": 2.4
+      },
+      "lunch": {
+        "mae": 15.18,
+        "rmse": 18.98,
+        "wape": 0.269,
+        "bias": -0.27
+      }
+    },
+    "category_breakdown": {
+      "beverage": {
+        "mae": 11.32,
+        "rmse": 14.61,
+        "wape": 0.2869,
+        "bias": 1.2
+      },
+      "breakfast": {
+        "mae": 15.78,
+        "rmse": 19.05,
+        "wape": 0.2723,
+        "bias": 1.08
+      },
+      "dessert": {
+        "mae": 10.12,
+        "rmse": 12.21,
+        "wape": 0.2957,
+        "bias": -2.64
+      },
+      "main": {
+        "mae": 17.45,
+        "rmse": 21.09,
+        "wape": 0.267,
+        "bias": 2.35
+      },
+      "snack": {
+        "mae": 10.43,
+        "rmse": 12.58,
+        "wape": 0.2728,
+        "bias": -1.35
+      }
+    },
+    "history_split": {
+      "low_history": {
+        "mae": 19.3,
+        "rmse": 20.71,
+        "wape": 0.6605,
+        "bias": 17.73
+      },
+      "normal_history": {
+        "mae": 14.17,
+        "rmse": 17.75,
+        "wape": 0.2598,
+        "bias": -0.14
+      },
+      "low_history_count": 32,
+      "normal_history_count": 584
+    },
+    "calibration_bins": [
+      {
+        "bin_range": "18-43",
+        "predicted_mean": 33.6,
+        "actual_mean": 30.8,
+        "count": 221
+      },
+      {
+        "bin_range": "43-67",
+        "predicted_mean": 54.1,
+        "actual_mean": 52.9,
+        "count": 242
+      },
+      {
+        "bin_range": "67-92",
+        "predicted_mean": 77.2,
+        "actual_mean": 78.0,
+        "count": 126
+      },
+      {
+        "bin_range": "92-117",
+        "predicted_mean": 102.6,
+        "actual_mean": 118.7,
+        "count": 16
+      },
+      {
+        "bin_range": "117-142",
+        "predicted_mean": 126.9,
+        "actual_mean": 132.7,
+        "count": 11
+      }
+    ]
+  },
+  "is_synthetic": true,
+  "notice": "Trained with three-way time split. Evaluated on out-of-sample test set. Synthetic demo dataset."
+}

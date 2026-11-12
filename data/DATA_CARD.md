@@ -45,7 +45,7 @@ $$\text{portions\_prepared} = \text{round}\Big(\text{recent\_avg} \times (1.0 + 
 
 - **Realized Sales**: $\text{portions\_sold} = \min(\text{latent\_demand}, \text{portions\_prepared})$.
 - **Stockout / Censoring Indicator**: $\text{sold\_out} = (\text{latent\_demand} \ge \text{portions\_prepared})$.
-- **Empirical Censoring Rate**: **9.22%** (372 sold-out events out of 4,036 service rows), closely matching the realistic 8%–12% target specified in operations literature.
+- **Empirical Censoring Rate**: **11.50%** (464 sold-out events out of 4,036 service rows), closely matching the realistic 8%–12% target specified in operations literature.
 
 ---
 

@@ -151,14 +151,14 @@ def generate_calendar_schedule(start_date: datetime, days_count: int = 180) -> D
 
     return schedule
 
-def sample_negative_binomial(mean_val: float, dispersion: float = 12.0) -> int:
+def sample_negative_binomial(mean_val: float, dispersion: float = 40.0) -> int:
     """
     NegativeBinomial parameterized by mean and dispersion (Gamma-Poisson mixture).
-    Produces realistic overdispersed cafeteria demand counts.
+    Produces realistic overdispersed cafeteria demand counts with learnable structure.
     """
     if mean_val <= 0.1:
         return 0
-    k = max(2.0, dispersion)
+    k = max(5.0, dispersion)
     # Gamma sample: shape=k, scale=mean/k
     gamma_sample = np.random.gamma(shape=k, scale=mean_val / k)
     return int(np.random.poisson(gamma_sample))
@@ -308,8 +308,8 @@ def simulate_cafeteria_dataset(
                     recent_avg = float(lam)
 
                 # Safe operational buffer so stock-outs occur ~8-12% of the time
-                prep_buffer = 0.60 if base_pop >= 75 else 0.64
-                noise = np.random.normal(loc=0.0, scale=0.04)
+                prep_buffer = 0.55 if base_pop >= 75 else 0.59
+                noise = np.random.normal(loc=0.0, scale=0.03)
                 portions_prepared = int(round(recent_avg * (1.0 + prep_buffer + noise)))
                 portions_prepared = max(int(recent_avg * 1.20), portions_prepared)
                 portions_prepared = max(8, portions_prepared)

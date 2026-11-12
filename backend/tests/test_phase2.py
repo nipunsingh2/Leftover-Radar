@@ -47,4 +47,4 @@ def test_data_card_exists():
     content = card_path.read_text(encoding="utf-8")
     assert "NegativeBinomial" in content
     assert "Censored Demand" in content
-    assert "9.22%" in content or "8–12%" in content
+    assert "11.50%" in content or "8%–12%" in content or "8-12%" in content
