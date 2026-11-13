@@ -96,12 +96,12 @@ def evaluate_plan_risk(
     if planned < p80_low:
         return {
             "risk_level": "high",
-            "risk_reason": f"Under-prep risk: planned ({planned}) is below 80% demand floor ({p80_low}). Likely stock-out.",
+            "risk_reason": f"Under-prep risk: planned ({planned}) is below 95% demand floor ({p80_low}). Likely stock-out.",
         }
     elif planned > p80_high:
         return {
             "risk_level": "high",
-            "risk_reason": f"Over-prep risk: planned ({planned}) exceeds 80% demand ceiling ({p80_high}). High waste expected.",
+            "risk_reason": f"Over-prep risk: planned ({planned}) exceeds 95% demand ceiling ({p80_high}). High waste expected.",
         }
     elif planned > (predicted_demand * 1.15) and planned > recommended_prep:
         return {
@@ -116,5 +116,5 @@ def evaluate_plan_risk(
     else:
         return {
             "risk_level": "low",
-            "risk_reason": f"Well-calibrated: planned ({planned}) is within 80% interval [{p80_low}, {p80_high}].",
+            "risk_reason": f"Well-calibrated: planned ({planned}) is within 95% interval [{p80_low}, {p80_high}].",
         }

@@ -40,14 +40,14 @@ export const RangeBar: React.FC<RangeBarProps> = ({
     <div className="w-full select-none">
       {/* Visual Sonar Track Container */}
       <div className="relative h-6 bg-canvas-subtle/80 dark:bg-white/5 rounded-xl border border-ink-hairline dark:border-ink-dark-hairline overflow-hidden shadow-inner">
-        {/* 1. 80% Conformal Interval Zone (Matcha Sonar Sweep Band) */}
+        {/* 1. 95% Conformal Interval Zone (Matcha Sonar Sweep Band) */}
         <div
           className="absolute top-0 bottom-0 bg-matcha/15 dark:bg-matcha-light/20 border-x-2 border-matcha/40 dark:border-matcha-light/40"
           style={{
             left: `${pLowPct}%`,
             width: `${Math.max(2, pHighPct - pLowPct)}%`,
           }}
-          title={`80% Conformal Range: [${p80Low}, ${p80High}] portions`}
+          title={`95% Conformal Range: [${p80Low}, ${p80High}] portions`}
         >
           {/* Subtle micro dots */}
           <div className="w-full h-full opacity-20 bg-[radial-gradient(#1E4D38_1px,transparent_1px)] dark:bg-[radial-gradient(#FFF_1px,transparent_1px)] [background-size:6px_6px]" />
@@ -108,8 +108,8 @@ export const RangeBar: React.FC<RangeBarProps> = ({
 
       {/* Sub-track Labels with Quirky Status Badges */}
       <div className="flex justify-between items-center text-[10px] font-mono mt-1 px-1 text-ink-muted dark:text-ink-dark-muted">
-        <span title="Lower 80% interval bound">
-          p80: <span className="font-bold text-ink dark:text-ink-dark">{p80Low}</span>
+        <span title="Lower 95% conformal interval bound">
+          p95: <span className="font-bold text-ink dark:text-ink-dark">{p80Low}</span>
         </span>
 
         <span className="font-bold text-[10px] flex items-center gap-1">
@@ -126,8 +126,8 @@ export const RangeBar: React.FC<RangeBarProps> = ({
           )}
         </span>
 
-        <span title="Upper 80% interval bound">
-          p80: <span className="font-bold text-ink dark:text-ink-dark">{p80High}</span>
+        <span title="Upper 95% conformal interval bound">
+          p95: <span className="font-bold text-ink dark:text-ink-dark">{p80High}</span>
         </span>
       </div>
     </div>

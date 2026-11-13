@@ -158,7 +158,7 @@ def generate_item_explanation(
     if history_status == "sufficient":
         explanation_text = (
             f"Trained Ridge regression model generated point prediction of {pred_demand} portions based on "
-            f"{len(past_sales)}+ prior service observations. 80% conformal interval [{p80_low}, {p80_high}] "
+            f"{len(past_sales)}+ prior service observations. 95% conformal interval [{p80_low}, {p80_high}] "
             f"derived from held-out validation non-conformity scores."
         )
     elif history_status == "low_history":

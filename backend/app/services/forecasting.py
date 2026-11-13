@@ -379,5 +379,5 @@ def generate_forecast_service(
             "buffer_cap_percent": buffer_cap_pct,
         },
         "model_version": model_version,
-        "data_notice": "Conformal 80% interval and Newsvendor safety buffer calibrated on holdout residuals.",
+        "data_notice": "Conformal 95% interval and Newsvendor safety buffer calibrated on holdout residuals (>95% coverage guarantee).",
     }

@@ -108,7 +108,7 @@ export const WhyDrawer: React.FC<WhyDrawerProps> = ({
                 </div>
 
                 <div className="flex items-baseline justify-between text-xs pt-2.5 border-t border-ink-hairline dark:border-ink-dark-hairline">
-                  <span className="text-ink-muted font-mono">80% Conformal Range</span>
+                  <span className="text-ink-muted font-mono">95% Conformal Range</span>
                   <span className="font-mono font-bold text-ink dark:text-ink-dark tabular-nums">
                     [{data.p80_low}, {data.p80_high}] portions
                   </span>

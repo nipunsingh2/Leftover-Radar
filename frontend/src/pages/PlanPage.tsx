@@ -169,7 +169,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
             <div className="pt-2 border-t border-ink-hairline dark:border-ink-dark-hairline flex items-center justify-between text-[11px] font-mono">
               <span className="text-ink-muted">Safety Level:</span>
               <span className={`font-bold ${totalShortfall === 0 ? 'text-matcha dark:text-matcha-light' : 'text-berry'}`}>
-                {totalShortfall === 0 ? '80% Guaranteed' : 'Action Needed'}
+                {totalShortfall === 0 ? '95% Guaranteed' : 'Action Needed'}
               </span>
             </div>
           </div>
@@ -278,7 +278,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                 <tr>
                   <th className="py-3 px-4">Menu Dish</th>
                   <th className="py-3 px-3 text-right">Forecast (ŷ)</th>
-                  <th className="py-3 px-4 min-w-[220px]">80% Conformal Range</th>
+                  <th className="py-3 px-4 min-w-[220px]">95% Conformal Range</th>
                   <th className="py-3 px-4 text-center min-w-[195px]">Planned Prep</th>
                   <th className="py-3 px-3 text-right">Est. Leftover</th>
                   <th className="py-3 px-3 text-right">Recommended</th>

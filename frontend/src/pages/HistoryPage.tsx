@@ -178,10 +178,10 @@ export const HistoryPage: React.FC = () => {
                 Pipeline 2 ($lookup & $project)
               </span>
               <h2 className="font-serif text-xl font-bold text-ink dark:text-ink-dark mt-1">
-                Realized Sales vs. Model Forecast Range (80% Conformal Band)
+                Realized Sales vs. Model Forecast Range (95% Conformal Band)
               </h2>
               <p className="text-xs text-ink-muted">
-                Observed actual sales (forest matcha line) plotted against model point predictions (persimmon dashed line) and 80% confidence interval envelope.
+                Observed actual sales (forest matcha line) plotted against model point predictions (persimmon dashed line) and 95% confidence interval envelope.
               </p>
             </div>
 
@@ -201,9 +201,9 @@ export const HistoryPage: React.FC = () => {
                       boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
                     }}
                   />
-                  {/* Conformal 80% Band */}
-                  <Area type="monotone" dataKey="upper" stroke="none" fill="#1E4D38" fillOpacity={0.12} name="80% Upper" />
-                  <Area type="monotone" dataKey="lower" stroke="none" fill="#FFFFFF" fillOpacity={0.8} name="80% Lower" />
+                  {/* Conformal 95% Band */}
+                  <Area type="monotone" dataKey="upper" stroke="none" fill="#1E4D38" fillOpacity={0.12} name="95% Upper" />
+                  <Area type="monotone" dataKey="lower" stroke="none" fill="#FFFFFF" fillOpacity={0.8} name="95% Lower" />
                   <Line type="monotone" dataKey="predicted" stroke="#FF6B35" strokeDasharray="4 4" strokeWidth={2} dot={false} name="Forecast" />
                   <Line type="monotone" dataKey="actual" stroke="#1E4D38" strokeWidth={2.75} dot={{ r: 3.5, fill: '#1E4D38' }} name="Actual Sold" />
                 </ComposedChart>

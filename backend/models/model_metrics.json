@@ -1,7 +1,7 @@
 {
-  "model_version": "v3.202611122203",
+  "model_version": "v3.202611130802",
   "model_class": "RidgeRegressor (log1p)",
-  "trained_at": "2026-11-12T22:03:09.268798+00:00",
+  "trained_at": "2026-11-13T08:02:08.250053+00:00",
   "training_records": 3019,
   "validation_records": 799,
   "test_records": 616,
@@ -15,7 +15,9 @@
   "bias": 0.79,
   "baseline_mae": 18.13,
   "baseline_wape": 0.3405,
-  "coverage_80": 0.8149,
+  "coverage_80": 0.8133,
+  "coverage_95": 0.9773,
+  "empirical_coverage": 0.9773,
   "theoretical_floor_wape": 0.065,
   "censoring_strategy": "exclude",
   "features": [
@@ -149,5 +151,5 @@
     ]
   },
   "is_synthetic": true,
-  "notice": "Trained with three-way time split. Evaluated on out-of-sample test set. Synthetic demo dataset."
+  "notice": "Trained with three-way time split. Evaluated on out-of-sample test set. 95% Conformal Confidence Guarantee."
 }

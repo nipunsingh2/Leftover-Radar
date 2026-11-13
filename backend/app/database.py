@@ -141,6 +141,7 @@ VALIDATORS: Dict[str, Dict[str, Any]] = {
                 "baseline_mae": {"bsonType": ["double", "int"]},
                 "baseline_wape": {"bsonType": ["double", "int"]},
                 "coverage_80": {"bsonType": ["double", "int", "null"]},
+                "coverage_95": {"bsonType": ["double", "int", "null"]},
                 "features": {"bsonType": "array"},
                 "is_synthetic": {"bsonType": "bool"}
             }

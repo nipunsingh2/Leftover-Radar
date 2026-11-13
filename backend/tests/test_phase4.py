@@ -25,6 +25,7 @@ def test_model_artifact_and_metrics_exist():
     assert "mae" in metrics
     assert "baseline_mae" in metrics
     assert "coverage_80" in metrics
+    assert "coverage_95" in metrics
     assert "breakdowns" in metrics
     assert "calibration_bins" in metrics["breakdowns"]
 
@@ -32,6 +33,8 @@ def test_model_artifact_and_metrics_exist():
     assert metrics["mae"] < metrics["baseline_mae"], f"Model MAE ({metrics['mae']}) must beat baseline ({metrics['baseline_mae']})"
     # 80% coverage must be within calibrated tolerance [0.75, 0.86]
     assert 0.75 <= metrics["coverage_80"] <= 0.86, f"Conformal coverage ({metrics['coverage_80']}) must be near 80%"
+    # 95% high-confidence coverage must exceed 95%
+    assert metrics["coverage_95"] >= 0.95, f"High-confidence coverage ({metrics['coverage_95']}) must be >= 95%"
 
 
 def test_model_artifact_load_and_predict():

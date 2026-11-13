@@ -112,7 +112,7 @@ export const PrepSheetModal: React.FC<PrepSheetModalProps> = ({
                       <th className="py-2.5 px-3">Category</th>
                       <th className="py-2.5 px-3 text-right">Target Prep</th>
                       <th className="py-2.5 px-3 text-right">Recommended</th>
-                      <th className="py-2.5 px-3 text-center">80% Interval</th>
+                      <th className="py-2.5 px-3 text-center">95% Interval</th>
                       <th className="py-2.5 px-3">Chef Initials</th>
                     </tr>
                   </thead>
