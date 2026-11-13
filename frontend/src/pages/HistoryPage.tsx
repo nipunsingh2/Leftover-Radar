@@ -73,7 +73,7 @@ export const HistoryPage: React.FC = () => {
       <div className="border-b border-ink-hairline dark:border-ink-dark-hairline pb-4 flex flex-wrap justify-between items-end gap-4">
         <div>
           <div className="sticker-badge bg-persimmon/10 text-persimmon border-persimmon/30">
-            Radar Telemetry 📡
+            Radar Telemetry
           </div>
           <h1 className="font-serif text-3xl font-bold tracking-tight text-ink dark:text-ink-dark mt-1">
             Historical Trends & Forecast Verification

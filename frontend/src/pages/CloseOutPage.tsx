@@ -142,7 +142,7 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
       <div className="border-b border-ink-hairline dark:border-ink-dark-hairline pb-4 flex flex-wrap justify-between items-end gap-4">
         <div>
           <div className="sticker-badge bg-matcha/10 text-matcha dark:text-matcha-light border-matcha/30">
-            Post-Service Debrief 🧾
+            Post-Service Debrief
           </div>
           <h1 className="font-serif text-3xl font-bold tracking-tight text-ink dark:text-ink-dark mt-1">
             Service Close-out • {servicePeriod.toUpperCase()} ({serviceDate})

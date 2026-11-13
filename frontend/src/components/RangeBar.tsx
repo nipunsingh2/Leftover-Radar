@@ -114,14 +114,14 @@ export const RangeBar: React.FC<RangeBarProps> = ({
 
         <span className="font-bold text-[10px] flex items-center gap-1">
           {planned === predicted ? (
-            <span className="text-matcha dark:text-matcha-light">🎯 Bullseye Matched</span>
+            <span className="text-matcha dark:text-matcha-light">Target Matched</span>
           ) : planned > predicted ? (
             <span className={isExtremeOver ? 'text-berry' : 'text-yuzu-dark'}>
-              🥐 +{planned - predicted} buffer
+              +{planned - predicted} buffer
             </span>
           ) : (
             <span className="text-persimmon">
-              🚨 -{predicted - planned} shortfall
+              -{predicted - planned} shortfall
             </span>
           )}
         </span>

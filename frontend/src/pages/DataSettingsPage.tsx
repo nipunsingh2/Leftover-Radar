@@ -151,14 +151,14 @@ export const DataSettingsPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <span className="sticker-badge bg-yuzu/25 text-ink dark:text-yuzu border-yuzu/40 font-mono">
-              ⚙️ CONTROL PANEL
+              CONTROL PANEL
             </span>
             <span className="text-[11px] font-mono text-ink-muted">
               MongoDB Param Hub & POS Ingestion
             </span>
           </div>
           <h1 className="font-serif text-3xl font-bold tracking-tight text-matcha-dark dark:text-cream">
-            Kitchen Settings & Economics 🛠️
+            Kitchen Settings & Economics
           </h1>
           <p className="text-xs text-ink-muted mt-1 max-w-2xl font-sans">
             Calibrate Newsvendor unit risk asymmetric costs, curate active cafeteria menu items, record campus exogenous events, and ingest POS observation logs.
@@ -177,7 +177,7 @@ export const DataSettingsPage: React.FC = () => {
           }`}
         >
           <Sliders className="w-3.5 h-3.5 text-yuzu" />
-          <span>⚖️ Newsvendor Economics</span>
+          <span>Newsvendor Economics</span>
         </button>
 
         <button
@@ -189,7 +189,7 @@ export const DataSettingsPage: React.FC = () => {
           }`}
         >
           <Utensils className="w-3.5 h-3.5 text-persimmon" />
-          <span>🍱 Menu Catalog ({menuItems.length})</span>
+          <span>Menu Catalog ({menuItems.length})</span>
         </button>
 
         <button
@@ -201,7 +201,7 @@ export const DataSettingsPage: React.FC = () => {
           }`}
         >
           <Calendar className="w-3.5 h-3.5 text-lavender" />
-          <span>📅 Campus Exogenous Factors</span>
+          <span>Campus Exogenous Factors</span>
         </button>
 
         <button
@@ -213,7 +213,7 @@ export const DataSettingsPage: React.FC = () => {
           }`}
         >
           <UploadCloud className="w-3.5 h-3.5 text-berry" />
-          <span>📦 POS CSV Ingestion</span>
+          <span>POS CSV Ingestion</span>
         </button>
       </div>
 
@@ -229,7 +229,7 @@ export const DataSettingsPage: React.FC = () => {
                 <span className="text-xs font-mono text-ink-muted">q* = c_s / (c_s + c_w)</span>
               </div>
               <h2 className="font-serif text-2xl font-bold text-matcha-dark dark:text-cream mt-1.5">
-                Newsvendor Loss & Shortage Cost Calibration ⚖️
+                Newsvendor Loss & Shortage Cost Calibration
               </h2>
               <p className="text-xs text-ink-muted mt-1 leading-relaxed">
                 The classical stochastic Newsvendor formulation balances the tangible cost of over-preparation (spoilage, disposal) against the penalty of stockouts (missed revenue, unhappy campus diners). Modulating these coefficients updates the target critical fractile instantaneously.
@@ -240,7 +240,7 @@ export const DataSettingsPage: React.FC = () => {
             <div className="p-4 rounded-card bg-canvas/70 dark:bg-canvas-dark/50 border border-matcha/15 dark:border-matcha/25 space-y-2.5">
               <div className="flex justify-between items-baseline">
                 <label className="text-xs font-bold text-ink dark:text-ink-dark flex items-center gap-1.5 font-sans">
-                  <span>🗑️ Unit Waste Disposal Cost (c_w)</span>
+                  <span>Unit Waste Disposal Cost (c_w)</span>
                 </label>
                 <span className="font-mono text-sm font-bold text-persimmon bg-persimmon/10 px-2.5 py-0.5 rounded-pill border border-persimmon/20">
                   ₹{settings.waste_cost.toFixed(1)}
@@ -267,7 +267,7 @@ export const DataSettingsPage: React.FC = () => {
             <div className="p-4 rounded-card bg-canvas/70 dark:bg-canvas-dark/50 border border-matcha/15 dark:border-matcha/25 space-y-2.5">
               <div className="flex justify-between items-baseline">
                 <label className="text-xs font-bold text-ink dark:text-ink-dark flex items-center gap-1.5 font-sans">
-                  <span>🚨 Unit Stockout Penalty (c_s)</span>
+                  <span>Unit Stockout Penalty (c_s)</span>
                 </label>
                 <span className="font-mono text-sm font-bold text-berry bg-berry/10 px-2.5 py-0.5 rounded-pill border border-berry/20">
                   ₹{settings.stockout_cost.toFixed(1)}
@@ -294,7 +294,7 @@ export const DataSettingsPage: React.FC = () => {
             <div className="p-4 rounded-card bg-canvas/70 dark:bg-canvas-dark/50 border border-matcha/15 dark:border-matcha/25 space-y-2.5">
               <div className="flex justify-between items-baseline">
                 <label className="text-xs font-bold text-ink dark:text-ink-dark flex items-center gap-1.5 font-sans">
-                  <span>🛡️ Maximum Recommended Safety Buffer Cap</span>
+                  <span>Maximum Recommended Safety Buffer Cap</span>
                 </label>
                 <span className="font-mono text-sm font-bold text-matcha-dark dark:text-matcha-light bg-matcha/10 px-2.5 py-0.5 rounded-pill border border-matcha/20">
                   +{(settings.buffer_cap_percent * 100).toFixed(0)}%
@@ -322,7 +322,7 @@ export const DataSettingsPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-ink-muted flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-persimmon" />
-                  Live Equilibrium Equilibrium Receipt
+                  Live Equilibrium Receipt
                 </span>
                 <span className="sticker-badge bg-white dark:bg-surface-dark border-matcha/20 font-mono text-[10px]">
                   FRACTILE DIAL
@@ -350,21 +350,21 @@ export const DataSettingsPage: React.FC = () => {
               <div className="text-[11px] text-ink dark:text-cream/90 leading-relaxed font-sans pt-2 border-t border-yuzu/30">
                 {liveQStar >= 0.70 ? (
                   <div className="flex items-start gap-2">
-                    <span className="text-base">🛡️</span>
+                    <span className="w-2 h-2 rounded-full bg-matcha mt-1.5 shrink-0" />
                     <span>
                       <strong>Protective Safety Buffer Policy:</strong> Stockout penalties dominate waste costs. The model will recommend preparing upper-quantile buffers to ensure zero student stockouts.
                     </span>
                   </div>
                 ) : liveQStar <= 0.40 ? (
                   <div className="flex items-start gap-2">
-                    <span className="text-base">🌱</span>
+                    <span className="w-2 h-2 rounded-full bg-persimmon mt-1.5 shrink-0" />
                     <span>
                       <strong>Lean Anti-Waste Policy:</strong> Waste costs dominate stockouts. The model will recommend conservative preparation strictly near or below median expectation.
                     </span>
                   </div>
                 ) : (
                   <div className="flex items-start gap-2">
-                    <span className="text-base">⚖️</span>
+                    <span className="w-2 h-2 rounded-full bg-yuzu mt-1.5 shrink-0" />
                     <span>
                       <strong>Balanced Symmetry Policy:</strong> Unit costs are in close parity. Preparation targets are centered around the median expected distribution.
                     </span>
@@ -485,7 +485,7 @@ export const DataSettingsPage: React.FC = () => {
                 EXTERNAL SIGNAL
               </span>
               <h2 className="font-serif text-2xl font-bold text-matcha-dark dark:text-cream mt-1.5">
-                Campus Environment Override 🌤️
+                Campus Environment Override
               </h2>
               <p className="text-xs text-ink-muted mt-1 font-sans">
                 Injected into the ML feature pipeline as day-level regressors for weather and student population swings.
@@ -513,10 +513,10 @@ export const DataSettingsPage: React.FC = () => {
                 onChange={(e) => setCalendarContext({ ...calendarContext, weather: e.target.value })}
                 className="w-full font-mono text-xs p-2.5 rounded-card bg-canvas dark:bg-canvas-dark border border-matcha/25 text-ink dark:text-ink-dark outline-none cursor-pointer focus:border-matcha"
               >
-                <option value="clear">☀️ Clear / Sunny (Standard baseline attendance)</option>
-                <option value="rainy">🌧️ Monsoon / Heavy Rain (+22% hot snack surge)</option>
-                <option value="hot">🔥 Scorching Heat (Cold beverage volume surge)</option>
-                <option value="cloudy">☁️ Cloudy / Overcast</option>
+                <option value="clear">Clear / Sunny (Standard baseline attendance)</option>
+                <option value="rainy">Monsoon / Heavy Rain (+22% hot snack surge)</option>
+                <option value="hot">Heat Wave (Cold beverage volume surge)</option>
+                <option value="cloudy">Cloudy / Overcast</option>
               </select>
             </div>
 
@@ -532,7 +532,7 @@ export const DataSettingsPage: React.FC = () => {
                 />
                 <div>
                   <div className="font-bold text-ink dark:text-ink-dark flex items-center gap-1.5">
-                    <span>🎉 Campus Fest / Cultural Event</span>
+                    <span>Campus Fest / Cultural Event</span>
                     <span className="sticker-badge bg-persimmon/15 text-persimmon border-persimmon/30 font-mono text-[9px]">
                       +25% SURGE
                     </span>
@@ -552,7 +552,7 @@ export const DataSettingsPage: React.FC = () => {
                 />
                 <div>
                   <div className="font-bold text-ink dark:text-ink-dark flex items-center gap-1.5">
-                    <span>📚 Midterm / Final Exam Period</span>
+                    <span>Midterm / Final Exam Period</span>
                     <span className="sticker-badge bg-yuzu/25 text-ink dark:text-yuzu border-yuzu/40 font-mono text-[9px]">
                       QUICK SNACKS
                     </span>
@@ -572,7 +572,7 @@ export const DataSettingsPage: React.FC = () => {
                 />
                 <div>
                   <div className="font-bold text-ink dark:text-ink-dark flex items-center gap-1.5">
-                    <span>🏖️ Campus Break / Public Holiday</span>
+                    <span>Campus Break / Public Holiday</span>
                     <span className="sticker-badge bg-berry/15 text-berry border-berry/30 font-mono text-[9px]">
                       -50% REDUCTION
                     </span>
@@ -611,7 +611,7 @@ export const DataSettingsPage: React.FC = () => {
                 DATA PIPELINE
               </span>
               <h2 className="font-serif text-2xl font-bold text-matcha-dark dark:text-cream mt-1.5">
-                Batch Ingest Cafeteria POS Logs 📥
+                Batch Ingest Cafeteria POS Logs
               </h2>
               <p className="text-xs text-ink-muted mt-1 leading-relaxed font-sans">
                 Upload historical POS records. Every row is rigorously evaluated against schema constraints and physical dining invariant: portions sold &le; portions prepared.

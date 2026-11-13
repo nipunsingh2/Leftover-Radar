@@ -38,7 +38,7 @@ export const PrepSheetModal: React.FC<PrepSheetModalProps> = ({
         {/* Modal Controls (Hidden in print) */}
         <div className="no-print p-4 px-6 border-b border-ink-hairline dark:border-ink-dark-hairline flex items-center justify-between bg-canvas-subtle/80 dark:bg-black/30">
           <div className="flex items-center gap-2">
-            <span className="text-xl">📋</span>
+            <Printer className="w-4 h-4 text-persimmon" />
             <span className="text-xs font-mono font-bold text-ink dark:text-ink-dark uppercase tracking-wider">
               Kitchen Preparation Order Ticket
             </span>

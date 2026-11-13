@@ -13,7 +13,7 @@ import { ModelLabPage } from './pages/ModelLabPage';
 import { DataSettingsPage } from './pages/DataSettingsPage';
 import { PrepSheetModal } from './components/PrepSheetModal';
 import { CuteLoadingScreen } from './components/CuteLoadingScreen';
-import { AlertCircle, RotateCcw } from 'lucide-react';
+import { AlertCircle, RotateCcw, Sparkles } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Navigation
@@ -61,7 +61,15 @@ export const App: React.FC = () => {
 
   // Modals & Overlays
   const [isPrepSheetModalOpen, setIsPrepSheetModalOpen] = useState<boolean>(false);
-  const [showCuteLoading, setShowCuteLoading] = useState<boolean>(false);
+  const [showCuteLoading, setShowCuteLoading] = useState<boolean>(true);
+
+  // Auto-dismiss initial cute loading screen after first visit
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowCuteLoading(false);
+    }, 2200);
+    return () => clearTimeout(timer);
+  }, []);
 
   // 1. Initialize Dark Mode and Menu Items
   useEffect(() => {
@@ -234,7 +242,6 @@ export const App: React.FC = () => {
         onToggleClockSync={handleToggleClockSync}
         currentTimeStr={currentTimeStr}
         activeServicePeriod={servicePeriod}
-        onTriggerCuteLoading={() => setShowCuteLoading(true)}
       />
 
       {/* 2. Top Header Strip with Service Controls */}
@@ -298,7 +305,7 @@ export const App: React.FC = () => {
       {showUndoToast && (
         <div className="fixed bottom-6 right-6 z-40 quirky-card px-5 py-3.5 shadow-quirky border-2 border-matcha/30 dark:border-matcha/40 flex items-center gap-4 bg-canvas dark:bg-canvas-dark animate-spring">
           <div className="flex items-center gap-2.5">
-            <span className="text-xl">✨</span>
+            <Sparkles className="w-4 h-4 text-yuzu" />
             <div>
               <div className="text-xs font-bold text-ink dark:text-ink-dark font-sans">
                 All Recommendations Applied
@@ -332,12 +339,10 @@ export const App: React.FC = () => {
         onClose={() => setIsPrepSheetModalOpen(false)}
       />
 
-      {/* 7. Cute Kitchen Radar Loading Screen Overlay */}
+      {/* 7. Cute Kitchen Radar Initial Loading Screen Overlay */}
       <CuteLoadingScreen
         isLoading={showCuteLoading}
         onDismiss={() => setShowCuteLoading(false)}
-        servicePeriod={servicePeriod}
-        serviceDate={serviceDate}
       />
     </div>
   );

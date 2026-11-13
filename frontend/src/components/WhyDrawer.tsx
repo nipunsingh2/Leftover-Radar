@@ -55,7 +55,7 @@ export const WhyDrawer: React.FC<WhyDrawerProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="sticker-badge bg-persimmon/10 text-persimmon border-persimmon/30">
-                Attribution Recipe 🧾
+                Attribution Recipe
               </span>
               <span className="text-[10px] font-mono text-ink-muted">Ridge log1p Model</span>
             </div>

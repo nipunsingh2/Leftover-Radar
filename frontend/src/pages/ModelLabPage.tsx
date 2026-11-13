@@ -91,7 +91,7 @@ export const ModelLabPage: React.FC = () => {
       <div className="border-b border-ink-hairline dark:border-ink-dark-hairline pb-4 flex flex-wrap justify-between items-end gap-4">
         <div>
           <div className="sticker-badge bg-lavender/15 text-lavender border-lavender/40">
-            Computational Lab 🔬
+            Computational Lab
           </div>
           <h1 className="font-serif text-3xl font-bold tracking-tight text-ink dark:text-ink-dark mt-1">
             Model Validation & Telemetry Laboratory
@@ -114,7 +114,7 @@ export const ModelLabPage: React.FC = () => {
           ) : (
             <>
               <RefreshCw className="w-4 h-4 text-yuzu" strokeWidth={2} />
-              <span>Retrain on Fresh Data 🚀</span>
+              <span>Retrain on Fresh Data</span>
             </>
           )}
         </button>
@@ -158,7 +158,7 @@ export const ModelLabPage: React.FC = () => {
                     Production Model
                   </span>
                   <span className="sticker-badge bg-matcha text-white font-bold text-[9px]">
-                    ACTIVE 🏆
+                    ACTIVE
                   </span>
                 </div>
 

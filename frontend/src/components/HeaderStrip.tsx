@@ -27,12 +27,6 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
     : serviceDate;
   const periodLabel = servicePeriod.charAt(0).toUpperCase() + servicePeriod.slice(1);
 
-  const mealEmojis = {
-    breakfast: '🍳',
-    lunch: '🥪',
-    dinner: '🍛',
-  };
-
   const handleStepDay = (deltaDays: number) => {
     const cur = new Date(serviceDate + 'T00:00:00');
     cur.setDate(cur.getDate() + deltaDays);
@@ -45,9 +39,8 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
       {/* Left: Compact Date Stepper & Active Service */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-xl select-none">{mealEmojis[servicePeriod]}</span>
           <span className="font-serif font-bold text-lg text-ink dark:text-ink-dark leading-none">
-            {periodLabel}
+            {periodLabel} Service
           </span>
           <span className="text-ink-muted text-xs font-sans">•</span>
           <span className="text-xs font-sans font-medium text-ink-muted dark:text-ink-dark-muted">
@@ -87,7 +80,7 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
 
       {/* Right: Service Period Control & Quick Actions */}
       <div className="flex items-center gap-2.5">
-        {/* Sleek Segmented Meal Toggle */}
+        {/* Sleek Segmented Meal Toggle (Clean Text, No Emojis) */}
         <div className="flex items-center p-0.5 bg-canvas-subtle/70 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline rounded-full text-xs font-semibold shadow-inner">
           {(['breakfast', 'lunch', 'dinner'] as const).map((p) => {
             const isSelected = servicePeriod === p;
@@ -95,14 +88,13 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
               <button
                 key={p}
                 onClick={() => onPeriodChange(p)}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full capitalize text-xs transition-all duration-200 cursor-pointer ${
+                className={`px-3 py-1 rounded-full capitalize text-xs transition-all duration-200 cursor-pointer ${
                   isSelected
                     ? 'bg-matcha text-white font-bold shadow-xs scale-102'
                     : 'text-ink-muted dark:text-ink-dark-muted hover:text-ink'
                 }`}
               >
-                <span>{mealEmojis[p]}</span>
-                <span>{p}</span>
+                {p}
               </button>
             );
           })}

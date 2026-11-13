@@ -87,7 +87,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
               <div>
                 <div className="flex items-center gap-2">
                   <span className="sticker-badge bg-matcha/10 text-matcha dark:text-matcha-light border-matcha/30">
-                    🟢 Kitchen Prep Payload
+                    Kitchen Prep Payload
                   </span>
                 </div>
                 <div className="flex items-baseline gap-3 mt-2">
@@ -113,7 +113,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-persimmon animate-pulse" />
                 <span className="font-semibold text-ink dark:text-ink-dark">
-                  Net Balance: {netDelta >= 0 ? `+${netDelta} buffer (+${netDeltaPercent}%) ✨ Ready for lunch rush` : `${netDelta} deficit (${netDeltaPercent}%) ⚠️`}
+                  Net Balance: {netDelta >= 0 ? `+${netDelta} buffer (+${netDeltaPercent}%) • Ready for service` : `${netDelta} deficit (${netDeltaPercent}%)`}
                 </span>
               </div>
               <span className="text-[11px] font-mono text-ink-muted">
@@ -126,7 +126,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
           <div className="bento-glass-card p-5 flex flex-col justify-between cursor-default">
             <div className="flex items-center justify-between">
               <span className="sticker-badge bg-yuzu/15 text-yuzu-dark dark:text-yuzu border-yuzu/40">
-                Surplus Cushion 🥐
+                Surplus Cushion
               </span>
               <TrendingDown className="w-4 h-4 text-yuzu-dark" />
             </div>
@@ -151,7 +151,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
           <div className="bento-glass-card p-5 flex flex-col justify-between cursor-default">
             <div className="flex items-center justify-between">
               <span className="sticker-badge bg-persimmon/15 text-persimmon border-persimmon/40">
-                Stockout Guard 🛡️
+                Stockout Guard
               </span>
               <TrendingUp className="w-4 h-4 text-persimmon" />
             </div>
@@ -162,7 +162,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                 <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">missed</span>
               </div>
               <div className="text-[11px] text-ink-muted font-sans mt-0.5">
-                {totalShortfall === 0 ? 'All diners fed & happy! 🎉' : 'Hungry diners warning 🚨'}
+                {totalShortfall === 0 ? 'All expected diners covered' : 'Diner shortfall warning'}
               </div>
             </div>
 
@@ -181,7 +181,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
         <section aria-label="Kitchen Attention Items" className="bento-glass-card p-4 space-y-2.5 border-l-4 border-l-persimmon bg-persimmon/5 dark:bg-persimmon/10">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-lg select-none">🔥</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-persimmon animate-pulse" />
               <h2 className="text-xs font-serif font-bold text-ink dark:text-ink-dark flex items-center gap-1.5">
                 <span>Attention Required:</span>
                 <span className="font-mono text-persimmon font-bold">{attentionItems.length} Dishes Outside Safety Bounds</span>
@@ -230,7 +230,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                   className="btn-tactile px-2.5 py-1 rounded-lg bg-matcha hover:bg-matcha-hover text-white text-[11px] font-bold cursor-pointer shrink-0"
                   title="Bump to recommended portions"
                 >
-                  Bump 🚀
+                  Bump
                 </button>
               </div>
             ))}
@@ -265,7 +265,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
               onClick={onApplyAllRecommendations}
               className="btn-tactile px-4 py-1.5 rounded-xl bg-matcha hover:bg-matcha-hover text-white text-xs font-bold shadow-xs cursor-pointer"
             >
-              Apply All Recommendations ✨
+              Apply All Recommendations
             </button>
           </div>
         </div>

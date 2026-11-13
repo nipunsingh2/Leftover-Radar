@@ -7,8 +7,9 @@ import {
   Sliders,
   Radio,
   Clock,
-  Sparkles,
   Zap,
+  Moon,
+  Sun,
 } from 'lucide-react';
 
 export type TabId = 'plan' | 'closeout' | 'history' | 'model_lab' | 'data_settings';
@@ -22,7 +23,6 @@ interface TopNavigationBarProps {
   onToggleClockSync: () => void;
   currentTimeStr: string;
   activeServicePeriod: 'breakfast' | 'lunch' | 'dinner';
-  onTriggerCuteLoading: () => void;
 }
 
 export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
@@ -34,21 +34,14 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   onToggleClockSync,
   currentTimeStr,
   activeServicePeriod,
-  onTriggerCuteLoading,
 }) => {
-  const navItems: Array<{ id: TabId; label: string; icon: React.ElementType; emoji: string; badge?: string }> = [
-    { id: 'plan', label: 'Preparation Ledger', icon: CalendarDays, emoji: '🍱' },
-    { id: 'closeout', label: 'Daily Close-Out', icon: CheckSquare, emoji: '🧾' },
-    { id: 'history', label: 'Radar Telemetry', icon: TrendingUp, emoji: '📈' },
-    { id: 'model_lab', label: 'Model Diagnostics', icon: Cpu, emoji: '🔬', badge: 'Ridge log1p' },
-    { id: 'data_settings', label: 'Economics & Config', icon: Sliders, emoji: '⚙️' },
+  const navItems: Array<{ id: TabId; label: string; icon: React.ElementType; badge?: string }> = [
+    { id: 'plan', label: 'Preparation Ledger', icon: CalendarDays },
+    { id: 'closeout', label: 'Daily Close-Out', icon: CheckSquare },
+    { id: 'history', label: 'Radar Telemetry', icon: TrendingUp },
+    { id: 'model_lab', label: 'Model Diagnostics', icon: Cpu, badge: 'Ridge log1p' },
+    { id: 'data_settings', label: 'Economics & Config', icon: Sliders },
   ];
-
-  const mealEmojis = {
-    breakfast: '🍳',
-    lunch: '🥪',
-    dinner: '🍛',
-  };
 
   return (
     <header className="liquid-glass-nav sticky top-0 z-30 px-6 py-2.5 transition-all select-none">
@@ -56,36 +49,27 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         
         {/* Left: Brand Identity & Animated Radar Dish */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="relative w-10 h-10 rounded-2xl bg-matcha dark:bg-matcha text-white flex items-center justify-center shadow-quirky overflow-hidden cursor-pointer group"
-               onClick={onTriggerCuteLoading}
-               title="Click for Cute Kitchen Radar Loading Animation!">
+          <div className="relative w-9 h-9 rounded-2xl bg-matcha dark:bg-matcha text-white flex items-center justify-center shadow-quirky overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent animate-pulse" />
-            <Radio className="w-5 h-5 text-yuzu relative z-10 transition-transform duration-300 group-hover:scale-110" strokeWidth={2.2} />
+            <Radio className="w-4 h-4 text-yuzu relative z-10" strokeWidth={2.2} />
             {/* Spinning Sonar Sweep */}
             <div className="absolute inset-0 border border-white/25 rounded-full animate-ping opacity-25 pointer-events-none" />
-            {/* Cute sparkle dot */}
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-persimmon animate-pulse" />
           </div>
 
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-serif text-xl font-bold tracking-tight text-ink dark:text-ink-dark flex items-center gap-1">
-                <span>Leftover Radar</span>
-                <span className="text-xs text-persimmon animate-bounce">✨</span>
-              </span>
-              <span className="hidden lg:inline-flex sticker-badge bg-yuzu/20 text-yuzu-dark dark:text-yuzu border-yuzu/40 font-mono text-[9px] py-0.5 px-2">
-                v3.PRODUCTION
-              </span>
-            </div>
-            <div className="text-[11px] font-sans text-ink-muted dark:text-ink-dark-muted hidden sm:block">
+            <h1 className="font-serif text-xl font-bold tracking-tight text-ink dark:text-ink-dark leading-none">
+              Leftover Radar
+            </h1>
+            <div className="text-[11px] font-sans text-ink-muted dark:text-ink-dark-muted hidden sm:block mt-0.5">
               The Algorithmic Kitchen Companion
             </div>
           </div>
         </div>
 
-        {/* Center: Hoverable Liquid Glass Navigation Pills */}
+        {/* Center: Hoverable Liquid Glass Navigation Pills (Clean Lucide Icons, No Emojis) */}
         <nav className="flex items-center gap-1.5 p-1 rounded-full bg-canvas-subtle/50 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline shadow-inner max-w-full overflow-x-auto py-1">
           {navItems.map((item) => {
+            const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
@@ -95,9 +79,10 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
                   isActive ? 'liquid-pill-active' : 'text-ink dark:text-ink-dark'
                 }`}
               >
-                <span className="text-sm transition-transform duration-200 group-hover:scale-125">
-                  {item.emoji}
-                </span>
+                <Icon className={`w-3.5 h-3.5 transition-transform duration-200 group-hover:scale-110 ${
+                  isActive ? 'text-white' : 'text-ink-muted dark:text-cream/70'
+                }`} strokeWidth={2} />
+                
                 <span className="font-sans font-bold text-xs tracking-tight">
                   {item.label}
                 </span>
@@ -118,7 +103,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
           })}
         </nav>
 
-        {/* Right: Clock Sync Widget, Cute Preview & Theme Toggle */}
+        {/* Right: Clock Sync Widget & Theme Toggle (Preview Button Removed) */}
         <div className="flex items-center gap-2.5 shrink-0">
           {/* Live Kitchen Clock Sync Pill */}
           <div
@@ -137,9 +122,8 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
 
             <div className="h-3 w-[1px] bg-ink-hairline dark:bg-white/20" />
 
-            <div className="flex items-center gap-1 text-[11px] font-sans font-semibold">
-              <span>{mealEmojis[activeServicePeriod]}</span>
-              <span className="capitalize">{activeServicePeriod}</span>
+            <div className="text-[11px] font-sans font-semibold capitalize">
+              {activeServicePeriod}
             </div>
 
             <div className="flex items-center">
@@ -157,26 +141,16 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
             </div>
           </div>
 
-          {/* Cute Loading Screen Trigger Pill */}
-          <button
-            onClick={onTriggerCuteLoading}
-            className="liquid-glass-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-ink-muted hover:text-matcha dark:text-cream/80 dark:hover:text-cream cursor-pointer transition-all"
-            title="Preview Cute Kitchen Radar Loading Screen!"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-yuzu animate-spin" style={{ animationDuration: '6s' }} />
-            <span className="font-serif hidden md:inline">Cute Splash 🌸</span>
-          </button>
-
           {/* Daytime / Midnight Diner Toggle */}
           <button
             onClick={onToggleDarkMode}
             className="liquid-glass-pill p-2 rounded-full text-ink-muted hover:text-ink dark:text-cream/80 dark:hover:text-cream cursor-pointer transition-all flex items-center justify-center"
-            title={isDarkMode ? 'Switch to ☀️ Daytime Kitchen' : 'Switch to 🌙 Midnight Diner'}
+            title={isDarkMode ? 'Switch to Daytime Kitchen' : 'Switch to Midnight Diner'}
           >
             {isDarkMode ? (
-              <span className="text-base select-none">🌙</span>
+              <Moon className="w-4 h-4 text-yuzu" strokeWidth={2} />
             ) : (
-              <span className="text-base select-none">☀️</span>
+              <Sun className="w-4 h-4 text-persimmon" strokeWidth={2} />
             )}
           </button>
         </div>
