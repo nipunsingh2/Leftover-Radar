@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Printer, Sparkles, Loader2, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Printer, Sparkles, Loader2, Calendar, Clock, Zap } from 'lucide-react';
 
 interface HeaderStripProps {
   serviceDate: string;
@@ -10,6 +10,9 @@ interface HeaderStripProps {
   onOpenPrintSheet?: () => void;
   isGenerating?: boolean;
   modelVersion?: string;
+  isClockSynced?: boolean;
+  onToggleClockSync?: () => void;
+  currentTimeStr?: string;
 }
 
 export const HeaderStrip: React.FC<HeaderStripProps> = ({
@@ -21,6 +24,9 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
   onOpenPrintSheet,
   isGenerating = false,
   modelVersion = 'v3.production',
+  isClockSynced = true,
+  onToggleClockSync,
+  currentTimeStr = '12:00 PM',
 }) => {
   // Format date e.g. "Saturday, Nov 14, 2026"
   const dateObj = new Date(serviceDate + 'T00:00:00');
@@ -43,7 +49,7 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
   };
 
   return (
-    <header className="bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-xl border-b border-ink-hairline dark:border-ink-dark-hairline px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10">
+    <div className="bg-surface/85 dark:bg-surface-dark/85 backdrop-blur-xl border-b border-ink-hairline dark:border-ink-dark-hairline px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 sticky top-[58px] z-20 transition-all">
       {/* Title & Service Date Stepper */}
       <div className="flex items-center gap-5">
         <div>
@@ -60,7 +66,7 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
           <h1 className="font-serif text-2xl font-bold tracking-tight text-ink dark:text-ink-dark mt-0.5 flex items-center gap-2">
             <span>{mealEmojis[servicePeriod]}</span>
             <span>{periodLabel} Service</span>
-            <span className="text-ink-muted dark:text-ink-dark-muted font-normal text-lg font-sans">
+            <span className="text-ink-muted dark:text-ink-dark-muted font-normal text-base font-sans">
               • {formattedDay}
             </span>
           </h1>
@@ -97,7 +103,29 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
       </div>
 
       {/* Service Period Segmented Control & Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center flex-wrap gap-3">
+        {/* Clock Sync Status Badge / Quick Toggle */}
+        {onToggleClockSync && (
+          <button
+            onClick={onToggleClockSync}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border text-xs font-mono font-bold transition-all cursor-pointer ${
+              isClockSynced
+                ? 'bg-matcha/10 border-matcha/30 text-matcha-dark dark:text-cream shadow-xs'
+                : 'bg-canvas-subtle dark:bg-white/5 border-persimmon/30 text-persimmon hover:bg-persimmon/10'
+            }`}
+            title={isClockSynced ? 'Service is synchronized with clock time. Click for manual mode.' : 'Manual service override. Click to sync with clock.'}
+          >
+            <Clock className={`w-3.5 h-3.5 ${isClockSynced ? 'text-matcha animate-pulse' : 'text-persimmon'}`} strokeWidth={2} />
+            <span>{isClockSynced ? `Synced (${currentTimeStr})` : 'Manual Service'}</span>
+            {!isClockSynced && (
+              <span className="flex items-center gap-0.5 text-[9px] bg-persimmon text-white px-1.5 py-0.2 rounded-full">
+                <Zap className="w-2.5 h-2.5" />
+                Sync
+              </span>
+            )}
+          </button>
+        )}
+
         {/* Playful Segmented Meal Toggle */}
         <div className="flex items-center p-1 bg-canvas-subtle/80 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline rounded-2xl text-xs font-semibold shadow-tactile">
           {(['breakfast', 'lunch', 'dinner'] as const).map((p) => {
@@ -150,6 +178,6 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
           )}
         </button>
       </div>
-    </header>
+    </div>
   );
 };

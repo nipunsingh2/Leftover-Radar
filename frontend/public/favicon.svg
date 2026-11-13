@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E4D38" />
+      <stop offset="100%" stop-color="#153A2A" />
+    </linearGradient>
+
+    <!-- Onigiri Rice Gradient -->
+    <linearGradient id="riceGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#FAF7F2" />
+    </linearGradient>
+
+    <!-- Blush Glow -->
+    <radialGradient id="blushGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF85A2" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#FF85A2" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Golden Radar Wave -->
+    <linearGradient id="goldWave" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F7C948" />
+      <stop offset="100%" stop-color="#FF6B35" />
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Base with Soft Drop Shadow -->
+  <rect x="8" y="8" width="112" height="112" rx="32" fill="url(#bgGrad)" />
+  <rect x="9" y="9" width="110" height="110" rx="31" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+
+  <!-- Radar Waves (Emitting from Cute Antenna) -->
+  <path d="M 64 36 A 38 38 0 0 1 96 58" fill="none" stroke="url(#goldWave)" stroke-width="4" stroke-linecap="round" opacity="0.8" />
+  <path d="M 64 26 A 48 48 0 0 1 106 54" fill="none" stroke="url(#goldWave)" stroke-width="3" stroke-linecap="round" opacity="0.5" />
+  <path d="M 64 16 A 58 58 0 0 1 114 50" fill="none" stroke="url(#goldWave)" stroke-width="2.5" stroke-linecap="round" opacity="0.3" stroke-dasharray="3 3" />
+
+  <!-- Little Antenna Stem & Dish -->
+  <line x1="64" y1="46" x2="64" y2="34" stroke="#F7C948" stroke-width="3.5" stroke-linecap="round" />
+  <circle cx="64" cy="32" r="5" fill="#FF6B35" />
+  <circle cx="64" cy="32" r="2" fill="#FFF" />
+
+  <!-- Cute Onigiri / Bento Body (Rounded Soft Triangle) -->
+  <path d="M 64 46 C 46 46, 30 76, 32 94 C 33 104, 44 108, 64 108 C 84 108, 95 104, 96 94 C 98 76, 82 46, 64 46 Z" 
+        fill="url(#riceGrad)" />
+
+  <!-- Matcha Nori Wrap on the bottom -->
+  <path d="M 50 88 C 50 88, 52 86, 64 86 C 76 86, 78 88, 78 88 L 78 108 C 74 108, 54 108, 50 108 Z" 
+        fill="#1E4D38" rx="4" />
+
+  <!-- Kawaii Happy Smiling Eyes -->
+  <path d="M 48 74 Q 52 70, 56 74" fill="none" stroke="#191C1A" stroke-width="3" stroke-linecap="round" />
+  <path d="M 72 74 Q 76 70, 80 74" fill="none" stroke="#191C1A" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Cute Sweet Open Smile -->
+  <path d="M 60 80 Q 64 85, 68 80" fill="#E03131" stroke="#191C1A" stroke-width="1.5" stroke-linecap="round" />
+
+  <!-- Rosy Blushing Cheeks -->
+  <circle cx="43" cy="79" r="6" fill="url(#blushGrad)" />
+  <circle cx="85" cy="79" r="6" fill="url(#blushGrad)" />
+
+  <!-- Sparkling Radar Star (Top Right) -->
+  <path d="M 104 22 Q 104 28, 110 28 Q 104 28, 104 34 Q 104 28, 98 28 Q 104 28, 104 22 Z" fill="#F7C948" />
+  <circle cx="104" cy="28" r="1.5" fill="#FFF" />
+
+  <!-- Sparkle (Top Left) -->
+  <path d="M 24 38 Q 24 42, 28 42 Q 24 42, 24 46 Q 24 42, 20 42 Q 24 42, 24 38 Z" fill="#FF85A2" opacity="0.9" />
+</svg>

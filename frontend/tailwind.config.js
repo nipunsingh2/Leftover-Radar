@@ -90,12 +90,28 @@ export default {
           '0%': { transform: 'scale(0.95)' },
           '60%': { transform: 'scale(1.03)' },
           '100%': { transform: 'scale(1)' },
+        },
+        mascotBounce: {
+          '0%, 100%': { transform: 'translateY(0) scale(1)' },
+          '50%': { transform: 'translateY(-12px) scale(1.05)' },
+        },
+        liquidGlow: {
+          '0%, 100%': { opacity: '0.5', filter: 'blur(14px)' },
+          '50%': { opacity: '0.9', filter: 'blur(22px)' },
+        },
+        steamFloat: {
+          '0%': { transform: 'translateY(0) scale(0.8)', opacity: '0' },
+          '50%': { opacity: '0.7' },
+          '100%': { transform: 'translateY(-20px) scale(1.2)', opacity: '0' },
         }
       },
       animation: {
         'radar-sweep': 'radarSweep 6s linear infinite',
         'radar-pulse': 'radarPulse 3s ease-in-out infinite',
         'spring-pop': 'springPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'mascot-bounce': 'mascotBounce 2.4s ease-in-out infinite',
+        'liquid-glow': 'liquidGlow 4s ease-in-out infinite',
+        'steam-float': 'steamFloat 2.2s ease-out infinite',
       }
     },
   },
