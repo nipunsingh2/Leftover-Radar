@@ -4,35 +4,57 @@
 
 @layer base {
   :root {
-    --canvas: #F6F1E7;
-    --surface: #FBF8F1;
-    --ink: #17211B;
-    --ink-muted: #5B665F;
-    --hairline: #DDD5C4;
-    --primary: #1F4D3A;
-    --primary-hover: #173B2D;
-    --saffron: #C98A1B;
-    --clay: #A63D2F;
-    --sage-tint: #E3EBDD;
+    --canvas: #F8F5EE;
+    --canvas-subtle: #F2ECE0;
+    --surface: #FFFFFF;
+    --surface-frosted: rgba(255, 255, 255, 0.78);
+    --ink: #14231B;
+    --ink-muted: #5A6B61;
+    --hairline: rgba(197, 160, 89, 0.22);
+    --gold: #C5A059;
+    --gold-glow: rgba(197, 160, 89, 0.35);
+    --forest: #164232;
+    --forest-hover: #0F2D21;
+    --forest-tint: #EAF2EC;
+    --saffron: #C98223;
+    --clay: #9E2A2B;
+    --glass-border: rgba(255, 255, 255, 0.65);
+    --glass-shadow: 0 8px 32px 0 rgba(15, 45, 33, 0.08);
   }
 
   .dark {
-    --canvas: #10150F;
-    --surface: #171E17;
-    --ink: #EDE8DA;
-    --ink-muted: #8A958E;
-    --hairline: #263127;
-    --primary: #7FB59A;
-    --primary-hover: #679E83;
-    --saffron: #DCA23A;
-    --clay: #C25648;
-    --sage-tint: #1C271E;
+    --canvas: #0B140E;
+    --canvas-subtle: #101D15;
+    --surface: #122219;
+    --surface-frosted: rgba(18, 34, 25, 0.82);
+    --ink: #E8F0EA;
+    --ink-muted: #8FA297;
+    --hairline: rgba(255, 255, 255, 0.09);
+    --gold: #DCBF6F;
+    --gold-glow: rgba(220, 191, 111, 0.3);
+    --forest: #6CB292;
+    --forest-hover: #539878;
+    --forest-tint: #16281E;
+    --saffron: #E5A142;
+    --clay: #E05354;
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   }
 
   body {
     background-color: var(--canvas);
     color: var(--ink);
-    font-family: 'Instrument Sans', 'IBM Plex Sans', -apple-system, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background-image: 
+      radial-gradient(ellipse at 15% 10%, rgba(197, 160, 89, 0.05) 0%, transparent 45%),
+      radial-gradient(ellipse at 85% 85%, rgba(22, 66, 50, 0.04) 0%, transparent 45%);
+    background-attachment: fixed;
+  }
+
+  .dark body {
+    background-image: 
+      radial-gradient(ellipse at 15% 10%, rgba(197, 160, 89, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 85%, rgba(108, 178, 146, 0.04) 0%, transparent 50%);
   }
 
   /* Monospace numerals and numbers must always have tabular alignment */
@@ -41,10 +63,93 @@
   }
 }
 
-/* Subtle paper texture */
-.paper-texture {
-  background-image: radial-gradient(var(--hairline) 0.5px, transparent 0.5px);
-  background-size: 16px 16px;
+/* Glassmorphic & Bento Utilities */
+.glass-panel {
+  background: var(--surface-frosted);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--surface-frosted);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--glass-shadow);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.4), transparent);
+  pointer-events: none;
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-3px);
+  border-color: rgba(197, 160, 89, 0.45);
+  box-shadow: 0 16px 36px -8px rgba(15, 45, 33, 0.12), 0 0 20px -4px var(--gold-glow);
+}
+
+.dark .glass-card-hover:hover {
+  border-color: rgba(220, 191, 111, 0.4);
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.6), 0 0 24px -4px var(--gold-glow);
+}
+
+/* Victorian Editorial Touches */
+.victorian-heading {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+.victorian-badge {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gold-engraved-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.4;
+}
+
+/* Micro-Shimmer on buttons and hero elements */
+.shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-hover::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transform: rotate(30deg) translateX(-100%);
+  transition: transform 0.75s ease;
+}
+
+.shimmer-hover:hover::after {
+  transform: rotate(30deg) translateX(100%);
 }
 
 /* Perforated ticket top border */
@@ -75,24 +180,25 @@
     display: block !important;
   }
   .prep-ticket-print {
-    border: 1px solid #000 !important;
+    border: 2px solid #000 !important;
     box-shadow: none !important;
     page-break-inside: avoid;
   }
 }
 
-/* Custom hairline scrollbars */
+/* Custom hairline scrollbars with brass antique touch */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--canvas);
+  background: var(--canvas-subtle);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--hairline);
-  border-radius: 2px;
+  background: var(--gold);
+  opacity: 0.6;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--ink-muted);
+  background: #AA853D;
 }

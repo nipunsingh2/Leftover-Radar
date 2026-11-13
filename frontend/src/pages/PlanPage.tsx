@@ -8,6 +8,9 @@ import {
   ArrowRight,
   TrendingDown,
   TrendingUp,
+  ShieldAlert,
+  Printer,
+  Compass,
 } from 'lucide-react';
 import { ForecastItemResult } from '../api/client';
 import { RangeBar } from '../components/RangeBar';
@@ -43,10 +46,10 @@ export const PlanPage: React.FC<PlanPageProps> = ({
   const totalLeftovers = forecastItems.reduce((acc, it) => acc + (it.estimated_leftovers || 0), 0);
   const totalShortfall = forecastItems.reduce((acc, it) => acc + (it.estimated_shortfall || 0), 0);
 
-  // 2. Attention Panel (Top 5 items requiring kitchen manager attention)
+  // 2. Attention Panel (Top items requiring kitchen manager attention)
   const attentionItems = forecastItems
     .filter((it) => it.risk_level === 'high' || it.risk_level === 'watch' || it.history_status !== 'sufficient')
-    .slice(0, 5);
+    .slice(0, 4);
 
   const handleApplySingle = (itemId: string, recommended: number) => {
     onUpdatePlannedPortions(itemId, recommended);
@@ -59,144 +62,194 @@ export const PlanPage: React.FC<PlanPageProps> = ({
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
-      {/* 1. Summary Band (Section 9.5: 4 figures, no card boxes, hairline dividers) */}
-      <section aria-label="Service Plan Summary" className="border-b border-ink-hairline dark:border-ink-dark-hairline pb-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 divide-y md:divide-y-0 md:divide-x divide-ink-hairline dark:divide-ink-dark-hairline">
-          {/* Planned Portions */}
-          <div className="pt-2 md:pt-0 md:px-4 first:pl-0">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-ink-muted dark:text-ink-dark-muted">
-              Total Planned
-            </div>
-            <div className="font-serif text-3xl font-bold tracking-tight text-ink dark:text-ink-dark mt-1 tabular-nums">
-              {totalPlanned}
-              <span className="text-xs font-sans font-normal text-ink-muted dark:text-ink-dark-muted ml-1.5">
-                portions
+      {/* 1. Bento Grid: Executive Service Metrics */}
+      <section aria-label="Service Plan Summary Bento Grid">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Bento Cell 1: Total Planned Prep (Hero 2-col span on medium screens) */}
+          <div className="glass-card glass-card-hover p-6 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="victorian-badge text-[10px] text-forest dark:text-gold font-bold">
+                Target Operator Prep
+              </span>
+              <span className="victorian-badge text-[9px] px-2 py-0.5 rounded-full bg-forest/10 dark:bg-gold/10 text-forest dark:text-gold font-semibold">
+                Live State
               </span>
             </div>
-            <div className="text-[11px] text-ink-muted dark:text-ink-dark-muted mt-1 font-mono">
-              Target operator prep
+
+            <div className="my-4">
+              <div className="victorian-heading text-4xl lg:text-5xl font-bold text-forest dark:text-gold tabular-nums tracking-tight">
+                {totalPlanned}
+                <span className="text-sm font-sans font-normal text-ink-muted dark:text-ink-dark-muted ml-2">
+                  portions
+                </span>
+              </div>
+              <div className="text-xs font-mono text-ink-muted dark:text-ink-dark-muted mt-1">
+                Sum of kitchen planned preparation
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-gold/15 dark:border-white/10 flex items-center justify-between text-[11px] font-mono">
+              <span className="text-ink-muted">Expected Demand:</span>
+              <span className="font-semibold text-ink dark:text-ink-dark">{totalPredicted} portions</span>
             </div>
           </div>
 
-          {/* Predicted Demand */}
-          <div className="pt-4 md:pt-0 md:px-4">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-ink-muted dark:text-ink-dark-muted">
-              Model Forecast (80%)
-            </div>
-            <div className="font-serif text-3xl font-bold tracking-tight text-forest dark:text-forest-dark mt-1 tabular-nums">
-              {totalPredicted}
-              <span className="text-xs font-sans font-normal text-ink-muted dark:text-ink-dark-muted ml-1.5">
-                servings
+          {/* Bento Cell 2: Forecast Demand & 80% Coverage */}
+          <div className="glass-card glass-card-hover p-6 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="victorian-badge text-[10px] text-forest dark:text-gold font-bold">
+                Model Demand Forecast
+              </span>
+              <span className="victorian-badge text-[9px] px-2 py-0.5 rounded-full bg-sage/15 text-forest dark:text-gold font-semibold">
+                80% Conformal
               </span>
             </div>
-            <div className="text-[11px] text-ink-muted dark:text-ink-dark-muted mt-1 font-mono">
-              Aggregated dish demand
+
+            <div className="my-4">
+              <div className="victorian-heading text-4xl lg:text-5xl font-bold text-forest dark:text-gold tabular-nums tracking-tight">
+                {totalPredicted}
+                <span className="text-sm font-sans font-normal text-ink-muted dark:text-ink-dark-muted ml-2">
+                  servings
+                </span>
+              </div>
+              <div className="text-xs font-mono text-ink-muted dark:text-ink-dark-muted mt-1">
+                Ridge log1p point aggregation
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-gold/15 dark:border-white/10 flex items-center justify-between text-[11px] font-mono">
+              <span className="text-ink-muted">Net Prep Delta:</span>
+              <span className={`font-semibold ${totalPlanned >= totalPredicted ? 'text-forest dark:text-gold' : 'text-clay'}`}>
+                {totalPlanned - totalPredicted >= 0 ? `+${totalPlanned - totalPredicted} buffer` : `${totalPlanned - totalPredicted} deficit`}
+              </span>
             </div>
           </div>
 
-          {/* Estimated Leftovers */}
-          <div className="pt-4 md:pt-0 md:px-4">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-ink-muted dark:text-ink-dark-muted">
-              Projected Leftovers
-            </div>
-            <div className={`font-serif text-3xl font-bold tracking-tight mt-1 tabular-nums ${totalLeftovers > 40 ? 'text-saffron' : 'text-ink dark:text-ink-dark'}`}>
-              {totalLeftovers}
-              <span className="text-xs font-sans font-normal text-ink-muted dark:text-ink-dark-muted ml-1.5">
-                servings
+          {/* Bento Cell 3: Projected Leftovers (Waste Buffer) */}
+          <div className="glass-card glass-card-hover p-6 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="victorian-badge text-[10px] text-saffron font-bold">
+                Projected Leftovers
               </span>
+              <TrendingDown className="w-4 h-4 text-saffron" />
             </div>
-            <div className="text-[11px] text-ink-muted dark:text-ink-dark-muted mt-1 font-mono flex items-center gap-1">
-              {totalLeftovers > 0 ? (
-                <>
-                  <TrendingDown className="w-3 h-3 text-saffron" strokeWidth={1.5} />
-                  <span>Planned &gt; demand buffer</span>
-                </>
-              ) : (
-                <span>Zero waste planned</span>
-              )}
+
+            <div className="my-4">
+              <div className={`victorian-heading text-4xl lg:text-5xl font-bold tabular-nums tracking-tight ${totalLeftovers > 50 ? 'text-saffron' : 'text-ink dark:text-ink-dark'}`}>
+                {totalLeftovers}
+                <span className="text-sm font-sans font-normal text-ink-muted dark:text-ink-dark-muted ml-2">
+                  portions
+                </span>
+              </div>
+              <div className="text-xs font-mono text-ink-muted dark:text-ink-dark-muted mt-1">
+                Planned in excess of demand
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-gold/15 dark:border-white/10 flex items-center justify-between text-[11px] font-mono">
+              <span className="text-ink-muted">Est. Food Value:</span>
+              <span className="font-semibold text-saffron">≈ ₹{(totalLeftovers * 35).toLocaleString()}</span>
             </div>
           </div>
 
-          {/* Estimated Shortfall */}
-          <div className="pt-4 md:pt-0 md:px-4">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-ink-muted dark:text-ink-dark-muted">
-              Projected Shortfall
-            </div>
-            <div className={`font-serif text-3xl font-bold tracking-tight mt-1 tabular-nums ${totalShortfall > 0 ? 'text-clay' : 'text-ink dark:text-ink-dark'}`}>
-              {totalShortfall}
-              <span className="text-xs font-sans font-normal text-ink-muted dark:text-ink-dark-muted ml-1.5">
-                missed
+          {/* Bento Cell 4: Projected Shortfall (Stockout Risk) */}
+          <div className="glass-card glass-card-hover p-6 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="victorian-badge text-[10px] text-clay font-bold">
+                Projected Shortfall
               </span>
+              <TrendingUp className="w-4 h-4 text-clay" />
             </div>
-            <div className="text-[11px] text-ink-muted dark:text-ink-dark-muted mt-1 font-mono flex items-center gap-1">
-              {totalShortfall > 0 ? (
-                <>
-                  <TrendingUp className="w-3 h-3 text-clay" strokeWidth={1.5} />
-                  <span>Stock-out risk present</span>
-                </>
-              ) : (
-                <span>Fully covered</span>
-              )}
+
+            <div className="my-4">
+              <div className={`victorian-heading text-4xl lg:text-5xl font-bold tabular-nums tracking-tight ${totalShortfall > 0 ? 'text-clay' : 'text-forest dark:text-gold'}`}>
+                {totalShortfall}
+                <span className="text-sm font-sans font-normal text-ink-muted dark:text-ink-dark-muted ml-2">
+                  missed
+                </span>
+              </div>
+              <div className="text-xs font-mono text-ink-muted dark:text-ink-dark-muted mt-1">
+                {totalShortfall === 0 ? 'Zero unserved guests expected' : 'Potential diner stockout'}
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-gold/15 dark:border-white/10 flex items-center justify-between text-[11px] font-mono">
+              <span className="text-ink-muted">Diner Coverage:</span>
+              <span className={`font-semibold ${totalShortfall === 0 ? 'text-forest dark:text-gold' : 'text-clay'}`}>
+                {totalShortfall === 0 ? '100% Satisfied' : 'Risk Present'}
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. Attention Panel (Section 9.5: at most 5 items that matter, plain-language reason, one-click fix) */}
+      {/* 2. Attention Bento Panel */}
       {attentionItems.length > 0 && (
-        <section aria-label="Kitchen Attention Items" className="bg-canvas dark:bg-canvas-dark border border-ink-hairline dark:border-ink-dark-hairline rounded-ticket p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-saffron" strokeWidth={1.5} />
-              <h2 className="text-xs font-mono uppercase tracking-wider font-bold text-ink dark:text-ink-dark">
-                Attention Panel ({attentionItems.length} Dishes Need Review)
-              </h2>
+        <section aria-label="Kitchen Attention Items" className="glass-card p-6 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-saffron/15 text-saffron flex items-center justify-center">
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <div>
+                <h2 className="victorian-heading text-lg font-bold text-forest dark:text-gold">
+                  Chef Attention Panel ({attentionItems.length} Dishes Need Review)
+                </h2>
+                <div className="text-[11px] font-mono text-ink-muted dark:text-ink-dark-muted">
+                  Dishes with high stockout variance or out-of-band preparation plans
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
+
+            <div className="flex items-center gap-3">
               {canUndo && onUndoApplyAll && (
                 <button
                   onClick={onUndoApplyAll}
-                  className="text-xs font-medium text-ink-muted hover:text-ink flex items-center gap-1 px-2 py-1 rounded-control border border-ink-hairline"
+                  className="px-3 py-1.5 rounded-xl border border-gold/30 text-xs font-semibold text-ink-muted hover:text-ink flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <RotateCcw className="w-3 h-3" />
+                  <RotateCcw className="w-3.5 h-3.5" />
                   <span>Undo</span>
                 </button>
               )}
+
               <button
                 onClick={onApplyAllRecommendations}
-                className="text-xs font-semibold text-forest dark:text-forest-dark hover:underline flex items-center gap-1 cursor-pointer"
+                className="shimmer-hover px-4 py-2 rounded-xl bg-forest hover:bg-forest-hover text-gold-50 dark:bg-gold dark:text-black text-xs font-semibold shadow-md flex items-center gap-2 transition-all duration-200 cursor-pointer"
               >
-                <span>Apply all recommendations</span>
-                <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
+                <span>Apply All Recommendations</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
             {attentionItems.map((item) => (
               <div
                 key={item.item_id}
-                className="p-3 bg-surface dark:bg-surface-dark border border-ink-hairline dark:border-ink-dark-hairline rounded-control text-xs flex flex-col justify-between space-y-2"
+                className="p-4 rounded-xl bg-canvas/70 dark:bg-white/5 border border-gold/25 dark:border-white/10 text-xs flex flex-col justify-between space-y-3 hover:border-gold/45 transition-all duration-200 shadow-xs"
               >
                 <div>
-                  <div className="font-semibold text-ink dark:text-ink-dark flex items-center justify-between">
-                    <span>{item.item_name}</span>
-                    <span className="font-mono text-ink-muted">
-                      Plan: {item.planned_portions}
+                  <div className="flex items-center justify-between font-serif">
+                    <span className="font-bold text-sm text-ink dark:text-ink-dark">{item.item_name}</span>
+                    <span className="victorian-badge text-[9px] px-1.5 py-0.5 rounded bg-clay/10 text-clay font-bold">
+                      {item.risk_level}
                     </span>
                   </div>
-                  <p className="text-[11px] text-ink-muted dark:text-ink-dark-muted mt-1 leading-snug">
+                  <div className="text-[10px] font-mono text-ink-muted mt-0.5">
+                    Planned: {item.planned_portions} · Rec: {item.recommended_portions}
+                  </div>
+                  <p className="text-[11px] text-ink-muted dark:text-ink-dark-muted mt-2 leading-snug">
                     {item.risk_reason || item.buffer_rationale}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-1 border-t border-ink-hairline/60">
-                  <span className="text-[10px] font-mono text-forest dark:text-forest-dark font-medium">
-                    Rec: {item.recommended_portions}
+                <div className="pt-2 border-t border-gold/15 dark:border-white/10 flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-forest dark:text-gold font-bold">
+                    Buffer: +{item.recommended_portions - item.predicted_demand}
                   </span>
                   <button
                     onClick={() => handleApplySingle(item.item_id, item.recommended_portions)}
-                    className="px-2 py-1 rounded-[3px] bg-forest text-[#F6F1E7] text-[10px] font-semibold hover:bg-forest-hover transition-colors"
+                    className="px-2.5 py-1 rounded-lg bg-forest hover:bg-forest-hover text-gold-50 dark:bg-gold dark:text-black text-[10px] font-semibold transition-all duration-150 cursor-pointer shadow-xs"
                   >
                     Apply {item.recommended_portions}
                   </button>
@@ -207,52 +260,53 @@ export const PlanPage: React.FC<PlanPageProps> = ({
         </section>
       )}
 
-      {/* 3. Forecast Ledger (Hero Component: RangeBar in every row, live recompute, ±5 steppers) */}
+      {/* 3. Preparation Ledger (Hero Component with RangeBars and Steppers) */}
       <section aria-label="Forecast Ledger" className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="font-serif text-xl font-bold tracking-tight text-ink dark:text-ink-dark">
+            <h2 className="victorian-heading text-2xl font-bold text-forest dark:text-gold">
               Preparation Ledger
             </h2>
             <p className="text-xs text-ink-muted dark:text-ink-dark-muted">
-              Live interactive planner with calibrated 80% demand range and Newsvendor buffer.
+              Live interactive planner with calibrated 80% conformal demand intervals and Newsvendor buffer optimization.
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setIsPrepSheetOpen(true)}
-              className="px-3 py-1.5 rounded-control border border-ink-hairline dark:border-ink-dark-hairline text-xs font-medium text-ink dark:text-ink-dark hover:bg-surface transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gold/30 dark:border-white/15 bg-white/70 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 text-xs font-semibold text-forest dark:text-gold shadow-xs transition-all duration-200 cursor-pointer"
             >
-              Print Ticket
+              <Printer className="w-3.5 h-3.5" />
+              <span>Print Sheet</span>
             </button>
             <button
               onClick={onApplyAllRecommendations}
-              className="px-3 py-1.5 rounded-control bg-forest hover:bg-forest-hover text-[#F6F1E7] text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+              className="shimmer-hover px-4 py-2 rounded-xl bg-forest hover:bg-forest-hover text-gold-50 dark:bg-gold dark:text-black text-xs font-semibold shadow-md transition-all duration-200 cursor-pointer"
             >
               Apply All Recommendations
             </button>
           </div>
         </div>
 
-        {/* Ledger Table */}
-        <div className="border border-ink-hairline dark:border-ink-dark-hairline rounded-ticket bg-surface dark:bg-surface-dark overflow-hidden">
+        {/* Ledger Table inside Glass Card */}
+        <div className="glass-card shadow-glass dark:shadow-glass-dark">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-canvas dark:bg-canvas-dark border-b border-ink-hairline dark:border-ink-dark-hairline text-ink-muted dark:text-ink-dark-muted font-mono text-[11px] uppercase tracking-wider">
+              <thead className="bg-canvas-subtle/80 dark:bg-white/5 border-b border-gold/20 dark:border-white/10 text-ink-muted dark:text-ink-dark-muted victorian-badge text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">Menu Dish</th>
-                  <th className="py-3 px-3 text-right">Predicted</th>
-                  <th className="py-3 px-4 min-w-[240px]">80% Conformal Range</th>
-                  <th className="py-3 px-4 text-center min-w-[170px]">Planned Prep</th>
-                  <th className="py-3 px-3 text-right">Leftovers</th>
-                  <th className="py-3 px-3 text-right">Recommended</th>
-                  <th className="py-3 px-3 text-center">Status</th>
-                  <th className="py-3 px-3 text-center">Audit</th>
+                  <th className="py-4 px-5">Menu Dish</th>
+                  <th className="py-4 px-3 text-right">Predicted</th>
+                  <th className="py-4 px-5 min-w-[260px]">80% Conformal Range</th>
+                  <th className="py-4 px-5 text-center min-w-[190px]">Target Planned Prep</th>
+                  <th className="py-4 px-3 text-right">Est. Leftover</th>
+                  <th className="py-4 px-3 text-right">Recommended</th>
+                  <th className="py-4 px-3 text-center">Status</th>
+                  <th className="py-4 px-3 text-center">Audit</th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-ink-hairline dark:divide-ink-dark-hairline">
+              <tbody className="divide-y divide-gold/15 dark:divide-white/10">
                 {forecastItems.map((item) => {
                   const isHighRisk = item.risk_level === 'high';
                   const isWatch = item.risk_level === 'watch';
@@ -260,15 +314,15 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                   return (
                     <tr
                       key={item.item_id}
-                      className="hover:bg-canvas/50 dark:hover:bg-canvas-dark/40 transition-colors"
+                      className="hover:bg-gold/5 dark:hover:bg-white/5 transition-colors duration-150 group"
                     >
                       {/* 1. Dish Name & Tags */}
-                      <td className="py-3 px-4">
-                        <div className="font-semibold text-ink dark:text-ink-dark text-sm">
+                      <td className="py-4 px-5">
+                        <div className="font-serif font-bold text-ink dark:text-ink-dark text-base">
                           {item.item_name}
                         </div>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded-[2px] bg-canvas dark:bg-canvas-dark border border-ink-hairline dark:border-ink-dark-hairline text-ink-muted">
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="victorian-badge text-[9px] px-2 py-0.5 rounded-full bg-canvas dark:bg-white/5 border border-gold/25 dark:border-white/10 text-ink-muted font-medium">
                             {item.category}
                           </span>
                           <span className="text-[11px] font-mono text-ink-muted">
@@ -276,12 +330,12 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                           </span>
                           {/* History Badge */}
                           <span
-                            className={`text-[9px] font-mono px-1 py-0.5 rounded-[2px] uppercase ${
+                            className={`victorian-badge text-[8px] px-2 py-0.5 rounded-full font-bold ${
                               item.history_status === 'sufficient'
-                                ? 'bg-sage-tint/60 text-forest'
+                                ? 'bg-forest/10 text-forest dark:text-forest-dark'
                                 : item.history_status === 'low_history'
-                                ? 'bg-saffron-tint text-saffron font-bold'
-                                : 'bg-clay-tint text-clay font-bold'
+                                ? 'bg-saffron/15 text-saffron'
+                                : 'bg-clay/15 text-clay'
                             }`}
                           >
                             {item.history_status.replace('_', ' ')}
@@ -290,12 +344,12 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                       </td>
 
                       {/* 2. Predicted Demand */}
-                      <td className="py-3 px-3 text-right font-mono text-base font-bold text-ink dark:text-ink-dark tabular-nums">
+                      <td className="py-4 px-3 text-right font-serif text-xl font-bold text-forest dark:text-gold tabular-nums">
                         {item.predicted_demand}
                       </td>
 
                       {/* 3. Range Bar Track (Hero visual) */}
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-5">
                         <RangeBar
                           predicted={item.predicted_demand}
                           p80Low={item.lower_estimate}
@@ -305,12 +359,12 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                       </td>
 
                       {/* 4. Editable Planned Portions (Live local recompute) */}
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-5">
                         <div className="flex items-center justify-center gap-1.5">
                           {/* -5 Button */}
                           <button
                             onClick={() => handleAdjustStep(item.item_id, item.planned_portions, -5)}
-                            className="px-1.5 py-1 text-[10px] font-mono rounded-[3px] border border-ink-hairline dark:border-ink-dark-hairline bg-canvas hover:bg-surface text-ink-muted hover:text-ink"
+                            className="px-2 py-1 text-[10px] font-mono font-semibold rounded-lg border border-gold/25 dark:border-white/10 bg-canvas dark:bg-white/5 hover:bg-gold/15 dark:hover:bg-white/15 text-ink-muted hover:text-ink transition-colors cursor-pointer"
                             title="Decrease by 5"
                           >
                             -5
@@ -319,7 +373,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                           {/* -1 Button */}
                           <button
                             onClick={() => handleAdjustStep(item.item_id, item.planned_portions, -1)}
-                            className="w-6 h-7 text-xs font-mono rounded-[3px] border border-ink-hairline dark:border-ink-dark-hairline bg-canvas hover:bg-surface text-ink-muted hover:text-ink"
+                            className="w-7 h-8 text-xs font-mono font-semibold rounded-lg border border-gold/25 dark:border-white/10 bg-canvas dark:bg-white/5 hover:bg-gold/15 dark:hover:bg-white/15 text-ink-muted hover:text-ink transition-colors cursor-pointer"
                           >
                             -
                           </button>
@@ -333,13 +387,13 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                               const val = parseInt(e.target.value, 10);
                               onUpdatePlannedPortions(item.item_id, isNaN(val) ? 0 : Math.max(0, val));
                             }}
-                            className="w-16 h-7 text-center font-mono font-bold text-sm bg-canvas dark:bg-canvas-dark border border-ink-hairline dark:border-ink-dark-hairline rounded-[3px] text-ink dark:text-ink-dark focus:border-forest outline-none tabular-nums"
+                            className="w-18 h-8 text-center font-mono font-bold text-sm bg-canvas/90 dark:bg-black/40 border border-gold/30 dark:border-white/15 rounded-lg text-ink dark:text-ink-dark focus:border-gold outline-none tabular-nums shadow-inner transition-colors"
                           />
 
                           {/* +1 Button */}
                           <button
                             onClick={() => handleAdjustStep(item.item_id, item.planned_portions, 1)}
-                            className="w-6 h-7 text-xs font-mono rounded-[3px] border border-ink-hairline dark:border-ink-dark-hairline bg-canvas hover:bg-surface text-ink-muted hover:text-ink"
+                            className="w-7 h-8 text-xs font-mono font-semibold rounded-lg border border-gold/25 dark:border-white/10 bg-canvas dark:bg-white/5 hover:bg-gold/15 dark:hover:bg-white/15 text-ink-muted hover:text-ink transition-colors cursor-pointer"
                           >
                             +
                           </button>
@@ -347,7 +401,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                           {/* +5 Button */}
                           <button
                             onClick={() => handleAdjustStep(item.item_id, item.planned_portions, 5)}
-                            className="px-1.5 py-1 text-[10px] font-mono rounded-[3px] border border-ink-hairline dark:border-ink-dark-hairline bg-canvas hover:bg-surface text-ink-muted hover:text-ink"
+                            className="px-2 py-1 text-[10px] font-mono font-semibold rounded-lg border border-gold/25 dark:border-white/10 bg-canvas dark:bg-white/5 hover:bg-gold/15 dark:hover:bg-white/15 text-ink-muted hover:text-ink transition-colors cursor-pointer"
                             title="Increase by 5"
                           >
                             +5
@@ -356,9 +410,9 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                       </td>
 
                       {/* 5. Live Estimated Leftovers */}
-                      <td className="py-3 px-3 text-right font-mono text-sm tabular-nums">
+                      <td className="py-4 px-3 text-right font-mono text-sm tabular-nums">
                         {item.estimated_leftovers > 0 ? (
-                          <span className={item.planned_portions > item.upper_estimate ? 'text-clay font-bold' : 'text-saffron font-medium'}>
+                          <span className={item.planned_portions > item.upper_estimate ? 'text-clay font-bold' : 'text-saffron font-semibold'}>
                             +{item.estimated_leftovers}
                           </span>
                         ) : (
@@ -367,14 +421,14 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                       </td>
 
                       {/* 6. Recommended Portions */}
-                      <td className="py-3 px-3 text-right">
-                        <div className="font-mono text-sm font-bold text-forest dark:text-forest-dark tabular-nums">
+                      <td className="py-4 px-3 text-right">
+                        <div className="font-serif text-lg font-bold text-forest dark:text-gold tabular-nums">
                           {item.recommended_portions}
                         </div>
                         {item.planned_portions !== item.recommended_portions && (
                           <button
                             onClick={() => handleApplySingle(item.item_id, item.recommended_portions)}
-                            className="text-[10px] text-forest dark:text-forest-dark underline hover:no-underline font-medium"
+                            className="text-[10px] victorian-badge text-forest dark:text-gold hover:underline font-bold"
                           >
                             Apply
                           </button>
@@ -382,14 +436,14 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                       </td>
 
                       {/* 7. Risk Status Badge */}
-                      <td className="py-3 px-3 text-center">
+                      <td className="py-4 px-3 text-center">
                         <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-[3px] text-[10px] font-semibold uppercase font-mono ${
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] victorian-badge font-bold ${
                             isHighRisk
-                              ? 'bg-clay-tint text-clay border border-clay/30'
+                              ? 'bg-clay/15 text-clay border border-clay/30'
                               : isWatch
-                              ? 'bg-saffron-tint text-saffron border border-saffron/30'
-                              : 'bg-sage-tint text-forest border border-forest/30'
+                              ? 'bg-saffron/15 text-saffron border border-saffron/30'
+                              : 'bg-forest/10 text-forest dark:text-forest-dark border border-forest/30'
                           }`}
                           title={item.risk_reason}
                         >
@@ -401,13 +455,13 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                       </td>
 
                       {/* 8. Audit "Why?" Button */}
-                      <td className="py-3 px-3 text-center">
+                      <td className="py-4 px-3 text-center">
                         <button
                           onClick={() => setActiveWhyItem({ id: item.item_id, name: item.item_name })}
-                          className="p-1 rounded-control text-ink-muted hover:text-forest hover:bg-canvas transition-colors"
+                          className="p-1.5 rounded-lg text-ink-muted hover:text-gold hover:bg-gold/10 transition-colors cursor-pointer"
                           title="View waterfall drivers and buffer math"
                         >
-                          <HelpCircle className="w-4 h-4" strokeWidth={1.5} />
+                          <HelpCircle className="w-4 h-4" strokeWidth={1.75} />
                         </button>
                       </td>
                     </tr>

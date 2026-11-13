@@ -12,7 +12,7 @@ import { HistoryPage } from './pages/HistoryPage';
 import { ModelLabPage } from './pages/ModelLabPage';
 import { DataSettingsPage } from './pages/DataSettingsPage';
 import { PrepSheetModal } from './components/PrepSheetModal';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, RotateCcw, CheckCircle2 } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Navigation
@@ -22,7 +22,7 @@ export const App: React.FC = () => {
   const [serviceDate, setServiceDate] = useState<string>('2026-11-14');
   const [servicePeriod, setServicePeriod] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
 
-  // Dark Mode ("Night Kitchen")
+  // Dark Mode ("Night Conservatory")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   // App Data State
@@ -33,6 +33,7 @@ export const App: React.FC = () => {
 
   // Undo History for "Apply All Recommendations"
   const [undoStack, setUndoStack] = useState<ForecastItemResult[] | null>(null);
+  const [showUndoToast, setShowUndoToast] = useState<boolean>(false);
 
   // Prep sheet modal trigger from header
   const [isPrepSheetModalOpen, setIsPrepSheetModalOpen] = useState<boolean>(false);
@@ -125,9 +126,10 @@ export const App: React.FC = () => {
     );
   };
 
-  // 4. Apply All Recommendations with Undo Toast
+  // 4. Apply All Recommendations with Floating Undo Toast
   const handleApplyAllRecommendations = () => {
     setUndoStack([...forecastItems]);
+    setShowUndoToast(true);
     setForecastItems((prev) =>
       prev.map((item) => {
         const rec = item.recommended_portions || item.predicted_demand || 0;
@@ -148,12 +150,13 @@ export const App: React.FC = () => {
     if (undoStack) {
       setForecastItems(undoStack);
       setUndoStack(null);
+      setShowUndoToast(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-canvas dark:bg-canvas-dark text-ink dark:text-ink-dark transition-colors font-sans selection:bg-sage-tint selection:text-forest">
-      {/* 1. Left Navigation Rail (Section 9.4) */}
+    <div className="flex min-h-screen bg-canvas dark:bg-canvas-dark text-ink dark:text-ink-dark transition-colors font-sans selection:bg-gold/30 selection:text-forest">
+      {/* 1. Left Navigation Rail */}
       <NavigationRail
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -177,14 +180,14 @@ export const App: React.FC = () => {
 
         {/* Global Error Banner */}
         {errorMessage && (
-          <div className="mx-8 mt-4 p-4 rounded-control bg-clay/10 border border-clay/30 text-clay text-xs flex items-center justify-between">
+          <div className="mx-8 mt-4 p-4 rounded-xl bg-clay/10 border border-clay/30 text-clay text-xs flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
             <button
               onClick={loadForecastData}
-              className="px-2.5 py-1 rounded bg-clay text-white text-[10px] font-semibold"
+              className="px-3 py-1 rounded-lg bg-clay text-white text-xs font-semibold cursor-pointer"
             >
               Retry
             </button>
@@ -221,6 +224,31 @@ export const App: React.FC = () => {
           {activeTab === 'data_settings' && <DataSettingsPage />}
         </main>
       </div>
+
+      {/* Floating Undo Toast Notification */}
+      {showUndoToast && (
+        <div className="fixed bottom-6 right-6 z-40 glass-card px-5 py-3.5 shadow-2xl border border-gold/40 flex items-center gap-4 animate-in slide-in-from-bottom duration-300">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-forest dark:text-gold" />
+            <span className="text-xs font-serif font-bold text-ink dark:text-ink-dark">
+              Applied all Newsvendor recommendations.
+            </span>
+          </div>
+          <button
+            onClick={handleUndoApplyAll}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-forest text-gold-50 dark:bg-gold dark:text-black text-xs font-semibold cursor-pointer shadow-sm hover:opacity-90 transition-opacity"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Undo</span>
+          </button>
+          <button
+            onClick={() => setShowUndoToast(false)}
+            className="text-xs text-ink-muted hover:text-ink cursor-pointer ml-1"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Printable Prep Sheet Modal */}
       <PrepSheetModal

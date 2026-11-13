@@ -11,7 +11,7 @@ import {
   Area,
 } from 'recharts';
 import { api, ForecastVsActualComparison, RollingWastePoint, AccuracySummary } from '../api/client';
-import { Loader2, TrendingUp, Filter } from 'lucide-react';
+import { Loader2, TrendingUp, Filter, BarChart3, Database } from 'lucide-react';
 
 export const HistoryPage: React.FC = () => {
   const [selectedService, setSelectedService] = useState<string>('lunch');
@@ -70,29 +70,29 @@ export const HistoryPage: React.FC = () => {
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
       {/* Page Header & Filter Controls */}
-      <div className="border-b border-ink-hairline dark:border-ink-dark-hairline pb-4 flex flex-wrap justify-between items-end gap-4">
+      <div className="border-b border-gold/20 dark:border-white/10 pb-5 flex flex-wrap justify-between items-end gap-4">
         <div>
-          <div className="text-[11px] font-mono uppercase tracking-wider text-ink-muted dark:text-ink-dark-muted font-semibold">
+          <div className="victorian-badge text-[10px] text-forest dark:text-gold font-bold">
             Service Analytics & Aggregation
           </div>
-          <h1 className="font-serif text-2xl font-bold tracking-tight text-ink dark:text-ink-dark mt-1">
+          <h1 className="victorian-heading text-3xl font-bold tracking-tight text-forest dark:text-gold mt-1">
             Historical Trends & Forecast Verification
           </h1>
           <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-0.5">
-            PyMongo Aggregations: Pipeline 2 (Forecast vs Actual Join), Pipeline 3 (Accuracy Facets), Pipeline 4 (7-Day Rolling Waste).
+            PyMongo Aggregations: Pipeline 2 (Forecast vs Actual Join), Pipeline 3 (Accuracy Facets), Pipeline 4 (7-Day Rolling Moving Window).
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs text-ink-muted">
+        {/* Filter Capsule */}
+        <div className="flex items-center gap-3 bg-white/70 dark:bg-white/5 border border-gold/30 dark:border-white/10 rounded-xl px-3 py-1.5 backdrop-blur-md shadow-xs">
+          <div className="flex items-center gap-1.5 text-xs text-forest dark:text-gold font-serif">
             <Filter className="w-3.5 h-3.5" />
-            <span>Service:</span>
+            <span>Service Filter:</span>
           </div>
           <select
             value={selectedService}
             onChange={(e) => setSelectedService(e.target.value)}
-            className="text-xs font-mono px-3 py-1.5 rounded-control bg-canvas dark:bg-canvas-dark border border-ink-hairline dark:border-ink-dark-hairline text-ink dark:text-ink-dark outline-none cursor-pointer"
+            className="text-xs font-mono font-semibold bg-transparent text-ink dark:text-ink-dark outline-none cursor-pointer"
           >
             <option value="breakfast">Breakfast</option>
             <option value="lunch">Lunch</option>
@@ -103,144 +103,152 @@ export const HistoryPage: React.FC = () => {
       </div>
 
       {loading && (
-        <div className="py-20 text-center text-ink-muted space-y-2">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-forest" strokeWidth={1.5} />
-          <p className="text-xs font-mono">Running MongoDB Aggregation Pipelines across historical service streams...</p>
+        <div className="py-24 text-center text-ink-muted space-y-3">
+          <Loader2 className="w-9 h-9 animate-spin mx-auto text-gold" strokeWidth={2} />
+          <p className="text-xs font-mono">Executing MongoDB 8.3 aggregation pipelines across service observation streams...</p>
         </div>
       )}
 
       {error && (
-        <div className="p-4 rounded-control bg-clay/10 border border-clay/30 text-clay text-xs">
+        <div className="p-4 rounded-xl bg-clay/10 border border-clay/30 text-clay text-xs">
           {error}
         </div>
       )}
 
       {!loading && (
         <>
-          {/* Key Accuracy Metrics (Pipeline 3 Facet Summary) */}
+          {/* Key Accuracy Metrics (Bento Grid of Pipeline 3 Facet Summary) */}
           {accuracy && accuracy.overall && (
-            <section aria-label="Forecast Accuracy Summary" className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 rounded-ticket bg-surface dark:bg-surface-dark border border-ink-hairline dark:border-ink-dark-hairline">
-                <div className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            <section aria-label="Forecast Accuracy Summary" className="grid grid-cols-2 md:grid-cols-4 gap-5">
+              <div className="glass-card glass-card-hover p-5">
+                <div className="victorian-badge text-[9px] text-ink-muted">
                   Mean Absolute Error (MAE)
                 </div>
-                <div className="font-mono text-2xl font-bold text-ink dark:text-ink-dark mt-1">
-                  {accuracy.overall.mae} <span className="text-xs font-normal text-ink-muted">portions</span>
+                <div className="victorian-heading text-3xl font-bold text-forest dark:text-gold mt-1 tabular-nums">
+                  {accuracy.overall.mae}
+                  <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">portions</span>
                 </div>
-                <div className="text-[10px] text-ink-muted mt-1 font-mono">
-                  Target: &lt; 15 portions
+                <div className="text-[10px] text-ink-muted mt-2 font-mono">
+                  Production Target: &lt; 15 portions
                 </div>
               </div>
 
-              <div className="p-4 rounded-ticket bg-surface dark:bg-surface-dark border border-ink-hairline dark:border-ink-dark-hairline">
-                <div className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+              <div className="glass-card glass-card-hover p-5">
+                <div className="victorian-badge text-[9px] text-ink-muted">
                   Weighted Absolute % Error
                 </div>
-                <div className="font-mono text-2xl font-bold text-forest dark:text-forest-dark mt-1">
+                <div className="victorian-heading text-3xl font-bold text-forest dark:text-gold mt-1 tabular-nums">
                   {(accuracy.overall.wape * 100).toFixed(1)}%
                 </div>
-                <div className="text-[10px] text-ink-muted mt-1 font-mono">
-                  WAPE = sum(|actual - pred|) / sum(actual)
+                <div className="text-[10px] text-ink-muted mt-2 font-mono">
+                  WAPE = Σ|actual - pred| / Σ(actual)
                 </div>
               </div>
 
-              <div className="p-4 rounded-ticket bg-surface dark:bg-surface-dark border border-ink-hairline dark:border-ink-dark-hairline">
-                <div className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+              <div className="glass-card glass-card-hover p-5">
+                <div className="victorian-badge text-[9px] text-ink-muted">
                   Systematic Model Bias
                 </div>
-                <div className={`font-mono text-2xl font-bold mt-1 ${Math.abs(accuracy.overall.bias) > 1.0 ? 'text-saffron' : 'text-ink dark:text-ink-dark'}`}>
+                <div className={`victorian-heading text-3xl font-bold mt-1 tabular-nums ${Math.abs(accuracy.overall.bias) > 1.0 ? 'text-saffron' : 'text-forest dark:text-gold'}`}>
                   {accuracy.overall.bias > 0 ? `+${accuracy.overall.bias}` : accuracy.overall.bias}
-                  <span className="text-xs font-normal text-ink-muted ml-1">portions</span>
+                  <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">portions</span>
                 </div>
-                <div className="text-[10px] text-ink-muted mt-1 font-mono">
-                  Target: |bias| &lt; 1.0
+                <div className="text-[10px] text-ink-muted mt-2 font-mono">
+                  Production Target: |bias| &lt; 1.0
                 </div>
               </div>
 
-              <div className="p-4 rounded-ticket bg-surface dark:bg-surface-dark border border-ink-hairline dark:border-ink-dark-hairline">
-                <div className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
-                  Verified Service Observations
+              <div className="glass-card glass-card-hover p-5">
+                <div className="victorian-badge text-[9px] text-ink-muted">
+                  Verified Observations
                 </div>
-                <div className="font-mono text-2xl font-bold text-ink dark:text-ink-dark mt-1">
-                  {accuracy.overall.count} <span className="text-xs font-normal text-ink-muted">records</span>
+                <div className="victorian-heading text-3xl font-bold text-forest dark:text-gold mt-1 tabular-nums">
+                  {accuracy.overall.count}
+                  <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">records</span>
                 </div>
-                <div className="text-[10px] text-ink-muted mt-1 font-mono">
-                  Historical joined services
+                <div className="text-[10px] text-ink-muted mt-2 font-mono">
+                  Joined historical meal services
                 </div>
               </div>
             </section>
           )}
 
-          {/* Chart 1: Actual Sales vs Predicted Demand with 80% Interval Band (Pipeline 2) */}
-          <section aria-label="Actual vs Forecast Comparison" className="p-6 rounded-ticket bg-surface dark:bg-surface-dark border border-ink-hairline dark:border-ink-dark-hairline space-y-4">
-            <div>
-              <div className="text-[11px] font-mono uppercase text-forest dark:text-forest-dark font-semibold">
-                Pipeline 2 Join Aggregation
+          {/* Chart 1: Actual Sales vs Predicted Demand with 80% Conformal Interval (Pipeline 2) */}
+          <section aria-label="Actual vs Forecast Comparison" className="glass-card p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="victorian-badge text-[9px] text-forest dark:text-gold font-bold">
+                  Pipeline 2 ($lookup & $project Join)
+                </span>
+                <h2 className="victorian-heading text-xl font-bold text-forest dark:text-gold mt-0.5">
+                  Realized Sales vs. Model Forecast Range (80% Conformal Band)
+                </h2>
+                <p className="text-xs text-ink-muted">
+                  Observed actual sales (deep emerald line) plotted against model point predictions (golden line) and 80% confidence interval.
+                </p>
               </div>
-              <h2 className="font-serif text-lg font-bold text-ink dark:text-ink-dark">
-                Realized Sales vs. Model Forecast Range (80% Conformal Band)
-              </h2>
-              <p className="text-xs text-ink-muted">
-                Observed actual sales (forest line) plotted against model point predictions (dashed line) and 80% interval envelope.
-              </p>
             </div>
 
-            <div className="h-72 w-full">
+            <div className="h-80 w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={forecastActualChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#DDD5C4" opacity={0.4} />
-                  <XAxis dataKey="date" stroke="#5B665F" fontSize={11} fontFamily="monospace" />
-                  <YAxis stroke="#5B665F" fontSize={11} fontFamily="monospace" />
+                <ComposedChart data={forecastActualChartData} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(197, 160, 89, 0.2)" opacity={0.5} />
+                  <XAxis dataKey="date" stroke="#8FA297" fontSize={11} fontFamily="monospace" />
+                  <YAxis stroke="#8FA297" fontSize={11} fontFamily="monospace" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#FBF8F1',
-                      border: '1px solid #DDD5C4',
-                      borderRadius: '4px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                      border: '1px solid rgba(197, 160, 89, 0.35)',
+                      borderRadius: '12px',
                       fontFamily: 'monospace',
                       fontSize: '11px',
+                      boxShadow: '0 8px 24px rgba(15, 45, 33, 0.1)',
                     }}
                   />
                   {/* Conformal 80% Band */}
-                  <Area type="monotone" dataKey="upper" stroke="none" fill="#E3EBDD" fillOpacity={0.6} name="80% Upper" />
-                  <Area type="monotone" dataKey="lower" stroke="none" fill="#FBF8F1" fillOpacity={1} name="80% Lower" />
-                  <Line type="monotone" dataKey="predicted" stroke="#C98A1B" strokeDasharray="4 4" strokeWidth={2} dot={false} name="Forecast" />
-                  <Line type="monotone" dataKey="actual" stroke="#1F4D3A" strokeWidth={2.5} dot={{ r: 3 }} name="Actual Sold" />
+                  <Area type="monotone" dataKey="upper" stroke="none" fill="#C5A059" fillOpacity={0.15} name="80% Upper" />
+                  <Area type="monotone" dataKey="lower" stroke="none" fill="#FFFFFF" fillOpacity={0.8} name="80% Lower" />
+                  <Line type="monotone" dataKey="predicted" stroke="#C5A059" strokeDasharray="4 4" strokeWidth={2} dot={false} name="Forecast" />
+                  <Line type="monotone" dataKey="actual" stroke="#164232" strokeWidth={2.75} dot={{ r: 3.5, fill: '#164232' }} name="Actual Sold" />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
           </section>
 
           {/* Chart 2: Daily Waste & 7-Day Rolling Moving Average (Pipeline 4) */}
-          <section aria-label="Rolling Waste Window Fields" className="p-6 rounded-ticket bg-surface dark:bg-surface-dark border border-ink-hairline dark:border-ink-dark-hairline space-y-4">
-            <div>
-              <div className="text-[11px] font-mono uppercase text-forest dark:text-forest-dark font-semibold">
-                Pipeline 4 ($setWindowFields)
+          <section aria-label="Rolling Waste Window Fields" className="glass-card p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="victorian-badge text-[9px] text-forest dark:text-gold font-bold">
+                  Pipeline 4 ($setWindowFields)
+                </span>
+                <h2 className="victorian-heading text-xl font-bold text-forest dark:text-gold mt-0.5">
+                  Daily Cafeteria Leftover Portions & 7-Day Rolling Moving Average
+                </h2>
+                <p className="text-xs text-ink-muted">
+                  Daily unconsumed preparation leftovers (amber bars) with 7-day trailing moving average curve to monitor waste trends.
+                </p>
               </div>
-              <h2 className="font-serif text-lg font-bold text-ink dark:text-ink-dark">
-                Daily Cafeteria Leftover Portions & 7-Day Rolling Moving Average
-              </h2>
-              <p className="text-xs text-ink-muted">
-                Daily preparation leftovers (bars) with 7-day trailing moving average window to monitor waste reduction.
-              </p>
             </div>
 
-            <div className="h-72 w-full">
+            <div className="h-80 w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={rollingWaste.slice(-30)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#DDD5C4" opacity={0.4} />
-                  <XAxis dataKey="service_date" stroke="#5B665F" fontSize={11} fontFamily="monospace" tickFormatter={(v) => v.slice(5)} />
-                  <YAxis stroke="#5B665F" fontSize={11} fontFamily="monospace" />
+                <ComposedChart data={rollingWaste.slice(-30)} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(197, 160, 89, 0.2)" opacity={0.5} />
+                  <XAxis dataKey="service_date" stroke="#8FA297" fontSize={11} fontFamily="monospace" tickFormatter={(v) => v.slice(5)} />
+                  <YAxis stroke="#8FA297" fontSize={11} fontFamily="monospace" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#FBF8F1',
-                      border: '1px solid #DDD5C4',
-                      borderRadius: '4px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                      border: '1px solid rgba(197, 160, 89, 0.35)',
+                      borderRadius: '12px',
                       fontFamily: 'monospace',
                       fontSize: '11px',
+                      boxShadow: '0 8px 24px rgba(15, 45, 33, 0.1)',
                     }}
                   />
-                  <Bar dataKey="daily_waste" fill="#C98A1B" opacity={0.7} radius={[2, 2, 0, 0]} name="Daily Leftovers" />
-                  <Line type="monotone" dataKey="rolling_7d_waste" stroke="#A63D2F" strokeWidth={2.5} dot={false} name="7-Day Rolling Avg" />
+                  <Bar dataKey="daily_waste" fill="#C98223" opacity={0.65} radius={[4, 4, 0, 0]} name="Daily Leftovers" />
+                  <Line type="monotone" dataKey="rolling_7d_waste" stroke="#9E2A2B" strokeWidth={2.75} dot={false} name="7-Day Rolling Avg" />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -249,28 +257,28 @@ export const HistoryPage: React.FC = () => {
           {/* Category Breakdown Table (Pipeline 3 Facet) */}
           {accuracy && accuracy.by_category.length > 0 && (
             <section aria-label="Accuracy by Category" className="space-y-3">
-              <h2 className="font-serif text-lg font-bold text-ink dark:text-ink-dark">
-                Forecast Performance by Category
+              <h2 className="victorian-heading text-2xl font-bold text-forest dark:text-gold">
+                Forecast Performance by Menu Category
               </h2>
-              <div className="border border-ink-hairline dark:border-ink-dark-hairline rounded-ticket bg-surface dark:bg-surface-dark overflow-hidden">
+              <div className="glass-card shadow-glass dark:shadow-glass-dark overflow-hidden">
                 <table className="w-full text-left text-xs font-mono">
-                  <thead className="bg-canvas dark:bg-canvas-dark border-b border-ink-hairline text-ink-muted text-[11px] uppercase">
+                  <thead className="bg-canvas-subtle/80 dark:bg-white/5 border-b border-gold/20 dark:border-white/10 text-ink-muted victorian-badge text-[10px]">
                     <tr>
-                      <th className="p-3">Category</th>
-                      <th className="p-3 text-right">Observations</th>
-                      <th className="p-3 text-right">MAE (Portions)</th>
-                      <th className="p-3 text-right">WAPE (%)</th>
-                      <th className="p-3 text-right">Signed Bias</th>
+                      <th className="py-4 px-5">Category</th>
+                      <th className="py-4 px-5 text-right">Observations</th>
+                      <th className="py-4 px-5 text-right">MAE (Portions)</th>
+                      <th className="py-4 px-5 text-right">WAPE (%)</th>
+                      <th className="py-4 px-5 text-right">Signed Bias</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-ink-hairline dark:divide-ink-dark-hairline">
+                  <tbody className="divide-y divide-gold/15 dark:divide-white/10">
                     {accuracy.by_category.map((cat, idx) => (
-                      <tr key={idx} className="hover:bg-canvas/50">
-                        <td className="p-3 font-semibold uppercase font-sans text-ink dark:text-ink-dark">{cat.category}</td>
-                        <td className="p-3 text-right text-ink-muted">{cat.count}</td>
-                        <td className="p-3 text-right text-ink dark:text-ink-dark font-bold">{cat.mae}</td>
-                        <td className="p-3 text-right text-forest dark:text-forest-dark font-bold">{(cat.wape * 100).toFixed(1)}%</td>
-                        <td className="p-3 text-right text-ink-muted">{cat.bias > 0 ? `+${cat.bias}` : cat.bias}</td>
+                      <tr key={idx} className="hover:bg-gold/5 dark:hover:bg-white/5 transition-colors">
+                        <td className="py-3.5 px-5 font-serif font-bold text-base text-ink dark:text-ink-dark">{cat.category}</td>
+                        <td className="py-3.5 px-5 text-right text-ink-muted">{cat.count}</td>
+                        <td className="py-3.5 px-5 text-right text-ink dark:text-ink-dark font-bold tabular-nums">{cat.mae}</td>
+                        <td className="py-3.5 px-5 text-right text-forest dark:text-gold font-bold tabular-nums">{(cat.wape * 100).toFixed(1)}%</td>
+                        <td className="py-3.5 px-5 text-right text-ink-muted tabular-nums">{cat.bias > 0 ? `+${cat.bias}` : cat.bias}</td>
                       </tr>
                     ))}
                   </tbody>

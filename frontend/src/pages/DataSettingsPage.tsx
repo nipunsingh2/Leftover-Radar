@@ -8,6 +8,8 @@ import {
   AlertCircle,
   Save,
   Loader2,
+  Sparkles,
+  Info,
 } from 'lucide-react';
 import {
   api,
@@ -132,40 +134,40 @@ export const DataSettingsPage: React.FC = () => {
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
       {/* Page Header */}
-      <div className="border-b border-ink-hairline dark:border-ink-dark-hairline pb-4 flex justify-between items-end">
+      <div className="border-b border-gold/20 dark:border-white/10 pb-5 flex justify-between items-end">
         <div>
-          <div className="text-[11px] font-mono uppercase tracking-wider text-forest dark:text-forest-dark font-semibold">
-            Cafeteria Configuration
+          <div className="victorian-badge text-[10px] text-forest dark:text-gold font-bold">
+            Cafeteria Configuration & Catalogs
           </div>
-          <h1 className="font-serif text-2xl font-bold tracking-tight text-ink dark:text-ink-dark mt-1">
+          <h1 className="victorian-heading text-3xl font-bold tracking-tight text-forest dark:text-gold mt-1">
             Data, Catalogs & Cost Settings
           </h1>
           <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-0.5">
-            Configure Newsvendor cost parameters, manage rotating Indian menu items, adjust campus calendar context, and import POS history.
+            Configure Newsvendor cost parameters, manage the rotating Indian menu catalog, adjust campus calendar context, and import POS observations.
           </p>
         </div>
       </div>
 
-      {/* Segmented Sub-Navigation */}
-      <div className="flex border-b border-ink-hairline dark:border-ink-dark-hairline gap-6 text-xs font-mono">
+      {/* Segmented Sub-Navigation Pills */}
+      <div className="flex flex-wrap gap-3">
         <button
           onClick={() => setActiveTab('settings')}
-          className={`pb-3 font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === 'settings'
-              ? 'border-forest text-forest dark:text-forest-dark'
-              : 'border-transparent text-ink-muted hover:text-ink'
+              ? 'bg-forest text-gold-50 dark:bg-gold dark:text-black shadow-md border border-gold/40'
+              : 'glass-card hover:border-gold/40 text-ink-muted hover:text-ink'
           }`}
         >
           <Sliders className="w-3.5 h-3.5" />
-          <span>Newsvendor Cost Parameters</span>
+          <span>Newsvendor Parameters</span>
         </button>
 
         <button
           onClick={() => setActiveTab('menu')}
-          className={`pb-3 font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === 'menu'
-              ? 'border-forest text-forest dark:text-forest-dark'
-              : 'border-transparent text-ink-muted hover:text-ink'
+              ? 'bg-forest text-gold-50 dark:bg-gold dark:text-black shadow-md border border-gold/40'
+              : 'glass-card hover:border-gold/40 text-ink-muted hover:text-ink'
           }`}
         >
           <Utensils className="w-3.5 h-3.5" />
@@ -174,50 +176,53 @@ export const DataSettingsPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('calendar')}
-          className={`pb-3 font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === 'calendar'
-              ? 'border-forest text-forest dark:text-forest-dark'
-              : 'border-transparent text-ink-muted hover:text-ink'
+              ? 'bg-forest text-gold-50 dark:bg-gold dark:text-black shadow-md border border-gold/40'
+              : 'glass-card hover:border-gold/40 text-ink-muted hover:text-ink'
           }`}
         >
           <Calendar className="w-3.5 h-3.5" />
-          <span>Calendar Context Editor</span>
+          <span>Calendar Context</span>
         </button>
 
         <button
           onClick={() => setActiveTab('import')}
-          className={`pb-3 font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === 'import'
-              ? 'border-forest text-forest dark:text-forest-dark'
-              : 'border-transparent text-ink-muted hover:text-ink'
+              ? 'bg-forest text-gold-50 dark:bg-gold dark:text-black shadow-md border border-gold/40'
+              : 'glass-card hover:border-gold/40 text-ink-muted hover:text-ink'
           }`}
         >
           <UploadCloud className="w-3.5 h-3.5" />
-          <span>CSV History Importer</span>
+          <span>CSV Importer</span>
         </button>
       </div>
 
       {/* TAB 1: Cost Sliders & Newsvendor Parameterization */}
       {activeTab === 'settings' && (
-        <section aria-label="Cost Parameters" className="max-w-2xl space-y-6">
-          <div className="p-6 rounded-ticket bg-surface dark:bg-surface-dark border border-ink-hairline dark:border-ink-dark-hairline space-y-6">
+        <section aria-label="Cost Parameters" className="max-w-3xl space-y-6">
+          <div className="glass-card p-8 space-y-6">
             <div>
-              <h2 className="font-serif text-lg font-bold text-ink dark:text-ink-dark">
+              <span className="victorian-badge text-[9px] text-forest dark:text-gold font-bold">
+                Economic Balance Function
+              </span>
+              <h2 className="victorian-heading text-2xl font-bold text-forest dark:text-gold mt-1">
                 Cost-Aware Newsvendor Buffer Configuration
               </h2>
               <p className="text-xs text-ink-muted mt-1 leading-relaxed">
-                The Newsvendor model balances the cost of over-preparation (waste) against under-preparation (lost student sale).
-                Adjusting these values shifts the optimal buffer quantile in real time.
+                The classical Newsvendor model balances the financial loss of over-preparation (waste disposal) against the penalty of stockouts (unhappy diners).
+                Modulating these parameters updates the critical fractile q* = c_s / (c_s + c_w) in real time.
               </p>
             </div>
 
             {/* Slider 1: Waste Cost (c_w) */}
-            <div className="space-y-2">
+            <div className="p-4 rounded-xl bg-canvas/70 dark:bg-white/5 border border-gold/20 dark:border-white/10 space-y-2.5">
               <div className="flex justify-between items-baseline">
-                <label className="text-xs font-semibold text-ink dark:text-ink-dark">
+                <label className="text-xs font-serif font-bold text-ink dark:text-ink-dark">
                   Cost per Wasted Portion (c_w)
                 </label>
-                <span className="font-mono text-sm font-bold text-ink dark:text-ink-dark">
+                <span className="font-mono text-base font-bold text-saffron tabular-nums">
                   ₹{settings.waste_cost}
                 </span>
               </div>
@@ -230,20 +235,21 @@ export const DataSettingsPage: React.FC = () => {
                 onChange={(e) =>
                   setSettings({ ...settings, waste_cost: parseFloat(e.target.value) })
                 }
-                className="w-full accent-forest cursor-pointer"
+                className="w-full accent-forest dark:accent-gold cursor-pointer"
               />
-              <p className="text-[11px] text-ink-muted font-mono">
-                Direct ingredient and disposal cost of unconsumed food portions.
-              </p>
+              <div className="text-[11px] text-ink-muted font-mono flex justify-between">
+                <span>Direct ingredient and disposal cost</span>
+                <span>₹5 – ₹120</span>
+              </div>
             </div>
 
             {/* Slider 2: Stockout Cost (c_s) */}
-            <div className="space-y-2">
+            <div className="p-4 rounded-xl bg-canvas/70 dark:bg-white/5 border border-gold/20 dark:border-white/10 space-y-2.5">
               <div className="flex justify-between items-baseline">
-                <label className="text-xs font-semibold text-ink dark:text-ink-dark">
+                <label className="text-xs font-serif font-bold text-ink dark:text-ink-dark">
                   Cost per Missed Sale (c_s)
                 </label>
-                <span className="font-mono text-sm font-bold text-ink dark:text-ink-dark">
+                <span className="font-mono text-base font-bold text-clay tabular-nums">
                   ₹{settings.stockout_cost}
                 </span>
               </div>
@@ -256,20 +262,21 @@ export const DataSettingsPage: React.FC = () => {
                 onChange={(e) =>
                   setSettings({ ...settings, stockout_cost: parseFloat(e.target.value) })
                 }
-                className="w-full accent-forest cursor-pointer"
+                className="w-full accent-forest dark:accent-gold cursor-pointer"
               />
-              <p className="text-[11px] text-ink-muted font-mono">
-                Lost revenue and student dissatisfaction cost when a dish runs out prematurely.
-              </p>
+              <div className="text-[11px] text-ink-muted font-mono flex justify-between">
+                <span>Lost revenue & diner dissatisfaction penalty</span>
+                <span>₹10 – ₹200</span>
+              </div>
             </div>
 
             {/* Slider 3: Buffer Cap Percent */}
-            <div className="space-y-2">
+            <div className="p-4 rounded-xl bg-canvas/70 dark:bg-white/5 border border-gold/20 dark:border-white/10 space-y-2.5">
               <div className="flex justify-between items-baseline">
-                <label className="text-xs font-semibold text-ink dark:text-ink-dark">
-                  Maximum Buffer Cap
+                <label className="text-xs font-serif font-bold text-ink dark:text-ink-dark">
+                  Maximum Recommended Buffer Cap
                 </label>
-                <span className="font-mono text-sm font-bold text-ink dark:text-ink-dark">
+                <span className="font-mono text-base font-bold text-forest dark:text-gold tabular-nums">
                   +{(settings.buffer_cap_percent * 100).toFixed(0)}%
                 </span>
               </div>
@@ -282,36 +289,37 @@ export const DataSettingsPage: React.FC = () => {
                 onChange={(e) =>
                   setSettings({ ...settings, buffer_cap_percent: parseFloat(e.target.value) })
                 }
-                className="w-full accent-forest cursor-pointer"
+                className="w-full accent-forest dark:accent-gold cursor-pointer"
               />
-              <p className="text-[11px] text-ink-muted font-mono">
-                Safety ceiling: prevents the buffer from exceeding this percentage of expected demand.
-              </p>
+              <div className="text-[11px] text-ink-muted font-mono flex justify-between">
+                <span>Prevents the buffer from exceeding this ratio of mean demand</span>
+                <span>+5% – +30%</span>
+              </div>
             </div>
 
-            {/* Live Explanation Readout Box (Section 9.6) */}
-            <div className="p-4 rounded-control bg-canvas dark:bg-canvas-dark border border-ink-hairline text-xs font-mono space-y-2">
-              <div className="text-[10px] uppercase text-forest font-bold">
+            {/* Live Bento Explanation Readout Box */}
+            <div className="p-5 rounded-xl bg-gradient-to-br from-gold/10 via-surface/80 to-forest/5 dark:from-gold/10 dark:via-black/30 dark:to-white/5 border border-gold/30 dark:border-white/15 space-y-2.5 font-mono text-xs">
+              <div className="victorian-badge text-[10px] text-forest dark:text-gold font-bold">
                 Real-Time Newsvendor Equilibrium
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-baseline">
                 <span className="text-ink-muted">Critical Fractile:</span>
-                <span className="font-bold text-forest">
-                  q* = {liveQStar.toFixed(2)} ({settings.stockout_cost} / ({settings.stockout_cost} + {settings.waste_cost}))
+                <span className="font-serif text-xl font-bold text-forest dark:text-gold">
+                  q* = {liveQStar.toFixed(2)} [{settings.stockout_cost} / ({settings.stockout_cost} + {settings.waste_cost})]
                 </span>
               </div>
-              <div className="text-[11px] text-ink-muted leading-relaxed font-sans">
+              <div className="text-[11px] text-ink-muted dark:text-ink-dark-muted leading-relaxed font-sans pt-1 border-t border-gold/20 dark:border-white/10">
                 {liveQStar >= 0.70 ? (
                   <span>
-                    Stockout cost outweighs waste: recommending a <strong>generous safety buffer</strong> to protect diner satisfaction.
+                    Stockout penalties significantly outweigh waste: model applies a <strong>protective safety buffer</strong> to ensure complete student satisfaction.
                   </span>
                 ) : liveQStar <= 0.40 ? (
                   <span>
-                    Waste cost outweighs stockouts: recommending a <strong>lean, conservative preparation</strong> to minimize food disposal.
+                    Waste costs outweigh stockout penalties: model recommends a <strong>lean, conservative preparation</strong> to curb culinary waste.
                   </span>
                 ) : (
                   <span>
-                    Balanced cost profile: recommending preparation near the <strong>median demand</strong>.
+                    Balanced cost profile: model recommends preparation close to the <strong>median expected demand</strong>.
                   </span>
                 )}
               </div>
@@ -320,16 +328,16 @@ export const DataSettingsPage: React.FC = () => {
             <div className="flex items-center justify-between pt-2">
               <button
                 onClick={handleSaveSettings}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-control bg-forest hover:bg-forest-hover text-[#F6F1E7] text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                className="shimmer-hover flex items-center gap-2 px-6 py-2.5 rounded-xl bg-forest hover:bg-forest-hover text-gold-50 dark:bg-gold dark:text-black text-xs font-semibold shadow-lg shadow-forest/25 dark:shadow-gold-glow/20 border border-gold/40 transition-all duration-200 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Cost Parameters</span>
               </button>
 
               {settingsSaved && (
-                <span className="text-xs font-mono text-forest flex items-center gap-1 font-semibold">
+                <span className="text-xs font-mono text-forest dark:text-gold flex items-center gap-1.5 font-bold">
                   <Check className="w-4 h-4" />
-                  Saved into MongoDB settings
+                  Saved into MongoDB `settings` collection
                 </span>
               )}
             </div>
@@ -340,45 +348,47 @@ export const DataSettingsPage: React.FC = () => {
       {/* TAB 2: Menu Catalog Management */}
       {activeTab === 'menu' && (
         <section aria-label="Menu Catalog" className="space-y-4">
-          <div className="border border-ink-hairline dark:border-ink-dark-hairline rounded-ticket bg-surface dark:bg-surface-dark overflow-hidden">
+          <div className="glass-card shadow-glass dark:shadow-glass-dark overflow-hidden">
             <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-canvas dark:bg-canvas-dark border-b border-ink-hairline text-ink-muted text-[11px] uppercase">
+              <thead className="bg-canvas-subtle/80 dark:bg-white/5 border-b border-gold/20 dark:border-white/10 text-ink-muted victorian-badge text-[10px]">
                 <tr>
-                  <th className="p-3">Dish Identifier</th>
-                  <th className="p-3">Dish Name</th>
-                  <th className="p-3">Category</th>
-                  <th className="p-3 text-right">Price (₹)</th>
-                  <th className="p-3 text-center">Status</th>
-                  <th className="p-3 text-center">Action</th>
+                  <th className="py-4 px-5">Dish Identifier</th>
+                  <th className="py-4 px-5">Dish Name</th>
+                  <th className="py-4 px-5">Category</th>
+                  <th className="py-4 px-5 text-right">Price (₹)</th>
+                  <th className="py-4 px-5 text-center">Catalog Status</th>
+                  <th className="py-4 px-5 text-center">Toggle Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-ink-hairline dark:divide-ink-dark-hairline">
+              <tbody className="divide-y divide-gold/15 dark:divide-white/10">
                 {menuItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-canvas/50">
-                    <td className="p-3 text-ink-muted">{item.id}</td>
-                    <td className="p-3 font-sans font-semibold text-ink dark:text-ink-dark">{item.name}</td>
-                    <td className="p-3 uppercase text-[10px] text-ink-muted">{item.category}</td>
-                    <td className="p-3 text-right">
+                  <tr key={item.id} className="hover:bg-gold/5 dark:hover:bg-white/5 transition-colors">
+                    <td className="py-3.5 px-5 text-ink-muted font-mono">{item.id}</td>
+                    <td className="py-3.5 px-5 font-serif font-bold text-base text-ink dark:text-ink-dark">{item.name}</td>
+                    <td className="py-3.5 px-5 victorian-badge text-[9px] text-ink-muted">{item.category}</td>
+                    <td className="py-3.5 px-5 text-right">
                       <input
                         type="number"
                         value={item.price}
                         onChange={(e) => handleUpdatePrice(item.id, parseFloat(e.target.value) || 0)}
-                        className="w-16 text-right font-mono p-1 rounded bg-canvas border border-ink-hairline text-xs"
+                        className="w-20 text-right font-mono font-bold p-1 rounded-lg bg-canvas dark:bg-black/30 border border-gold/25 dark:border-white/10 text-xs tabular-nums outline-none"
                       />
                     </td>
-                    <td className="p-3 text-center">
+                    <td className="py-3.5 px-5 text-center">
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                          item.active ? 'bg-sage-tint text-forest' : 'bg-gray-200 text-gray-600'
+                        className={`victorian-badge text-[9px] px-2.5 py-0.5 rounded-full font-bold ${
+                          item.active
+                            ? 'bg-forest/10 text-forest dark:text-gold'
+                            : 'bg-black/10 text-ink-muted dark:text-ink-dark-muted'
                         }`}
                       >
                         {item.active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="p-3 text-center">
+                    <td className="py-3.5 px-5 text-center">
                       <button
                         onClick={() => handleToggleMenu(item.id, item.active)}
-                        className="px-2.5 py-1 text-[10px] rounded border border-ink-hairline hover:bg-canvas transition-colors font-sans"
+                        className="px-3 py-1 text-[11px] rounded-lg border border-gold/30 dark:border-white/10 hover:bg-gold/10 font-sans transition-colors cursor-pointer"
                       >
                         {item.active ? 'Deactivate' : 'Activate'}
                       </button>
@@ -393,87 +403,101 @@ export const DataSettingsPage: React.FC = () => {
 
       {/* TAB 3: Calendar Context Editor */}
       {activeTab === 'calendar' && (
-        <section aria-label="Calendar Context" className="max-w-xl space-y-4">
-          <div className="p-6 rounded-ticket bg-surface dark:bg-surface-dark border border-ink-hairline space-y-4">
-            <h2 className="font-serif text-lg font-bold text-ink dark:text-ink-dark">
-              Campus Context for Service Date
-            </h2>
+        <section aria-label="Calendar Context" className="max-w-2xl space-y-4">
+          <div className="glass-card p-8 space-y-5">
+            <div>
+              <span className="victorian-badge text-[9px] text-forest dark:text-gold font-bold">
+                Exogenous Environmental Factors
+              </span>
+              <h2 className="victorian-heading text-2xl font-bold text-forest dark:text-gold mt-1">
+                Campus Context for Target Service Date
+              </h2>
+            </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <label className="text-xs font-mono text-ink-muted">Service Date:</label>
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full font-mono text-xs p-2 rounded bg-canvas border border-ink-hairline text-ink outline-none"
+                className="w-full font-mono text-xs p-2.5 rounded-xl bg-canvas dark:bg-black/40 border border-gold/30 dark:border-white/15 text-ink dark:text-ink-dark outline-none cursor-pointer"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs font-mono text-ink-muted">Weather Forecast:</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-mono text-ink-muted">Weather Forecast Condition:</label>
               <select
                 value={calendarContext.weather}
                 onChange={(e) => setCalendarContext({ ...calendarContext, weather: e.target.value })}
-                className="w-full font-mono text-xs p-2 rounded bg-canvas border border-ink-hairline text-ink outline-none"
+                className="w-full font-mono text-xs p-2.5 rounded-xl bg-canvas dark:bg-black/40 border border-gold/30 dark:border-white/15 text-ink dark:text-ink-dark outline-none cursor-pointer"
               >
-                <option value="clear">Clear / Sunny (Standard)</option>
-                <option value="rainy">Monsoon / Heavy Rain (+22% snack demand)</option>
-                <option value="hot">Scorching Heat (Beverage surge)</option>
+                <option value="clear">Clear / Sunny (Standard baseline attendance)</option>
+                <option value="rainy">Monsoon / Heavy Rain (+22% snack & tea surge)</option>
+                <option value="hot">Scorching Summer Heat (Beverage volume surge)</option>
                 <option value="cloudy">Cloudy / Overcast</option>
               </select>
             </div>
 
-            <div className="space-y-2 pt-2 border-t border-ink-hairline text-xs">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="space-y-3 pt-3 border-t border-gold/20 dark:border-white/10 text-xs">
+              <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gold/5 transition-colors">
                 <input
                   type="checkbox"
                   checked={calendarContext.campus_event}
                   onChange={(e) =>
                     setCalendarContext({ ...calendarContext, campus_event: e.target.checked })
                   }
-                  className="accent-forest"
+                  className="w-4 h-4 accent-forest dark:accent-gold"
                 />
-                <span>Campus Event / Cultural Fest Scheduled (+25% footfall surge)</span>
+                <div>
+                  <div className="font-semibold text-ink dark:text-ink-dark">Campus Event / Cultural Fest Scheduled</div>
+                  <div className="text-[11px] text-ink-muted">+25% footfall surge across all service counters</div>
+                </div>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gold/5 transition-colors">
                 <input
                   type="checkbox"
                   checked={calendarContext.exam_week}
                   onChange={(e) =>
                     setCalendarContext({ ...calendarContext, exam_week: e.target.checked })
                   }
-                  className="accent-forest"
+                  className="w-4 h-4 accent-forest dark:accent-gold"
                 />
-                <span>Midterm or Finals Exam Week (Comfort food & coffee shift)</span>
+                <div>
+                  <div className="font-semibold text-ink dark:text-ink-dark">Midterm / Final Exam Period</div>
+                  <div className="text-[11px] text-ink-muted">Quick grab-and-go shifts, late snack surge</div>
+                </div>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gold/5 transition-colors">
                 <input
                   type="checkbox"
                   checked={calendarContext.holiday}
                   onChange={(e) =>
                     setCalendarContext({ ...calendarContext, holiday: e.target.checked })
                   }
-                  className="accent-forest"
+                  className="w-4 h-4 accent-forest dark:accent-gold"
                 />
-                <span>Official Campus Holiday / Break (-50% occupancy)</span>
+                <div>
+                  <div className="font-semibold text-ink dark:text-ink-dark">Official Campus Holiday / Break</div>
+                  <div className="text-[11px] text-ink-muted">-50% dining hall occupancy reduction</div>
+                </div>
               </label>
             </div>
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center justify-between pt-3">
               <button
                 onClick={handleSaveCalendar}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-control bg-forest hover:bg-forest-hover text-[#F6F1E7] text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                className="shimmer-hover flex items-center gap-2 px-6 py-2.5 rounded-xl bg-forest hover:bg-forest-hover text-gold-50 dark:bg-gold dark:text-black text-xs font-semibold shadow-lg shadow-forest/25 dark:shadow-gold-glow/20 border border-gold/40 transition-all duration-200 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
-                <span>Save Context</span>
+                <span>Save Environmental Context</span>
               </button>
 
               {calendarSaved && (
-                <span className="text-xs font-mono text-forest flex items-center gap-1 font-semibold">
+                <span className="text-xs font-mono text-forest dark:text-gold flex items-center gap-1.5 font-bold">
                   <Check className="w-4 h-4" />
-                  Calendar context updated
+                  Calendar context saved
                 </span>
               )}
             </div>
@@ -484,34 +508,39 @@ export const DataSettingsPage: React.FC = () => {
       {/* TAB 4: CSV History Importer */}
       {activeTab === 'import' && (
         <section aria-label="CSV Importer" className="max-w-2xl space-y-4">
-          <div className="p-6 rounded-ticket bg-surface dark:bg-surface-dark border border-ink-hairline space-y-4">
-            <h2 className="font-serif text-lg font-bold text-ink dark:text-ink-dark">
-              Upload Cafeteria POS Service Log
-            </h2>
-            <p className="text-xs text-ink-muted">
-              Import historical service records via CSV. Every row is strictly validated against schema constraints and the sold &le; prepared invariant.
-            </p>
+          <div className="glass-card p-8 space-y-5">
+            <div>
+              <span className="victorian-badge text-[9px] text-forest dark:text-gold font-bold">
+                Batch Historical Ingestion
+              </span>
+              <h2 className="victorian-heading text-2xl font-bold text-forest dark:text-gold mt-1">
+                Upload Cafeteria POS Service Log
+              </h2>
+              <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+                Import historical observations via CSV. Every observation is strictly verified against schema constraints and the invariant: portions sold &le; portions prepared.
+              </p>
+            </div>
 
-            <div className="border-2 border-dashed border-ink-hairline rounded-ticket p-6 text-center space-y-2 bg-canvas">
-              <UploadCloud className="w-8 h-8 mx-auto text-forest" />
-              <div className="text-xs text-ink font-medium">Select POS observations CSV file</div>
+            <div className="border-2 border-dashed border-gold/40 dark:border-white/20 rounded-2xl p-8 text-center space-y-3 bg-canvas/40 dark:bg-black/20 hover:border-gold transition-colors">
+              <UploadCloud className="w-10 h-10 mx-auto text-gold" strokeWidth={1.5} />
+              <div className="text-sm font-serif font-bold text-ink dark:text-ink-dark">Select POS Observation CSV File</div>
               <input
                 type="file"
                 accept=".csv"
                 onChange={(e) => setImportFile(e.target.files?.[0] || null)}
-                className="text-xs text-ink-muted file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-forest file:text-white hover:file:bg-forest-hover cursor-pointer"
+                className="text-xs text-ink-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-forest file:text-gold-50 hover:file:bg-forest-hover cursor-pointer"
               />
             </div>
 
             <button
               onClick={handleCsvUpload}
               disabled={!importFile || importLoading}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-control bg-forest hover:bg-forest-hover text-[#F6F1E7] text-xs font-semibold shadow-xs transition-colors disabled:opacity-60 cursor-pointer"
+              className="shimmer-hover flex items-center gap-2 px-6 py-2.5 rounded-xl bg-forest hover:bg-forest-hover text-gold-50 dark:bg-gold dark:text-black text-xs font-semibold shadow-lg border border-gold/40 transition-all duration-200 disabled:opacity-60 cursor-pointer"
             >
               {importLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Validating & Importing...</span>
+                  <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2} />
+                  <span>Validating Schema & Ingesting...</span>
                 </>
               ) : (
                 <>
@@ -523,16 +552,16 @@ export const DataSettingsPage: React.FC = () => {
 
             {/* Row-Level Rejection Report */}
             {importReport && (
-              <div className="mt-4 p-4 rounded-control bg-canvas border border-ink-hairline text-xs font-mono space-y-2">
+              <div className="mt-4 p-5 rounded-xl bg-canvas dark:bg-black/30 border border-gold/30 dark:border-white/10 text-xs font-mono space-y-2.5">
                 <div className="flex justify-between font-bold">
-                  <span>Accepted Rows: {importReport.accepted_count}</span>
-                  <span className={importReport.rejected_count > 0 ? 'text-clay' : 'text-forest'}>
-                    Rejected Rows: {importReport.rejected_count}
+                  <span>Accepted Observations: {importReport.accepted_count}</span>
+                  <span className={importReport.rejected_count > 0 ? 'text-clay' : 'text-forest dark:text-gold'}>
+                    Rejected Observations: {importReport.rejected_count}
                   </span>
                 </div>
 
                 {importReport.rejected_details && importReport.rejected_details.length > 0 && (
-                  <div className="space-y-1 pt-2 border-t border-ink-hairline text-[11px] text-clay max-h-48 overflow-y-auto">
+                  <div className="space-y-1.5 pt-2 border-t border-gold/20 dark:border-white/10 text-[11px] text-clay max-h-48 overflow-y-auto">
                     {importReport.rejected_details.map((rej: any, idx: number) => (
                       <div key={idx}>
                         Row {rej.row}: {rej.reason}

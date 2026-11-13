@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, AlertCircle, Save, Loader2, Sparkles, CheckSquare } from 'lucide-react';
+import { Check, AlertCircle, Save, Loader2, Sparkles, CheckSquare, TrendingUp, TrendingDown } from 'lucide-react';
 import { api, MenuItem, ForecastItemResult } from '../api/client';
 
 interface CloseOutPageProps {
@@ -138,33 +138,33 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
-      {/* Title */}
-      <div className="border-b border-ink-hairline dark:border-ink-dark-hairline pb-4 flex justify-between items-end">
+      {/* Header with Title & Finalize Action */}
+      <div className="border-b border-gold/20 dark:border-white/10 pb-5 flex flex-wrap justify-between items-end gap-4">
         <div>
-          <div className="text-[11px] font-mono uppercase tracking-wider text-ink-muted dark:text-ink-dark-muted font-semibold">
+          <div className="victorian-badge text-[10px] text-forest dark:text-gold font-bold">
             Post-Service Reconciliation
           </div>
-          <h1 className="font-serif text-2xl font-bold tracking-tight text-ink dark:text-ink-dark mt-1">
+          <h1 className="victorian-heading text-3xl font-bold tracking-tight text-forest dark:text-gold mt-1">
             Service Close-out · {servicePeriod.toUpperCase()} ({serviceDate})
           </h1>
           <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-0.5">
-            Record realized preparation, portions sold, and stockouts to calculate leftover waste and update model training data.
+            Log realized kitchen production, guest portions sold, and observed stockouts to update model training data.
           </p>
         </div>
 
         <button
           onClick={handleSaveCloseOut}
           disabled={isSaving}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-control bg-forest hover:bg-forest-hover text-[#F6F1E7] text-xs font-semibold shadow-xs transition-colors disabled:opacity-60 cursor-pointer"
+          className="shimmer-hover flex items-center gap-2 px-6 py-2.5 rounded-xl bg-forest hover:bg-forest-hover text-gold-50 dark:bg-gold dark:text-black text-xs font-semibold shadow-lg shadow-forest/25 dark:shadow-gold-glow/20 border border-gold/40 transition-all duration-200 cursor-pointer disabled:opacity-60"
         >
           {isSaving ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />
+              <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2} />
               <span>Saving Out-turn...</span>
             </>
           ) : (
             <>
-              <Save className="w-4 h-4" strokeWidth={1.5} />
+              <Save className="w-4 h-4" strokeWidth={1.75} />
               <span>Save & Finalize Service</span>
             </>
           )}
@@ -173,70 +173,80 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
 
       {/* Notifications */}
       {errorMessage && (
-        <div className="p-4 rounded-control bg-clay/10 border border-clay/30 text-clay text-xs flex items-center gap-2">
+        <div className="p-4 rounded-xl bg-clay/10 border border-clay/30 text-clay text-xs flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{errorMessage}</span>
+          <span className="font-medium">{errorMessage}</span>
         </div>
       )}
 
       {saveSuccess && (
-        <div className="p-4 rounded-control bg-forest/10 border border-forest/30 text-forest dark:text-forest-dark text-xs flex items-center gap-2">
-          <Check className="w-4 h-4 shrink-0" />
-          <span>Service close-out saved successfully into MongoDB `service_observations`. Debrief below.</span>
+        <div className="p-4 rounded-xl bg-forest/10 border border-forest/30 text-forest dark:text-gold text-xs flex items-center gap-2.5">
+          <Check className="w-4 h-4 shrink-0 text-forest dark:text-gold" />
+          <span className="font-semibold">Service close-out saved successfully into MongoDB `service_observations`. Debrief telemetry generated below.</span>
         </div>
       )}
 
-      {/* Instant Debrief Card (Section 9.6: debrief showing forecast vs actual per item, total waste, error) */}
+      {/* Bento Grid: Instant Service Debrief */}
       {debriefSummary && (
-        <section aria-label="Service Debrief Summary" className="p-5 rounded-ticket bg-canvas dark:bg-canvas-dark border border-ink-hairline dark:border-ink-dark-hairline space-y-3">
-          <h2 className="text-xs font-mono uppercase tracking-wider font-bold text-ink dark:text-ink-dark flex items-center gap-2">
-            <CheckSquare className="w-4 h-4 text-forest" />
-            <span>Instant Service Debrief</span>
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-1 font-mono text-xs">
-            <div className="p-3 bg-surface dark:bg-surface-dark rounded-control border border-ink-hairline">
-              <div className="text-ink-muted text-[10px] uppercase">Total Prepared</div>
-              <div className="text-xl font-bold text-ink dark:text-ink-dark mt-0.5">
-                {debriefSummary.total_prepared} <span className="text-[10px] font-normal">portions</span>
+        <section aria-label="Service Debrief Bento" className="space-y-3">
+          <div className="flex items-center gap-2">
+            <CheckSquare className="w-4 h-4 text-forest dark:text-gold" />
+            <h2 className="victorian-badge text-xs font-bold text-forest dark:text-gold">
+              Instant Service Debrief Telemetry
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="glass-card p-5">
+              <div className="victorian-badge text-[9px] text-ink-muted uppercase">Realized Preparation</div>
+              <div className="victorian-heading text-3xl font-bold text-forest dark:text-gold mt-1 tabular-nums">
+                {debriefSummary.total_prepared}
+                <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">portions</span>
               </div>
             </div>
-            <div className="p-3 bg-surface dark:bg-surface-dark rounded-control border border-ink-hairline">
-              <div className="text-ink-muted text-[10px] uppercase">Realized Sales</div>
-              <div className="text-xl font-bold text-forest dark:text-forest-dark mt-0.5">
-                {debriefSummary.total_sold} <span className="text-[10px] font-normal">servings</span>
+
+            <div className="glass-card p-5">
+              <div className="victorian-badge text-[9px] text-ink-muted uppercase">Realized Sales</div>
+              <div className="victorian-heading text-3xl font-bold text-forest dark:text-gold mt-1 tabular-nums">
+                {debriefSummary.total_sold}
+                <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">servings</span>
               </div>
             </div>
-            <div className="p-3 bg-surface dark:bg-surface-dark rounded-control border border-ink-hairline">
-              <div className="text-ink-muted text-[10px] uppercase">Realized Leftovers (Waste)</div>
-              <div className="text-xl font-bold text-saffron mt-0.5">
-                {debriefSummary.total_waste} <span className="text-[10px] font-normal">portions</span>
+
+            <div className="glass-card p-5">
+              <div className="victorian-badge text-[9px] text-saffron uppercase">Leftover Waste</div>
+              <div className="victorian-heading text-3xl font-bold text-saffron mt-1 tabular-nums">
+                {debriefSummary.total_waste}
+                <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">portions</span>
               </div>
             </div>
-            <div className="p-3 bg-surface dark:bg-surface-dark rounded-control border border-ink-hairline">
-              <div className="text-ink-muted text-[10px] uppercase">Stockouts Observed</div>
-              <div className="text-xl font-bold text-clay mt-0.5">
-                {debriefSummary.total_sold_out} <span className="text-[10px] font-normal">dishes</span>
+
+            <div className="glass-card p-5">
+              <div className="victorian-badge text-[9px] text-clay uppercase">Stockouts Observed</div>
+              <div className="victorian-heading text-3xl font-bold text-clay mt-1 tabular-nums">
+                {debriefSummary.total_sold_out}
+                <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">dishes</span>
               </div>
             </div>
           </div>
         </section>
       )}
 
-      {/* Close-Out Table (Tab-key friendly, inline validation) */}
-      <div className="border border-ink-hairline dark:border-ink-dark-hairline rounded-ticket bg-surface dark:bg-surface-dark overflow-hidden">
+      {/* Close-Out Input Table inside Glass Card */}
+      <div className="glass-card shadow-glass dark:shadow-glass-dark">
         <table className="w-full text-left text-xs border-collapse">
-          <thead className="bg-canvas dark:bg-canvas-dark border-b border-ink-hairline dark:border-ink-dark-hairline text-ink-muted dark:text-ink-dark-muted font-mono text-[11px] uppercase tracking-wider">
+          <thead className="bg-canvas-subtle/80 dark:bg-white/5 border-b border-gold/20 dark:border-white/10 text-ink-muted dark:text-ink-dark-muted victorian-badge text-[10px]">
             <tr>
-              <th className="py-3 px-4">Menu Dish</th>
-              <th className="py-3 px-3 text-right">Predicted Demand</th>
-              <th className="py-3 px-3 text-center min-w-[130px]">Portions Prepared</th>
-              <th className="py-3 px-3 text-center min-w-[130px]">Portions Sold</th>
-              <th className="py-3 px-3 text-right">Leftovers</th>
-              <th className="py-3 px-3 text-center">Stockout?</th>
-              <th className="py-3 px-3 text-center">Status</th>
+              <th className="py-4 px-5">Menu Dish</th>
+              <th className="py-4 px-3 text-right">Predicted Demand</th>
+              <th className="py-4 px-3 text-center min-w-[140px]">Portions Prepared</th>
+              <th className="py-4 px-3 text-center min-w-[140px]">Portions Sold</th>
+              <th className="py-4 px-3 text-right">Leftovers</th>
+              <th className="py-4 px-3 text-center">Stockout?</th>
+              <th className="py-4 px-3 text-center">Audit Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink-hairline dark:divide-ink-dark-hairline">
+          <tbody className="divide-y divide-gold/15 dark:divide-white/10">
             {rows.map((row, idx) => {
               const waste = Math.max(0, row.portions_prepared - row.portions_sold);
               const isInvalid = row.portions_sold > row.portions_prepared;
@@ -244,23 +254,23 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
               return (
                 <tr
                   key={row.item_id}
-                  className={`hover:bg-canvas/50 dark:hover:bg-canvas-dark/40 transition-colors ${
-                    isInvalid ? 'bg-clay/5' : ''
+                  className={`hover:bg-gold/5 dark:hover:bg-white/5 transition-colors duration-150 ${
+                    isInvalid ? 'bg-clay/10' : ''
                   }`}
                 >
                   {/* Dish Name */}
-                  <td className="py-3 px-4">
-                    <div className="font-semibold text-ink dark:text-ink-dark text-sm">{row.item_name}</div>
-                    <div className="text-[10px] uppercase font-mono text-ink-muted">{row.category}</div>
+                  <td className="py-3.5 px-5">
+                    <div className="font-serif font-bold text-base text-ink dark:text-ink-dark">{row.item_name}</div>
+                    <div className="victorian-badge text-[9px] text-ink-muted mt-0.5">{row.category}</div>
                   </td>
 
                   {/* Predicted Demand */}
-                  <td className="py-3 px-3 text-right font-mono text-sm text-ink-muted tabular-nums">
+                  <td className="py-3.5 px-3 text-right font-serif text-lg font-bold text-ink-muted tabular-nums">
                     {row.predicted_demand !== undefined ? row.predicted_demand : '—'}
                   </td>
 
                   {/* Portions Prepared Input */}
-                  <td className="py-3 px-3 text-center">
+                  <td className="py-3.5 px-3 text-center">
                     <input
                       type="number"
                       min="0"
@@ -272,12 +282,12 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                           Math.max(0, parseInt(e.target.value, 10) || 0)
                         )
                       }
-                      className="w-20 h-8 text-center font-mono font-bold text-sm bg-canvas dark:bg-canvas-dark border border-ink-hairline dark:border-ink-dark-hairline rounded-[3px] text-ink dark:text-ink-dark focus:border-forest outline-none tabular-nums"
+                      className="w-22 h-8 text-center font-mono font-bold text-sm bg-canvas/90 dark:bg-black/40 border border-gold/30 dark:border-white/15 rounded-lg text-ink dark:text-ink-dark focus:border-gold outline-none tabular-nums shadow-inner transition-colors"
                     />
                   </td>
 
                   {/* Portions Sold Input */}
-                  <td className="py-3 px-3 text-center">
+                  <td className="py-3.5 px-3 text-center">
                     <input
                       type="number"
                       min="0"
@@ -289,52 +299,52 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                           Math.max(0, parseInt(e.target.value, 10) || 0)
                         )
                       }
-                      className={`w-20 h-8 text-center font-mono font-bold text-sm bg-canvas dark:bg-canvas-dark border rounded-[3px] outline-none tabular-nums ${
+                      className={`w-22 h-8 text-center font-mono font-bold text-sm bg-canvas/90 dark:bg-black/40 border rounded-lg outline-none tabular-nums shadow-inner transition-colors ${
                         isInvalid
                           ? 'border-clay text-clay'
-                          : 'border-ink-hairline dark:border-ink-dark-hairline text-ink dark:text-ink-dark focus:border-forest'
+                          : 'border-gold/30 dark:border-white/15 text-ink dark:text-ink-dark focus:border-gold'
                       }`}
                     />
                   </td>
 
                   {/* Leftovers */}
-                  <td className="py-3 px-3 text-right font-mono text-sm tabular-nums">
+                  <td className="py-3.5 px-3 text-right font-mono text-sm tabular-nums">
                     {isInvalid ? (
                       <span className="text-clay font-bold">Error</span>
                     ) : waste > 0 ? (
                       <span className="text-saffron font-bold">+{waste}</span>
                     ) : (
-                      <span className="text-forest dark:text-forest-dark font-medium">0</span>
+                      <span className="text-forest dark:text-gold font-medium">0</span>
                     )}
                   </td>
 
                   {/* Sold-out toggle */}
-                  <td className="py-3 px-3 text-center">
+                  <td className="py-3.5 px-3 text-center">
                     <input
                       type="checkbox"
                       checked={row.sold_out}
                       onChange={(e) => handleUpdate(idx, 'sold_out', e.target.checked)}
-                      className="w-4 h-4 accent-clay cursor-pointer rounded-[2px]"
+                      className="w-4 h-4 accent-clay cursor-pointer rounded-xs"
                       title="Mark if dish ran out before service concluded"
                     />
                   </td>
 
                   {/* Validation status badge */}
-                  <td className="py-3 px-3 text-center font-mono text-[10px]">
+                  <td className="py-3.5 px-3 text-center">
                     {isInvalid ? (
-                      <span className="px-1.5 py-0.5 rounded bg-clay-tint text-clay font-bold">
+                      <span className="victorian-badge text-[9px] px-2 py-0.5 rounded-full bg-clay/15 text-clay font-bold">
                         Sold &gt; Prep
                       </span>
                     ) : row.sold_out ? (
-                      <span className="px-1.5 py-0.5 rounded bg-clay/10 text-clay font-bold">
-                        SOLD OUT
+                      <span className="victorian-badge text-[9px] px-2 py-0.5 rounded-full bg-clay/15 text-clay font-bold">
+                        STOCKOUT
                       </span>
                     ) : waste === 0 ? (
-                      <span className="px-1.5 py-0.5 rounded bg-sage-tint text-forest font-semibold">
+                      <span className="victorian-badge text-[9px] px-2 py-0.5 rounded-full bg-forest/10 text-forest dark:text-gold font-bold">
                         Zero Waste
                       </span>
                     ) : (
-                      <span className="text-ink-muted">OK</span>
+                      <span className="text-ink-muted text-xs font-mono">OK</span>
                     )}
                   </td>
                 </tr>
