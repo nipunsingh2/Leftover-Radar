@@ -141,30 +141,30 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
       {/* Header with Title & Finalize Action */}
       <div className="border-b border-ink-hairline dark:border-ink-dark-hairline pb-4 flex flex-wrap justify-between items-end gap-4">
         <div>
-          <div className="text-[10px] font-sans font-semibold text-racing dark:text-racing-dark uppercase tracking-wider">
-            Post-Service Reconciliation
+          <div className="sticker-badge bg-matcha/10 text-matcha dark:text-matcha-light border-matcha/30">
+            Post-Service Debrief 🧾
           </div>
-          <h1 className="editorial-title text-2xl font-bold tracking-tight text-ink dark:text-ink-dark mt-0.5">
-            Service Close-out · {servicePeriod.toUpperCase()} ({serviceDate})
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-ink dark:text-ink-dark mt-1">
+            Service Close-out • {servicePeriod.toUpperCase()} ({serviceDate})
           </h1>
           <p className="text-xs text-ink-muted mt-0.5">
-            Log realized kitchen production, guest portions sold, and observed stockouts to update model training telemetry.
+            Log realized kitchen production, student portions sold, and observed stockouts to update model training data.
           </p>
         </div>
 
         <button
           onClick={handleSaveCloseOut}
           disabled={isSaving}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-racing hover:bg-racing-hover text-white text-xs font-semibold shadow-xs transition-all duration-150 cursor-pointer disabled:opacity-60 active:scale-[0.98]"
+          className="btn-tactile flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-matcha hover:bg-matcha-hover text-white text-xs font-bold shadow-quirky cursor-pointer disabled:opacity-60"
         >
           {isSaving ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2} />
+              <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
               <span>Saving Out-turn...</span>
             </>
           ) : (
             <>
-              <Save className="w-4 h-4" strokeWidth={1.75} />
+              <Save className="w-4 h-4 text-yuzu" strokeWidth={2} />
               <span>Finalize & Save Service</span>
             </>
           )}
@@ -173,16 +173,16 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
 
       {/* Notifications */}
       {errorMessage && (
-        <div className="p-3.5 rounded-xl bg-crimson/10 border border-crimson/20 text-crimson text-xs flex items-center gap-2.5">
+        <div className="p-4 rounded-2xl bg-berry/10 border border-berry/20 text-berry text-xs flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span className="font-medium">{errorMessage}</span>
         </div>
       )}
 
       {saveSuccess && (
-        <div className="p-3.5 rounded-xl bg-racing/10 border border-racing/25 text-racing dark:text-racing-dark text-xs flex items-center gap-2.5">
-          <Check className="w-4 h-4 shrink-0 text-racing dark:text-racing-dark" />
-          <span className="font-semibold">Service close-out saved successfully into MongoDB `service_observations`. Telemetry debrief below.</span>
+        <div className="p-4 rounded-2xl bg-matcha/10 border border-matcha/30 text-matcha dark:text-matcha-light text-xs flex items-center gap-2.5 font-bold">
+          <Check className="w-4 h-4 shrink-0" />
+          <span>Service close-out saved successfully into MongoDB `service_observations`. Telemetry debrief below.</span>
         </div>
       )}
 
@@ -190,40 +190,40 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
       {debriefSummary && (
         <section aria-label="Service Debrief Bento" className="space-y-2">
           <div className="flex items-center gap-2">
-            <CheckSquare className="w-4 h-4 text-racing dark:text-racing-dark" />
-            <h2 className="text-xs font-sans font-bold text-ink dark:text-ink-dark uppercase tracking-wider">
+            <CheckSquare className="w-4 h-4 text-matcha dark:text-matcha-light" />
+            <h2 className="text-xs font-mono font-bold text-ink dark:text-ink-dark uppercase tracking-wider">
               Service Debrief Summary
             </h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="glass-card p-4">
-              <div className="text-[10px] font-sans font-semibold text-ink-muted uppercase">Realized Prep</div>
-              <div className="editorial-title text-2xl font-bold text-ink dark:text-ink-dark mt-1 tabular-nums">
+            <div className="quirky-card p-5">
+              <div className="text-[10px] font-mono font-bold text-ink-muted uppercase">Realized Prep</div>
+              <div className="font-serif text-3xl font-bold text-ink dark:text-ink-dark mt-1 tabular-nums">
                 {debriefSummary.total_prepared}
                 <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">portions</span>
               </div>
             </div>
 
-            <div className="glass-card p-4">
-              <div className="text-[10px] font-sans font-semibold text-ink-muted uppercase">Realized Sales</div>
-              <div className="editorial-title text-2xl font-bold text-racing dark:text-racing-dark mt-1 tabular-nums">
+            <div className="quirky-card p-5">
+              <div className="text-[10px] font-mono font-bold text-ink-muted uppercase">Realized Sales</div>
+              <div className="font-serif text-3xl font-bold text-matcha dark:text-matcha-light mt-1 tabular-nums">
                 {debriefSummary.total_sold}
                 <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">servings</span>
               </div>
             </div>
 
-            <div className="glass-card p-4">
-              <div className="text-[10px] font-sans font-semibold text-ochre uppercase">Leftover Waste</div>
-              <div className="editorial-title text-2xl font-bold text-ochre mt-1 tabular-nums">
+            <div className="quirky-card p-5">
+              <div className="text-[10px] font-mono font-bold text-yuzu-dark uppercase">Leftover Waste</div>
+              <div className="font-serif text-3xl font-bold text-yuzu-dark mt-1 tabular-nums">
                 {debriefSummary.total_waste}
                 <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">portions</span>
               </div>
             </div>
 
-            <div className="glass-card p-4">
-              <div className="text-[10px] font-sans font-semibold text-crimson uppercase">Stockouts Observed</div>
-              <div className="editorial-title text-2xl font-bold text-crimson mt-1 tabular-nums">
+            <div className="quirky-card p-5">
+              <div className="text-[10px] font-mono font-bold text-berry uppercase">Stockouts Observed</div>
+              <div className="font-serif text-3xl font-bold text-berry mt-1 tabular-nums">
                 {debriefSummary.total_sold_out}
                 <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">dishes</span>
               </div>
@@ -232,18 +232,18 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
         </section>
       )}
 
-      {/* Close-Out Input Table inside Glass Card */}
-      <div className="glass-card overflow-hidden">
+      {/* Close-Out Input Table inside Quirky Card */}
+      <div className="quirky-card overflow-hidden">
         <table className="w-full text-left text-xs border-collapse">
-          <thead className="bg-canvas-subtle/80 dark:bg-white/5 border-b border-ink-hairline dark:border-ink-dark-hairline text-ink-muted text-[10px] font-sans font-semibold uppercase tracking-wider">
+          <thead className="bg-canvas-subtle/80 dark:bg-white/5 border-b border-ink-hairline dark:border-ink-dark-hairline text-ink-muted text-[10px] font-mono font-bold uppercase tracking-wider">
             <tr>
-              <th className="py-3 px-4">Menu Dish</th>
-              <th className="py-3 px-3 text-right">Predicted Demand</th>
-              <th className="py-3 px-3 text-center min-w-[140px]">Portions Prepared</th>
-              <th className="py-3 px-3 text-center min-w-[140px]">Portions Sold</th>
-              <th className="py-3 px-3 text-right">Leftovers</th>
-              <th className="py-3 px-3 text-center">Stockout?</th>
-              <th className="py-3 px-3 text-center">Validation Status</th>
+              <th className="py-3.5 px-4">Menu Dish</th>
+              <th className="py-3.5 px-3 text-right">Predicted Demand</th>
+              <th className="py-3.5 px-3 text-center min-w-[140px]">Portions Prepared</th>
+              <th className="py-3.5 px-3 text-center min-w-[140px]">Portions Sold</th>
+              <th className="py-3.5 px-3 text-right">Leftovers</th>
+              <th className="py-3.5 px-3 text-center">Stockout?</th>
+              <th className="py-3.5 px-3 text-center">Validation Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-ink-hairline dark:divide-ink-dark-hairline">
@@ -255,17 +255,17 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                 <tr
                   key={row.item_id}
                   className={`hover:bg-canvas-subtle/50 dark:hover:bg-white/5 transition-colors ${
-                    isInvalid ? 'bg-crimson/10' : ''
+                    isInvalid ? 'bg-berry/10' : ''
                   }`}
                 >
                   {/* Dish Name */}
                   <td className="py-3 px-4">
-                    <div className="font-semibold text-ink dark:text-ink-dark text-sm">{row.item_name}</div>
-                    <div className="text-[10px] text-ink-muted">{row.category}</div>
+                    <div className="font-serif font-bold text-ink dark:text-ink-dark text-base">{row.item_name}</div>
+                    <div className="text-[10px] font-mono text-ink-muted">{row.category}</div>
                   </td>
 
                   {/* Predicted Demand */}
-                  <td className="py-3 px-3 text-right font-serif text-base font-bold text-ink-muted tabular-nums">
+                  <td className="py-3 px-3 text-right font-serif text-lg font-bold text-ink-muted tabular-nums">
                     {row.predicted_demand !== undefined ? row.predicted_demand : '—'}
                   </td>
 
@@ -282,7 +282,7 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                           Math.max(0, parseInt(e.target.value, 10) || 0)
                         )
                       }
-                      className="w-20 h-7 text-center font-mono font-bold text-sm bg-surface dark:bg-black/30 border border-ink-hairline dark:border-ink-dark-hairline rounded-md text-ink dark:text-ink-dark focus:border-racing outline-none tabular-nums"
+                      className="w-20 h-7 text-center font-mono font-bold text-sm bg-surface dark:bg-black/30 border-2 border-ink-hairline dark:border-ink-dark-hairline rounded-lg text-ink dark:text-ink-dark focus:border-matcha outline-none tabular-nums shadow-inner"
                     />
                   </td>
 
@@ -299,10 +299,10 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                           Math.max(0, parseInt(e.target.value, 10) || 0)
                         )
                       }
-                      className={`w-20 h-7 text-center font-mono font-bold text-sm bg-surface dark:bg-black/30 border rounded-md outline-none tabular-nums ${
+                      className={`w-20 h-7 text-center font-mono font-bold text-sm bg-surface dark:bg-black/30 border-2 rounded-lg outline-none tabular-nums shadow-inner ${
                         isInvalid
-                          ? 'border-crimson text-crimson'
-                          : 'border-ink-hairline dark:border-ink-dark-hairline text-ink dark:text-ink-dark focus:border-racing'
+                          ? 'border-berry text-berry'
+                          : 'border-ink-hairline dark:border-ink-dark-hairline text-ink dark:text-ink-dark focus:border-matcha'
                       }`}
                     />
                   </td>
@@ -310,11 +310,11 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                   {/* Leftovers */}
                   <td className="py-3 px-3 text-right font-mono text-sm tabular-nums">
                     {isInvalid ? (
-                      <span className="text-crimson font-bold">Error</span>
+                      <span className="text-berry font-bold">Error</span>
                     ) : waste > 0 ? (
-                      <span className="text-ochre font-semibold">+{waste}</span>
+                      <span className="text-yuzu-dark font-bold">+{waste}</span>
                     ) : (
-                      <span className="text-racing dark:text-racing-dark font-medium">0</span>
+                      <span className="text-matcha dark:text-matcha-light font-bold">0</span>
                     )}
                   </td>
 
@@ -324,7 +324,7 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                       type="checkbox"
                       checked={row.sold_out}
                       onChange={(e) => handleUpdate(idx, 'sold_out', e.target.checked)}
-                      className="w-4 h-4 accent-crimson cursor-pointer rounded-xs"
+                      className="w-4 h-4 accent-berry cursor-pointer rounded-xs"
                       title="Mark if dish ran out before service concluded"
                     />
                   </td>
@@ -332,15 +332,15 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                   {/* Validation status badge */}
                   <td className="py-3 px-3 text-center">
                     {isInvalid ? (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-crimson/15 text-crimson font-bold">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-berry/15 text-berry font-bold">
                         Sold &gt; Prep
                       </span>
                     ) : row.sold_out ? (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-crimson/15 text-crimson font-bold">
-                        STOCKOUT
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-berry/15 text-berry font-bold">
+                        SOLD OUT
                       </span>
                     ) : waste === 0 ? (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-racing/10 text-racing dark:text-racing-dark font-semibold">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-matcha/15 text-matcha dark:text-matcha-light font-bold">
                         Zero Waste
                       </span>
                     ) : (

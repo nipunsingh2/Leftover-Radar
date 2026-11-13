@@ -4,38 +4,34 @@
 
 @layer base {
   :root {
-    --canvas: #F9F7F2;
-    --canvas-subtle: #F2EFE8;
+    --canvas: #FAF7F2;
+    --canvas-subtle: #F3EFE6;
     --surface: #FFFFFF;
-    --surface-frosted: rgba(255, 255, 255, 0.85);
-    --ink: #16201A;
-    --ink-muted: #5A6B61;
-    --hairline: rgba(22, 32, 26, 0.08);
-    --racing: #143828;
-    --racing-hover: #0E291D;
-    --brass: #B88D48;
-    --brass-tint: #FDF8EE;
-    --ochre: #C07818;
-    --crimson: #A83228;
-    --sage: #5A7A68;
-    --card-border: rgba(220, 214, 202, 0.7);
+    --surface-frosted: rgba(255, 255, 255, 0.92);
+    --ink: #191C1A;
+    --ink-muted: #616763;
+    --hairline: rgba(25, 28, 26, 0.08);
+    --matcha: #1E4D38;
+    --matcha-hover: #153A2A;
+    --persimmon: #FF6B35;
+    --yuzu: #F7C948;
+    --berry: #E03131;
+    --card-border: rgba(25, 28, 26, 0.08);
   }
 
   .dark {
-    --canvas: #0E1310;
-    --canvas-subtle: #141C17;
-    --surface: #16201A;
-    --surface-frosted: rgba(22, 32, 26, 0.8);
-    --ink: #F0EDE6;
-    --ink-muted: #8D9C93;
+    --canvas: #121514;
+    --canvas-subtle: #1A201D;
+    --surface: #1A201D;
+    --surface-frosted: rgba(26, 32, 29, 0.88);
+    --ink: #F5F2EA;
+    --ink-muted: #96A09A;
     --hairline: rgba(255, 255, 255, 0.08);
-    --racing: #3AA676;
-    --racing-hover: #2F8C63;
-    --brass: #D4AF67;
-    --brass-tint: #262014;
-    --ochre: #E09226;
-    --crimson: #E5554B;
-    --sage: #759B85;
+    --matcha: #3FA373;
+    --matcha-hover: #32875E;
+    --persimmon: #FF7B47;
+    --yuzu: #FFD166;
+    --berry: #FA5252;
     --card-border: rgba(255, 255, 255, 0.08);
   }
 
@@ -43,101 +39,102 @@
     background-color: var(--canvas);
     color: var(--ink);
     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    letter-spacing: -0.011em;
+    background-image: radial-gradient(rgba(25, 28, 26, 0.035) 1px, transparent 1px);
+    background-size: 20px 20px;
+    letter-spacing: -0.012em;
   }
 
-  /* Force strict lining and tabular numerals so numbers never look irregular */
-  .tabular-nums, .font-mono, td, th, .font-serif {
+  .dark body {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Monospace figures and numerals with strict tabular alignment */
+  .tabular-nums, .font-mono, td, th {
     font-variant-numeric: lining-nums tabular-nums;
-    font-feature-settings: "lnum" 1, "tnum" 1;
   }
 }
 
-/* Glassmorphic Panel & Bento Card Utilities */
-.glass-panel {
+/* Quirky Bento Card & Panel Utilities */
+.quirky-card {
   background: var(--surface-frosted);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--hairline);
-}
-
-.glass-card {
-  background: var(--surface-frosted);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--card-border);
-  border-radius: 14px;
-  box-shadow: 0 1px 3px 0 rgba(20, 32, 26, 0.03);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 18px;
+  box-shadow: 0 2px 0 0 rgba(25, 28, 26, 0.05), 0 8px 24px -4px rgba(25, 28, 26, 0.04);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.glass-card-hover:hover {
+.dark .quirky-card {
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.25), 0 8px 24px -4px rgba(0, 0, 0, 0.35);
+}
+
+.quirky-card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px -4px rgba(20, 32, 26, 0.08), 0 2px 6px -1px rgba(20, 32, 26, 0.04);
-  border-color: rgba(184, 141, 72, 0.35);
+  box-shadow: 0 4px 0 0 rgba(25, 28, 26, 0.07), 0 14px 30px -6px rgba(25, 28, 26, 0.08);
 }
 
-.dark .glass-card-hover:hover {
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
-  border-color: rgba(212, 175, 103, 0.3);
+.dark .quirky-card-hover:hover {
+  box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.35), 0 14px 30px -6px rgba(0, 0, 0, 0.45);
 }
 
-/* Clean Editorial Heading */
-.editorial-title {
-  font-family: 'Newsreader', Georgia, serif;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  font-feature-settings: "lnum" 1, "tnum" 1;
+/* Tactile Click Buttons */
+.btn-tactile {
+  box-shadow: 0 2px 0 0 rgba(25, 28, 26, 0.12);
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Tactile Pill Badges */
-.badge-clean {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+.btn-tactile:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 0 0 0 0 transparent;
+}
+
+/* Quirky Sticker Badge */
+.sticker-badge {
+  font-family: 'Space Mono', monospace;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 2px 8px;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
   border-radius: 9999px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  border: 1px solid currentColor;
 }
 
-/* Print Styles for Kitchen Prep Sheet */
-@media print {
-  body {
-    background: white !important;
-    color: black !important;
-  }
-  .no-print {
-    display: none !important;
-  }
-  .print-only {
-    display: block !important;
-  }
-  .prep-ticket-print {
-    border: 2px solid #000 !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
-  }
+/* Kitchen Order Ticket perforated edge */
+.ticket-edge {
+  position: relative;
+}
+.ticket-edge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: radial-gradient(circle, transparent, transparent 3px, var(--surface) 3px, var(--surface));
+  background-size: 12px 6px;
 }
 
-/* Refined Minimalist Scrollbars */
+/* Minimalist Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(22, 32, 26, 0.15);
-  border-radius: 3px;
+  background: rgba(25, 28, 26, 0.18);
+  border-radius: 9999px;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.18);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brass);
+  background: var(--persimmon);
 }

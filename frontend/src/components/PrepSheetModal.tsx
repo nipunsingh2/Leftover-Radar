@@ -34,12 +34,12 @@ export const PrepSheetModal: React.FC<PrepSheetModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl bg-surface dark:bg-[#121815] border border-ink-hairline dark:border-ink-dark-hairline rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="w-full max-w-4xl bg-surface dark:bg-surface-dark border-2 border-ink-hairline dark:border-ink-dark-hairline rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Modal Controls (Hidden in print) */}
         <div className="no-print p-4 px-6 border-b border-ink-hairline dark:border-ink-dark-hairline flex items-center justify-between bg-canvas-subtle/80 dark:bg-black/30">
           <div className="flex items-center gap-2">
-            <UtensilsCrossed className="w-4 h-4 text-racing dark:text-racing-dark" />
-            <span className="text-xs font-sans font-semibold text-ink dark:text-ink-dark uppercase tracking-wider">
+            <span className="text-xl">📋</span>
+            <span className="text-xs font-mono font-bold text-ink dark:text-ink-dark uppercase tracking-wider">
               Kitchen Preparation Order Ticket
             </span>
           </div>
@@ -47,56 +47,56 @@ export const PrepSheetModal: React.FC<PrepSheetModalProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-racing hover:bg-racing-hover text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+              className="btn-tactile flex items-center gap-2 px-4 py-2 rounded-xl bg-matcha hover:bg-matcha-hover text-white text-xs font-bold shadow-xs cursor-pointer"
             >
-              <Printer className="w-3.5 h-3.5" strokeWidth={1.75} />
+              <Printer className="w-4 h-4 text-yuzu" strokeWidth={2} />
               <span>Print Sheet</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-ink-muted hover:text-ink dark:text-ink-dark-muted dark:hover:text-ink-dark hover:bg-canvas-subtle transition-colors cursor-pointer"
+              className="btn-tactile p-2 rounded-xl text-ink-muted hover:text-ink dark:text-ink-dark-muted dark:hover:text-ink-dark hover:bg-canvas-subtle cursor-pointer"
             >
-              <X className="w-5 h-5" strokeWidth={1.75} />
+              <X className="w-5 h-5" strokeWidth={2} />
             </button>
           </div>
         </div>
 
         {/* Printable Ticket Area */}
-        <div className="p-8 overflow-y-auto space-y-6 bg-white text-black font-sans print:p-0">
+        <div className="p-8 overflow-y-auto space-y-6 bg-[#FCFAF6] text-[#191C1A] font-sans print:p-0 print:bg-white print:text-black">
           {loading && (
             <div className="py-16 text-center text-gray-500 space-y-2">
-              <Loader2 className="w-7 h-7 animate-spin mx-auto text-racing" strokeWidth={2} />
+              <Loader2 className="w-8 h-8 animate-spin mx-auto text-persimmon" strokeWidth={2.5} />
               <p className="text-xs font-mono">Generating kitchen service order layout...</p>
             </div>
           )}
 
           {error && (
-            <div className="p-4 rounded-xl border border-red-300 bg-red-50 text-red-700 text-xs">
+            <div className="p-4 rounded-2xl border border-berry bg-berry/10 text-berry text-xs">
               {error}
             </div>
           )}
 
           {!loading && data && (
-            <div className="prep-ticket-print border-2 border-black p-8 space-y-6">
+            <div className="prep-ticket-print border-2 border-black p-8 space-y-6 bg-white relative rounded-xl shadow-xs">
               {/* Ticket Header */}
               <div className="border-b-2 border-black pb-5 flex justify-between items-start">
                 <div>
                   <div className="text-[10px] font-mono uppercase tracking-widest text-gray-600 font-bold">
-                    Official Cafeteria Daily Prep Order
+                    Official Cafeteria Daily Prep Order • Batch Ticket
                   </div>
-                  <h1 className="editorial-title text-3xl font-bold tracking-tight mt-1 text-black">
+                  <h1 className="font-serif text-3xl font-bold tracking-tight mt-1 text-black">
                     {data.kitchen_name}
                   </h1>
-                  <div className="text-sm text-gray-800 mt-1 font-medium">
-                    Service: <span className="font-bold uppercase">{data.service_period}</span> · Date: {data.service_date}
+                  <div className="text-sm text-gray-800 mt-1 font-sans">
+                    Service: <span className="font-bold uppercase">{data.service_period}</span> • Date: {data.service_date}
                   </div>
                 </div>
 
                 <div className="text-right font-mono text-xs">
-                  <div className="border-2 border-black px-3 py-1.5 inline-block font-bold text-sm bg-gray-50">
+                  <div className="border-2 border-black px-3 py-1.5 inline-block font-bold text-sm bg-gray-50 rounded-lg">
                     BATCH: {data.service_date.replace(/-/g, '')}-{data.service_period.toUpperCase()}
                   </div>
-                  <div className="text-xs text-gray-700 font-semibold mt-1.5">
+                  <div className="text-xs text-gray-700 font-bold mt-1.5">
                     Total Planned Prep: {data.total_planned_portions} Portions
                   </div>
                 </div>
@@ -122,7 +122,7 @@ export const PrepSheetModal: React.FC<PrepSheetModalProps> = ({
                         <td className="py-2 px-2 text-center">
                           <div className="w-4 h-4 border-2 border-black inline-block rounded-xs" />
                         </td>
-                        <td className="py-2 px-3 font-sans font-bold text-sm text-black">
+                        <td className="py-2 px-3 font-serif font-bold text-sm text-black">
                           {item.item_name}
                         </td>
                         <td className="py-2 px-3 uppercase text-[10px] text-gray-600 font-medium">

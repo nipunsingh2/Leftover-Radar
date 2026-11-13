@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Printer, Sparkles, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Printer, Sparkles, Loader2, Calendar } from 'lucide-react';
 
 interface HeaderStripProps {
   serviceDate: string;
@@ -29,6 +29,12 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
     : serviceDate;
   const periodLabel = servicePeriod.charAt(0).toUpperCase() + servicePeriod.slice(1);
 
+  const mealEmojis = {
+    breakfast: '🍳',
+    lunch: '🥪',
+    dinner: '🍛',
+  };
+
   const handleStepDay = (deltaDays: number) => {
     const cur = new Date(serviceDate + 'T00:00:00');
     cur.setDate(cur.getDate() + deltaDays);
@@ -37,69 +43,77 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
   };
 
   return (
-    <header className="glass-panel border-b border-ink-hairline dark:border-ink-dark-hairline px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10">
+    <header className="bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-xl border-b border-ink-hairline dark:border-ink-dark-hairline px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10">
       {/* Title & Service Date Stepper */}
       <div className="flex items-center gap-5">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-sans font-semibold text-racing dark:text-racing-dark uppercase tracking-wider">
-              Commercial Operations
+            <span className="text-[10px] font-mono uppercase tracking-wider text-matcha dark:text-matcha-light font-bold">
+              Service Orchestration
             </span>
-            <span className="w-1 h-1 rounded-full bg-ink-muted/40" />
-            <span className="text-[10px] font-mono text-ink-muted dark:text-ink-dark-muted">
-              Model {modelVersion} · 80% Conformal
+            <span className="w-1 h-1 rounded-full bg-persimmon" />
+            <span className="text-[10px] font-mono text-ink-muted">
+              Model {modelVersion} • 80% Conformal
             </span>
           </div>
 
-          <h1 className="editorial-title text-2xl font-bold tracking-tight text-ink dark:text-ink-dark mt-0.5">
-            {periodLabel} Service <span className="text-ink-muted dark:text-ink-dark-muted font-normal text-lg">· {formattedDay}</span>
+          <h1 className="font-serif text-2xl font-bold tracking-tight text-ink dark:text-ink-dark mt-0.5 flex items-center gap-2">
+            <span>{mealEmojis[servicePeriod]}</span>
+            <span>{periodLabel} Service</span>
+            <span className="text-ink-muted dark:text-ink-dark-muted font-normal text-lg font-sans">
+              • {formattedDay}
+            </span>
           </h1>
         </div>
 
-        {/* Date Stepper Controls */}
-        <div className="flex items-center bg-canvas-subtle/80 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline rounded-lg p-0.5 shadow-xs">
+        {/* Tactile Date Stepper Capsule */}
+        <div className="flex items-center bg-canvas-subtle/80 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline rounded-2xl p-1 shadow-tactile">
           <button
             onClick={() => handleStepDay(-1)}
             aria-label="Previous day"
-            className="p-1.5 rounded-md hover:bg-surface dark:hover:bg-white/10 text-ink-muted hover:text-ink dark:text-ink-dark-muted dark:hover:text-ink-dark transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl hover:bg-surface dark:hover:bg-white/10 text-ink-muted hover:text-ink transition-colors cursor-pointer active:scale-90"
           >
-            <ChevronLeft className="w-4 h-4" strokeWidth={1.75} />
+            <ChevronLeft className="w-4 h-4" strokeWidth={2} />
           </button>
 
-          <input
-            type="date"
-            value={serviceDate}
-            onChange={(e) => onDateChange(e.target.value)}
-            className="bg-transparent text-xs font-mono font-medium px-2 py-0.5 text-ink dark:text-ink-dark outline-none cursor-pointer"
-          />
+          <div className="flex items-center gap-1.5 px-2">
+            <Calendar className="w-3.5 h-3.5 text-persimmon" />
+            <input
+              type="date"
+              value={serviceDate}
+              onChange={(e) => onDateChange(e.target.value)}
+              className="bg-transparent text-xs font-mono font-bold text-ink dark:text-ink-dark outline-none cursor-pointer"
+            />
+          </div>
 
           <button
             onClick={() => handleStepDay(1)}
             aria-label="Next day"
-            className="p-1.5 rounded-md hover:bg-surface dark:hover:bg-white/10 text-ink-muted hover:text-ink dark:text-ink-dark-muted dark:hover:text-ink-dark transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl hover:bg-surface dark:hover:bg-white/10 text-ink-muted hover:text-ink transition-colors cursor-pointer active:scale-90"
           >
-            <ChevronRight className="w-4 h-4" strokeWidth={1.75} />
+            <ChevronRight className="w-4 h-4" strokeWidth={2} />
           </button>
         </div>
       </div>
 
       {/* Service Period Segmented Control & Actions */}
       <div className="flex items-center gap-3">
-        {/* Segmented Meal Toggle */}
-        <div className="flex items-center p-1 bg-canvas-subtle/80 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline rounded-lg text-xs font-medium">
+        {/* Playful Segmented Meal Toggle */}
+        <div className="flex items-center p-1 bg-canvas-subtle/80 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline rounded-2xl text-xs font-semibold shadow-tactile">
           {(['breakfast', 'lunch', 'dinner'] as const).map((p) => {
             const isSelected = servicePeriod === p;
             return (
               <button
                 key={p}
                 onClick={() => onPeriodChange(p)}
-                className={`px-3 py-1 rounded-md capitalize transition-all duration-150 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl capitalize transition-all duration-200 cursor-pointer ${
                   isSelected
-                    ? 'bg-surface dark:bg-surface-dark text-racing dark:text-racing-dark font-semibold shadow-xs'
-                    : 'text-ink-muted dark:text-ink-dark-muted hover:text-ink dark:hover:text-ink-dark'
+                    ? 'bg-matcha text-white font-bold shadow-xs scale-102'
+                    : 'text-ink-muted dark:text-ink-dark-muted hover:text-ink'
                 }`}
               >
-                {p}
+                <span>{mealEmojis[p]}</span>
+                <span>{p}</span>
               </button>
             );
           })}
@@ -109,11 +123,11 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
         {onOpenPrintSheet && (
           <button
             onClick={onOpenPrintSheet}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ink-hairline dark:border-ink-dark-hairline bg-surface dark:bg-surface-dark hover:bg-canvas-subtle text-xs font-medium text-ink dark:text-ink-dark shadow-xs transition-colors cursor-pointer"
+            className="btn-tactile flex items-center gap-2 px-3.5 py-2 rounded-2xl border border-ink-hairline dark:border-ink-dark-hairline bg-surface dark:bg-surface-dark hover:bg-canvas-subtle text-xs font-bold text-ink dark:text-ink-dark cursor-pointer"
             title="Print Kitchen Preparation Ticket"
           >
-            <Printer className="w-3.5 h-3.5 text-ink-muted" strokeWidth={1.75} />
-            <span>Prep Sheet</span>
+            <Printer className="w-3.5 h-3.5 text-persimmon" strokeWidth={2} />
+            <span>Prep Ticket</span>
           </button>
         )}
 
@@ -121,17 +135,17 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
         <button
           onClick={onGenerateForecast}
           disabled={isGenerating}
-          className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-racing hover:bg-racing-hover text-white text-xs font-semibold shadow-xs transition-all duration-150 cursor-pointer disabled:opacity-60 active:scale-[0.98]"
+          className="btn-tactile flex items-center gap-2 px-5 py-2 rounded-2xl bg-persimmon hover:bg-persimmon-hover text-white text-xs font-bold shadow-quirky cursor-pointer disabled:opacity-60"
         >
           {isGenerating ? (
             <>
-              <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={2} />
-              <span>Generating...</span>
+              <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2.5} />
+              <span>Scanning Radar...</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-3.5 h-3.5 text-brass-light" strokeWidth={2} />
-              <span>Generate Forecast</span>
+              <Sparkles className="w-4 h-4 text-yuzu" strokeWidth={2.5} />
+              <span>Ping Radar Forecast</span>
             </>
           )}
         </button>

@@ -12,7 +12,7 @@ import { HistoryPage } from './pages/HistoryPage';
 import { ModelLabPage } from './pages/ModelLabPage';
 import { DataSettingsPage } from './pages/DataSettingsPage';
 import { PrepSheetModal } from './components/PrepSheetModal';
-import { AlertCircle, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, RotateCcw } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Navigation
@@ -22,7 +22,7 @@ export const App: React.FC = () => {
   const [serviceDate, setServiceDate] = useState<string>('2026-11-14');
   const [servicePeriod, setServicePeriod] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
 
-  // Dark Mode ("Night Mode")
+  // Dark Mode ("Night Mode" / "Midnight Diner")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   // App Data State
@@ -155,7 +155,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-canvas dark:bg-canvas-dark text-ink dark:text-ink-dark transition-colors font-sans selection:bg-racing/15 selection:text-racing">
+    <div className="flex min-h-screen bg-canvas dark:bg-canvas-dark text-ink dark:text-ink-dark transition-colors font-sans selection:bg-persimmon/20 selection:text-persimmon">
       {/* 1. Left Navigation Rail */}
       <NavigationRail
         activeTab={activeTab}
@@ -180,14 +180,14 @@ export const App: React.FC = () => {
 
         {/* Global Error Banner */}
         {errorMessage && (
-          <div className="mx-8 mt-4 p-3.5 rounded-xl bg-crimson/10 border border-crimson/20 text-crimson text-xs flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{errorMessage}</span>
+          <div className="mx-8 mt-4 p-4 rounded-card quirky-card bg-berry/10 border-2 border-berry/30 text-berry text-xs flex items-center justify-between shadow-tactile">
+            <div className="flex items-center gap-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0 text-berry" />
+              <span className="font-sans font-medium">{errorMessage}</span>
             </div>
             <button
               onClick={loadForecastData}
-              className="px-2.5 py-1 rounded bg-crimson text-white text-xs font-semibold cursor-pointer"
+              className="btn-tactile px-3 py-1.5 rounded-card bg-berry text-white text-xs font-bold cursor-pointer shadow-tactile"
             >
               Retry
             </button>
@@ -225,25 +225,30 @@ export const App: React.FC = () => {
         </main>
       </div>
 
-      {/* Floating Undo Toast Notification */}
+      {/* Floating Quirky Undo Toast Notification */}
       {showUndoToast && (
-        <div className="fixed bottom-6 right-6 z-40 glass-card px-4 py-3 shadow-lg border border-ink-hairline dark:border-ink-dark-hairline flex items-center gap-3 animate-in slide-in-from-bottom duration-200">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-racing dark:text-racing-dark" />
-            <span className="text-xs font-medium text-ink dark:text-ink-dark">
-              Applied all Newsvendor recommended buffers.
-            </span>
+        <div className="fixed bottom-6 right-6 z-40 quirky-card px-5 py-3.5 shadow-quirky border-2 border-matcha/30 dark:border-matcha/40 flex items-center gap-4 bg-canvas dark:bg-canvas-dark animate-spring">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">✨</span>
+            <div>
+              <div className="text-xs font-bold text-ink dark:text-ink-dark font-sans">
+                All Recommendations Applied
+              </div>
+              <div className="text-[11px] font-mono text-ink-muted">
+                Newsvendor optimal safety buffers synchronized.
+              </div>
+            </div>
           </div>
           <button
             onClick={handleUndoApplyAll}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-racing hover:bg-racing-hover text-white text-xs font-semibold cursor-pointer shadow-xs transition-colors"
+            className="btn-tactile flex items-center gap-1.5 px-3 py-1.5 rounded-card bg-persimmon hover:bg-persimmon-hover text-white text-xs font-bold font-sans cursor-pointer shadow-tactile transition-all"
           >
-            <RotateCcw className="w-3 h-3" />
+            <RotateCcw className="w-3.5 h-3.5" />
             <span>Undo</span>
           </button>
           <button
             onClick={() => setShowUndoToast(false)}
-            className="text-xs text-ink-muted hover:text-ink cursor-pointer p-0.5 ml-1"
+            className="text-xs font-mono text-ink-muted hover:text-ink dark:hover:text-cream cursor-pointer p-1"
           >
             ✕
           </button>
