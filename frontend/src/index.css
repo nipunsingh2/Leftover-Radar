@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --canvas: #F6F1E7;
+    --surface: #FBF8F1;
+    --ink: #17211B;
+    --ink-muted: #5B665F;
+    --hairline: #DDD5C4;
+    --primary: #1F4D3A;
+    --primary-hover: #173B2D;
+    --saffron: #C98A1B;
+    --clay: #A63D2F;
+    --sage-tint: #E3EBDD;
+  }
+
+  .dark {
+    --canvas: #10150F;
+    --surface: #171E17;
+    --ink: #EDE8DA;
+    --ink-muted: #8A958E;
+    --hairline: #263127;
+    --primary: #7FB59A;
+    --primary-hover: #679E83;
+    --saffron: #DCA23A;
+    --clay: #C25648;
+    --sage-tint: #1C271E;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: 'Instrument Sans', 'IBM Plex Sans', -apple-system, sans-serif;
+  }
+
+  /* Monospace numerals and numbers must always have tabular alignment */
+  .tabular-nums, .font-mono, td, th {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Subtle paper texture */
+.paper-texture {
+  background-image: radial-gradient(var(--hairline) 0.5px, transparent 0.5px);
+  background-size: 16px 16px;
+}
+
+/* Perforated ticket top border */
+.ticket-perforated {
+  position: relative;
+}
+.ticket-perforated::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: radial-gradient(circle, transparent, transparent 2px, var(--surface) 2px, var(--surface));
+  background-size: 8px 4px;
+}
+
+/* Print Styles for Prep Sheet (Section 9.5 & 12) */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .prep-ticket-print {
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+}
+
+/* Custom hairline scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--canvas);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--hairline);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-muted);
+}
