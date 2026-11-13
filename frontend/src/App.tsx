@@ -22,7 +22,7 @@ export const App: React.FC = () => {
   const [serviceDate, setServiceDate] = useState<string>('2026-11-14');
   const [servicePeriod, setServicePeriod] = useState<'breakfast' | 'lunch' | 'dinner'>('lunch');
 
-  // Dark Mode ("Night Conservatory")
+  // Dark Mode ("Night Mode")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   // App Data State
@@ -155,7 +155,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-canvas dark:bg-canvas-dark text-ink dark:text-ink-dark transition-colors font-sans selection:bg-gold/30 selection:text-forest">
+    <div className="flex min-h-screen bg-canvas dark:bg-canvas-dark text-ink dark:text-ink-dark transition-colors font-sans selection:bg-racing/15 selection:text-racing">
       {/* 1. Left Navigation Rail */}
       <NavigationRail
         activeTab={activeTab}
@@ -180,14 +180,14 @@ export const App: React.FC = () => {
 
         {/* Global Error Banner */}
         {errorMessage && (
-          <div className="mx-8 mt-4 p-4 rounded-xl bg-clay/10 border border-clay/30 text-clay text-xs flex items-center justify-between">
+          <div className="mx-8 mt-4 p-3.5 rounded-xl bg-crimson/10 border border-crimson/20 text-crimson text-xs flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
             <button
               onClick={loadForecastData}
-              className="px-3 py-1 rounded-lg bg-clay text-white text-xs font-semibold cursor-pointer"
+              className="px-2.5 py-1 rounded bg-crimson text-white text-xs font-semibold cursor-pointer"
             >
               Retry
             </button>
@@ -227,23 +227,23 @@ export const App: React.FC = () => {
 
       {/* Floating Undo Toast Notification */}
       {showUndoToast && (
-        <div className="fixed bottom-6 right-6 z-40 glass-card px-5 py-3.5 shadow-2xl border border-gold/40 flex items-center gap-4 animate-in slide-in-from-bottom duration-300">
+        <div className="fixed bottom-6 right-6 z-40 glass-card px-4 py-3 shadow-lg border border-ink-hairline dark:border-ink-dark-hairline flex items-center gap-3 animate-in slide-in-from-bottom duration-200">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-forest dark:text-gold" />
-            <span className="text-xs font-serif font-bold text-ink dark:text-ink-dark">
-              Applied all Newsvendor recommendations.
+            <CheckCircle2 className="w-4 h-4 text-racing dark:text-racing-dark" />
+            <span className="text-xs font-medium text-ink dark:text-ink-dark">
+              Applied all Newsvendor recommended buffers.
             </span>
           </div>
           <button
             onClick={handleUndoApplyAll}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-forest text-gold-50 dark:bg-gold dark:text-black text-xs font-semibold cursor-pointer shadow-sm hover:opacity-90 transition-opacity"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-racing hover:bg-racing-hover text-white text-xs font-semibold cursor-pointer shadow-xs transition-colors"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-3 h-3" />
             <span>Undo</span>
           </button>
           <button
             onClick={() => setShowUndoToast(false)}
-            className="text-xs text-ink-muted hover:text-ink cursor-pointer ml-1"
+            className="text-xs text-ink-muted hover:text-ink cursor-pointer p-0.5 ml-1"
           >
             ✕
           </button>

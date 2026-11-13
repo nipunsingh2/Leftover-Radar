@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, AlertCircle, Save, Loader2, Sparkles, CheckSquare, TrendingUp, TrendingDown } from 'lucide-react';
+import { Check, AlertCircle, Save, Loader2, CheckSquare } from 'lucide-react';
 import { api, MenuItem, ForecastItemResult } from '../api/client';
 
 interface CloseOutPageProps {
@@ -137,25 +137,25 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
   };
 
   return (
-    <div className="p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-8 space-y-6 max-w-7xl mx-auto">
       {/* Header with Title & Finalize Action */}
-      <div className="border-b border-gold/20 dark:border-white/10 pb-5 flex flex-wrap justify-between items-end gap-4">
+      <div className="border-b border-ink-hairline dark:border-ink-dark-hairline pb-4 flex flex-wrap justify-between items-end gap-4">
         <div>
-          <div className="victorian-badge text-[10px] text-forest dark:text-gold font-bold">
+          <div className="text-[10px] font-sans font-semibold text-racing dark:text-racing-dark uppercase tracking-wider">
             Post-Service Reconciliation
           </div>
-          <h1 className="victorian-heading text-3xl font-bold tracking-tight text-forest dark:text-gold mt-1">
+          <h1 className="editorial-title text-2xl font-bold tracking-tight text-ink dark:text-ink-dark mt-0.5">
             Service Close-out · {servicePeriod.toUpperCase()} ({serviceDate})
           </h1>
-          <p className="text-xs text-ink-muted dark:text-ink-dark-muted mt-0.5">
-            Log realized kitchen production, guest portions sold, and observed stockouts to update model training data.
+          <p className="text-xs text-ink-muted mt-0.5">
+            Log realized kitchen production, guest portions sold, and observed stockouts to update model training telemetry.
           </p>
         </div>
 
         <button
           onClick={handleSaveCloseOut}
           disabled={isSaving}
-          className="shimmer-hover flex items-center gap-2 px-6 py-2.5 rounded-xl bg-forest hover:bg-forest-hover text-gold-50 dark:bg-gold dark:text-black text-xs font-semibold shadow-lg shadow-forest/25 dark:shadow-gold-glow/20 border border-gold/40 transition-all duration-200 cursor-pointer disabled:opacity-60"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-racing hover:bg-racing-hover text-white text-xs font-semibold shadow-xs transition-all duration-150 cursor-pointer disabled:opacity-60 active:scale-[0.98]"
         >
           {isSaving ? (
             <>
@@ -165,7 +165,7 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
           ) : (
             <>
               <Save className="w-4 h-4" strokeWidth={1.75} />
-              <span>Save & Finalize Service</span>
+              <span>Finalize & Save Service</span>
             </>
           )}
         </button>
@@ -173,57 +173,57 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
 
       {/* Notifications */}
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-clay/10 border border-clay/30 text-clay text-xs flex items-center gap-2.5">
+        <div className="p-3.5 rounded-xl bg-crimson/10 border border-crimson/20 text-crimson text-xs flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span className="font-medium">{errorMessage}</span>
         </div>
       )}
 
       {saveSuccess && (
-        <div className="p-4 rounded-xl bg-forest/10 border border-forest/30 text-forest dark:text-gold text-xs flex items-center gap-2.5">
-          <Check className="w-4 h-4 shrink-0 text-forest dark:text-gold" />
-          <span className="font-semibold">Service close-out saved successfully into MongoDB `service_observations`. Debrief telemetry generated below.</span>
+        <div className="p-3.5 rounded-xl bg-racing/10 border border-racing/25 text-racing dark:text-racing-dark text-xs flex items-center gap-2.5">
+          <Check className="w-4 h-4 shrink-0 text-racing dark:text-racing-dark" />
+          <span className="font-semibold">Service close-out saved successfully into MongoDB `service_observations`. Telemetry debrief below.</span>
         </div>
       )}
 
       {/* Bento Grid: Instant Service Debrief */}
       {debriefSummary && (
-        <section aria-label="Service Debrief Bento" className="space-y-3">
+        <section aria-label="Service Debrief Bento" className="space-y-2">
           <div className="flex items-center gap-2">
-            <CheckSquare className="w-4 h-4 text-forest dark:text-gold" />
-            <h2 className="victorian-badge text-xs font-bold text-forest dark:text-gold">
-              Instant Service Debrief Telemetry
+            <CheckSquare className="w-4 h-4 text-racing dark:text-racing-dark" />
+            <h2 className="text-xs font-sans font-bold text-ink dark:text-ink-dark uppercase tracking-wider">
+              Service Debrief Summary
             </h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="glass-card p-5">
-              <div className="victorian-badge text-[9px] text-ink-muted uppercase">Realized Preparation</div>
-              <div className="victorian-heading text-3xl font-bold text-forest dark:text-gold mt-1 tabular-nums">
+            <div className="glass-card p-4">
+              <div className="text-[10px] font-sans font-semibold text-ink-muted uppercase">Realized Prep</div>
+              <div className="editorial-title text-2xl font-bold text-ink dark:text-ink-dark mt-1 tabular-nums">
                 {debriefSummary.total_prepared}
                 <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">portions</span>
               </div>
             </div>
 
-            <div className="glass-card p-5">
-              <div className="victorian-badge text-[9px] text-ink-muted uppercase">Realized Sales</div>
-              <div className="victorian-heading text-3xl font-bold text-forest dark:text-gold mt-1 tabular-nums">
+            <div className="glass-card p-4">
+              <div className="text-[10px] font-sans font-semibold text-ink-muted uppercase">Realized Sales</div>
+              <div className="editorial-title text-2xl font-bold text-racing dark:text-racing-dark mt-1 tabular-nums">
                 {debriefSummary.total_sold}
                 <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">servings</span>
               </div>
             </div>
 
-            <div className="glass-card p-5">
-              <div className="victorian-badge text-[9px] text-saffron uppercase">Leftover Waste</div>
-              <div className="victorian-heading text-3xl font-bold text-saffron mt-1 tabular-nums">
+            <div className="glass-card p-4">
+              <div className="text-[10px] font-sans font-semibold text-ochre uppercase">Leftover Waste</div>
+              <div className="editorial-title text-2xl font-bold text-ochre mt-1 tabular-nums">
                 {debriefSummary.total_waste}
                 <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">portions</span>
               </div>
             </div>
 
-            <div className="glass-card p-5">
-              <div className="victorian-badge text-[9px] text-clay uppercase">Stockouts Observed</div>
-              <div className="victorian-heading text-3xl font-bold text-clay mt-1 tabular-nums">
+            <div className="glass-card p-4">
+              <div className="text-[10px] font-sans font-semibold text-crimson uppercase">Stockouts Observed</div>
+              <div className="editorial-title text-2xl font-bold text-crimson mt-1 tabular-nums">
                 {debriefSummary.total_sold_out}
                 <span className="text-xs font-sans font-normal text-ink-muted ml-1.5">dishes</span>
               </div>
@@ -233,20 +233,20 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
       )}
 
       {/* Close-Out Input Table inside Glass Card */}
-      <div className="glass-card shadow-glass dark:shadow-glass-dark">
+      <div className="glass-card overflow-hidden">
         <table className="w-full text-left text-xs border-collapse">
-          <thead className="bg-canvas-subtle/80 dark:bg-white/5 border-b border-gold/20 dark:border-white/10 text-ink-muted dark:text-ink-dark-muted victorian-badge text-[10px]">
+          <thead className="bg-canvas-subtle/80 dark:bg-white/5 border-b border-ink-hairline dark:border-ink-dark-hairline text-ink-muted text-[10px] font-sans font-semibold uppercase tracking-wider">
             <tr>
-              <th className="py-4 px-5">Menu Dish</th>
-              <th className="py-4 px-3 text-right">Predicted Demand</th>
-              <th className="py-4 px-3 text-center min-w-[140px]">Portions Prepared</th>
-              <th className="py-4 px-3 text-center min-w-[140px]">Portions Sold</th>
-              <th className="py-4 px-3 text-right">Leftovers</th>
-              <th className="py-4 px-3 text-center">Stockout?</th>
-              <th className="py-4 px-3 text-center">Audit Status</th>
+              <th className="py-3 px-4">Menu Dish</th>
+              <th className="py-3 px-3 text-right">Predicted Demand</th>
+              <th className="py-3 px-3 text-center min-w-[140px]">Portions Prepared</th>
+              <th className="py-3 px-3 text-center min-w-[140px]">Portions Sold</th>
+              <th className="py-3 px-3 text-right">Leftovers</th>
+              <th className="py-3 px-3 text-center">Stockout?</th>
+              <th className="py-3 px-3 text-center">Validation Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gold/15 dark:divide-white/10">
+          <tbody className="divide-y divide-ink-hairline dark:divide-ink-dark-hairline">
             {rows.map((row, idx) => {
               const waste = Math.max(0, row.portions_prepared - row.portions_sold);
               const isInvalid = row.portions_sold > row.portions_prepared;
@@ -254,23 +254,23 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
               return (
                 <tr
                   key={row.item_id}
-                  className={`hover:bg-gold/5 dark:hover:bg-white/5 transition-colors duration-150 ${
-                    isInvalid ? 'bg-clay/10' : ''
+                  className={`hover:bg-canvas-subtle/50 dark:hover:bg-white/5 transition-colors ${
+                    isInvalid ? 'bg-crimson/10' : ''
                   }`}
                 >
                   {/* Dish Name */}
-                  <td className="py-3.5 px-5">
-                    <div className="font-serif font-bold text-base text-ink dark:text-ink-dark">{row.item_name}</div>
-                    <div className="victorian-badge text-[9px] text-ink-muted mt-0.5">{row.category}</div>
+                  <td className="py-3 px-4">
+                    <div className="font-semibold text-ink dark:text-ink-dark text-sm">{row.item_name}</div>
+                    <div className="text-[10px] text-ink-muted">{row.category}</div>
                   </td>
 
                   {/* Predicted Demand */}
-                  <td className="py-3.5 px-3 text-right font-serif text-lg font-bold text-ink-muted tabular-nums">
+                  <td className="py-3 px-3 text-right font-serif text-base font-bold text-ink-muted tabular-nums">
                     {row.predicted_demand !== undefined ? row.predicted_demand : '—'}
                   </td>
 
                   {/* Portions Prepared Input */}
-                  <td className="py-3.5 px-3 text-center">
+                  <td className="py-3 px-3 text-center">
                     <input
                       type="number"
                       min="0"
@@ -282,12 +282,12 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                           Math.max(0, parseInt(e.target.value, 10) || 0)
                         )
                       }
-                      className="w-22 h-8 text-center font-mono font-bold text-sm bg-canvas/90 dark:bg-black/40 border border-gold/30 dark:border-white/15 rounded-lg text-ink dark:text-ink-dark focus:border-gold outline-none tabular-nums shadow-inner transition-colors"
+                      className="w-20 h-7 text-center font-mono font-bold text-sm bg-surface dark:bg-black/30 border border-ink-hairline dark:border-ink-dark-hairline rounded-md text-ink dark:text-ink-dark focus:border-racing outline-none tabular-nums"
                     />
                   </td>
 
                   {/* Portions Sold Input */}
-                  <td className="py-3.5 px-3 text-center">
+                  <td className="py-3 px-3 text-center">
                     <input
                       type="number"
                       min="0"
@@ -299,48 +299,48 @@ export const CloseOutPage: React.FC<CloseOutPageProps> = ({
                           Math.max(0, parseInt(e.target.value, 10) || 0)
                         )
                       }
-                      className={`w-22 h-8 text-center font-mono font-bold text-sm bg-canvas/90 dark:bg-black/40 border rounded-lg outline-none tabular-nums shadow-inner transition-colors ${
+                      className={`w-20 h-7 text-center font-mono font-bold text-sm bg-surface dark:bg-black/30 border rounded-md outline-none tabular-nums ${
                         isInvalid
-                          ? 'border-clay text-clay'
-                          : 'border-gold/30 dark:border-white/15 text-ink dark:text-ink-dark focus:border-gold'
+                          ? 'border-crimson text-crimson'
+                          : 'border-ink-hairline dark:border-ink-dark-hairline text-ink dark:text-ink-dark focus:border-racing'
                       }`}
                     />
                   </td>
 
                   {/* Leftovers */}
-                  <td className="py-3.5 px-3 text-right font-mono text-sm tabular-nums">
+                  <td className="py-3 px-3 text-right font-mono text-sm tabular-nums">
                     {isInvalid ? (
-                      <span className="text-clay font-bold">Error</span>
+                      <span className="text-crimson font-bold">Error</span>
                     ) : waste > 0 ? (
-                      <span className="text-saffron font-bold">+{waste}</span>
+                      <span className="text-ochre font-semibold">+{waste}</span>
                     ) : (
-                      <span className="text-forest dark:text-gold font-medium">0</span>
+                      <span className="text-racing dark:text-racing-dark font-medium">0</span>
                     )}
                   </td>
 
                   {/* Sold-out toggle */}
-                  <td className="py-3.5 px-3 text-center">
+                  <td className="py-3 px-3 text-center">
                     <input
                       type="checkbox"
                       checked={row.sold_out}
                       onChange={(e) => handleUpdate(idx, 'sold_out', e.target.checked)}
-                      className="w-4 h-4 accent-clay cursor-pointer rounded-xs"
+                      className="w-4 h-4 accent-crimson cursor-pointer rounded-xs"
                       title="Mark if dish ran out before service concluded"
                     />
                   </td>
 
                   {/* Validation status badge */}
-                  <td className="py-3.5 px-3 text-center">
+                  <td className="py-3 px-3 text-center">
                     {isInvalid ? (
-                      <span className="victorian-badge text-[9px] px-2 py-0.5 rounded-full bg-clay/15 text-clay font-bold">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-crimson/15 text-crimson font-bold">
                         Sold &gt; Prep
                       </span>
                     ) : row.sold_out ? (
-                      <span className="victorian-badge text-[9px] px-2 py-0.5 rounded-full bg-clay/15 text-clay font-bold">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-crimson/15 text-crimson font-bold">
                         STOCKOUT
                       </span>
                     ) : waste === 0 ? (
-                      <span className="victorian-badge text-[9px] px-2 py-0.5 rounded-full bg-forest/10 text-forest dark:text-gold font-bold">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-racing/10 text-racing dark:text-racing-dark font-semibold">
                         Zero Waste
                       </span>
                     ) : (

@@ -39,29 +39,26 @@ export const RangeBar: React.FC<RangeBarProps> = ({
   return (
     <div className="w-full select-none">
       {/* Visual Track Container */}
-      <div className="relative h-6 bg-canvas-subtle/80 dark:bg-black/40 rounded-lg border border-gold/20 dark:border-white/10 overflow-hidden shadow-inner">
+      <div className="relative h-5 bg-canvas-subtle/80 dark:bg-white/5 rounded-md border border-ink-hairline dark:border-ink-dark-hairline overflow-hidden">
         {/* 1. 80% Conformal Interval Zone (Sage Glass Band) */}
         <div
-          className="absolute top-0 bottom-0 bg-gradient-to-r from-forest/15 via-forest/20 to-forest/15 dark:from-forest-dark/20 dark:to-forest-dark/20 border-x border-forest/40 dark:border-gold/40 backdrop-blur-xs"
+          className="absolute top-0 bottom-0 bg-racing/10 dark:bg-racing-dark/15 border-x border-racing/30 dark:border-racing-dark/30"
           style={{
             left: `${pLowPct}%`,
             width: `${Math.max(1.5, pHighPct - pLowPct)}%`,
           }}
           title={`80% Conformal Interval: [${p80Low}, ${p80High}] portions`}
-        >
-          {/* Subtle diagonal hatching pattern for precision calibration feel */}
-          <div className="w-full h-full opacity-15 bg-[radial-gradient(#164232_1px,transparent_1px)] dark:bg-[radial-gradient(#C5A059_1px,transparent_1px)] [background-size:6px_6px]" />
-        </div>
+        />
 
-        {/* 2. Waste or Shortfall Deviation Shading */}
+        {/* 2. Deviation Shading between Planned and Forecast */}
         {zoneWidth > 0 && (
           <div
-            className={`absolute top-0 bottom-0 transition-all duration-300 opacity-60 backdrop-blur-xs ${
+            className={`absolute top-0 bottom-0 transition-all duration-200 opacity-40 ${
               isWasteZone
                 ? isExtremeOver
-                  ? 'bg-clay'
-                  : 'bg-saffron'
-                : 'bg-clay'
+                  ? 'bg-crimson'
+                  : 'bg-ochre'
+                : 'bg-crimson'
             }`}
             style={{
               left: `${zoneLeft}%`,
@@ -69,56 +66,56 @@ export const RangeBar: React.FC<RangeBarProps> = ({
             }}
             title={
               isWasteZone
-                ? `Estimated Over-prep / Waste: +${planned - predicted} portions`
-                : `Estimated Under-prep / Stock-out: -${predicted - planned} portions`
+                ? `Buffer: +${planned - predicted} portions`
+                : `Shortfall: -${predicted - planned} portions`
             }
           />
         )}
 
-        {/* 3. Point Demand Forecast (\hat{y}) - Slender Gold Needle */}
+        {/* 3. Point Demand Forecast (ŷ) - Clean Vertical Line */}
         <div
-          className="absolute top-0 bottom-0 w-0.5 bg-forest dark:bg-gold z-10 transition-all duration-300"
+          className="absolute top-0 bottom-0 w-0.5 bg-ink dark:bg-ink-dark z-10 transition-all duration-200"
           style={{ left: `${predPct}%` }}
           title={`Model Predicted Demand: ${predicted} portions`}
         >
-          <div className="w-2 h-2 -ml-[3px] bg-forest dark:bg-gold rounded-full -mt-0.5 shadow-sm border border-white dark:border-black" />
+          <div className="w-1.5 h-1.5 -ml-[2px] bg-ink dark:bg-ink-dark rounded-full -mt-0.5" />
         </div>
 
-        {/* 4. Planned Marker (Target Preparation) - Diamond Insignia */}
+        {/* 4. Planned Marker (Target Preparation) - Tactile Indicator */}
         <div
-          className={`absolute top-0 bottom-0 w-1 z-20 transition-all duration-300 ${
+          className={`absolute top-0 bottom-0 w-1 z-20 transition-all duration-200 ${
             isExtremeUnder || isExtremeOver
-              ? 'bg-clay'
-              : 'bg-forest dark:bg-gold'
+              ? 'bg-crimson'
+              : 'bg-racing dark:bg-racing-dark'
           }`}
           style={{ left: `${planPct}%` }}
           title={`Operator Planned Prep: ${planned} portions`}
         >
           <div
-            className={`w-3 h-3 -ml-[4.5px] rounded-[2px] rotate-45 -mt-1 shadow-md border-2 border-white dark:border-black transition-colors duration-300 ${
+            className={`w-2.5 h-2.5 -ml-[3px] rounded-xs rotate-45 -mt-0.5 shadow-xs border border-surface dark:border-surface-dark transition-colors duration-200 ${
               isExtremeUnder || isExtremeOver
-                ? 'bg-clay shadow-clay/40'
-                : 'bg-forest dark:bg-gold shadow-gold-glow'
+                ? 'bg-crimson'
+                : 'bg-racing dark:bg-racing-dark'
             }`}
           />
         </div>
       </div>
 
       {/* Sub-track Labels with Tabular Numerals */}
-      <div className="flex justify-between items-center text-[10px] font-mono mt-1 px-1 text-ink-muted dark:text-ink-dark-muted">
+      <div className="flex justify-between items-center text-[10px] font-mono mt-1 px-0.5 text-ink-muted dark:text-ink-dark-muted">
         <span title="Lower 80% interval bound">
           p80: <span className="font-semibold text-ink dark:text-ink-dark">{p80Low}</span>
         </span>
 
-        <span className="font-medium text-[9px] uppercase tracking-wider">
+        <span className="font-medium text-[10px]">
           {planned === predicted ? (
-            <span className="text-forest dark:text-gold font-semibold">Matched to Forecast</span>
+            <span className="text-racing dark:text-racing-dark font-semibold">Matches Forecast</span>
           ) : planned > predicted ? (
-            <span className={isExtremeOver ? 'text-clay font-bold' : 'text-saffron font-bold'}>
+            <span className={isExtremeOver ? 'text-crimson font-bold' : 'text-ochre font-semibold'}>
               +{planned - predicted} buffer
             </span>
           ) : (
-            <span className="text-clay font-bold">-{predicted - planned} shortfall</span>
+            <span className="text-crimson font-bold">-{predicted - planned} shortfall</span>
           )}
         </span>
 
