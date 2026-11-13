@@ -73,3 +73,5 @@ def list_model_runs(limit: int = 10) -> List[Dict[str, Any]]:
             "is_synthetic": doc.get("is_synthetic", True)
         })
     return runs
+
+get_all_model_runs = list_model_runs

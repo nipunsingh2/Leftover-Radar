@@ -83,6 +83,36 @@ def list_or_get_forecasts(
     }
 
 
+@router.get("/compare", status_code=200)
+def compare_forecasts_vs_actuals(
+    from_date: Optional[str] = Query(None, alias="from", description="Start date YYYY-MM-DD"),
+    to_date: Optional[str] = Query(None, alias="to", description="End date YYYY-MM-DD"),
+    item: Optional[str] = Query(None, description="Item ID filter"),
+    service: Optional[str] = Query(None, description="Service period filter"),
+) -> Dict[str, Any]:
+    """
+    Aggregation Pipeline 2 (Section 8.2):
+    Forecasts joined with actual observations on (service_date, service_period, item_id).
+    Calculates error, absolute error, over/under status, and realized waste.
+    """
+    from backend.app.database import parse_service_date
+    from backend.app.services.analytics import execute_forecast_vs_actual
+
+    dt_start = parse_service_date(from_date) if from_date else None
+    dt_end = parse_service_date(to_date) if to_date else None
+
+    comparison = execute_forecast_vs_actual(
+        start_date=dt_start,
+        end_date=dt_end,
+        item_id=item,
+        service_period=service,
+    )
+    return {
+        "count": len(comparison),
+        "comparison": comparison,
+    }
+
+
 @router.get("/{forecast_id}/explain", status_code=200)
 def explain_forecast_item(
     forecast_id: str,
