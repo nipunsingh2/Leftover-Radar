@@ -36,3 +36,6 @@ def update_operator_settings(new_settings: Dict[str, Any]) -> Dict[str, Any]:
     }
     col.replace_one({"key": SETTINGS_KEY}, doc, upsert=True)
     return doc
+
+get_settings = get_operator_settings
+update_settings = update_operator_settings

@@ -180,6 +180,12 @@ def health_check():
     status_code = status.HTTP_200_OK if is_healthy else status.HTTP_503_SERVICE_UNAVAILABLE
     return JSONResponse(status_code=status_code, content=body)
 
+# 5. Include API Routers
+from backend.app.routes.forecasts import router as forecasts_router
+
+app.include_router(forecasts_router, prefix="/api")
+app.include_router(forecasts_router)
+
 # Mount frontend production build if present
 dist_path = ROOT_DIR / "frontend" / "dist"
 if dist_path.exists():

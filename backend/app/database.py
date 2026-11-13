@@ -242,3 +242,12 @@ def init_database():
 def init_indexes():
     """Backward-compatible alias."""
     init_database()
+
+def get_observations_col() -> Collection:
+    return get_collection("service_observations")
+
+def get_menu_items_col() -> Collection:
+    return get_collection("menu_items")
+
+def get_forecasts_col() -> Collection:
+    return get_collection("forecasts")
