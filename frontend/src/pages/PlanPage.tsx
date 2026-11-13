@@ -78,16 +78,11 @@ export const PlanPage: React.FC<PlanPageProps> = ({
 
   return (
     <div className="p-8 space-y-6 max-w-[1440px] mx-auto">
-      {/* 1. Bento Grid: Quirky Kitchen Summary */}
+      {/* 1. Bento Grid: Glassmorphism Kitchen Summary with Interactive Raise & Outline */}
       <section aria-label="Kitchen Summary Bento Grid">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Bento Cell 1: Dominant Anchor (2-col span on LG) */}
-          <div className="lg:col-span-2 quirky-card p-6 flex flex-col justify-between relative overflow-hidden bg-gradient-to-br from-surface to-canvas-subtle/50 dark:from-surface-dark dark:to-black/30">
-            {/* Subtle decorative background watermarks */}
-            <div className="absolute top-2 right-4 text-7xl select-none opacity-5 font-serif pointer-events-none">
-              🍳
-            </div>
-
+          <div className="lg:col-span-2 bento-glass-card p-6 flex flex-col justify-between cursor-default">
             <div className="flex items-start justify-between relative z-10">
               <div>
                 <div className="flex items-center gap-2">
@@ -122,13 +117,13 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                 </span>
               </div>
               <span className="text-[11px] font-mono text-ink-muted">
-                {forecastItems.length} active menu items tracked
+                {forecastItems.length} active dishes tracked
               </span>
             </div>
           </div>
 
           {/* Bento Cell 2: Surplus Leftover Forecast */}
-          <div className="quirky-card p-5 flex flex-col justify-between">
+          <div className="bento-glass-card p-5 flex flex-col justify-between cursor-default">
             <div className="flex items-center justify-between">
               <span className="sticker-badge bg-yuzu/15 text-yuzu-dark dark:text-yuzu border-yuzu/40">
                 Surplus Cushion 🥐
@@ -153,7 +148,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({
           </div>
 
           {/* Bento Cell 3: Stockout Guard */}
-          <div className="quirky-card p-5 flex flex-col justify-between">
+          <div className="bento-glass-card p-5 flex flex-col justify-between cursor-default">
             <div className="flex items-center justify-between">
               <span className="sticker-badge bg-persimmon/15 text-persimmon border-persimmon/40">
                 Stockout Guard 🛡️
@@ -181,84 +176,62 @@ export const PlanPage: React.FC<PlanPageProps> = ({
         </div>
       </section>
 
-      {/* 2. Hot List Attention Panel (Quirky Diner Sticky Note) */}
+      {/* 2. Hot List Attention Panel (Sleek, Compact Attention Bar) */}
       {attentionItems.length > 0 && (
-        <section aria-label="Kitchen Attention Items" className="quirky-card p-5 space-y-3 border-l-6 border-l-persimmon bg-persimmon/5 dark:bg-persimmon/10">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl select-none">🔥</span>
-              <div>
-                <h2 className="text-sm font-serif font-bold text-ink dark:text-ink-dark flex items-center gap-2">
-                  <span>Chef's Hot List ({attentionItems.length} {attentionItems.length === 1 ? 'Dish Needs Review' : 'Dishes Need Review'})</span>
-                </h2>
-                <div className="text-[11px] text-ink-muted">
-                  Dishes where planned kitchen prep deviates significantly from calibrated Newsvendor safety bounds
-                </div>
-              </div>
+        <section aria-label="Kitchen Attention Items" className="bento-glass-card p-4 space-y-2.5 border-l-4 border-l-persimmon bg-persimmon/5 dark:bg-persimmon/10">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-lg select-none">🔥</span>
+              <h2 className="text-xs font-serif font-bold text-ink dark:text-ink-dark flex items-center gap-1.5">
+                <span>Attention Required:</span>
+                <span className="font-mono text-persimmon font-bold">{attentionItems.length} Dishes Outside Safety Bounds</span>
+              </h2>
             </div>
 
             <div className="flex items-center gap-2">
               {canUndo && onUndoApplyAll && (
                 <button
                   onClick={onUndoApplyAll}
-                  className="btn-tactile px-3 py-1.5 rounded-xl border border-ink-hairline text-xs font-bold text-ink-muted hover:text-ink flex items-center gap-1.5 bg-surface dark:bg-surface-dark cursor-pointer"
+                  className="btn-tactile px-2.5 py-1 rounded-full border border-ink-hairline text-[11px] font-bold text-ink-muted hover:text-ink flex items-center gap-1 bg-surface dark:bg-surface-dark cursor-pointer"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-3 h-3" />
                   <span>Undo</span>
                 </button>
               )}
 
               <button
                 onClick={onApplyAllRecommendations}
-                className="btn-tactile px-4 py-1.5 rounded-xl bg-persimmon hover:bg-persimmon-hover text-white text-xs font-bold flex items-center gap-1.5 shadow-quirky cursor-pointer"
+                className="btn-tactile px-3.5 py-1 rounded-full bg-persimmon hover:bg-persimmon-hover text-white text-xs font-bold flex items-center gap-1 shadow-sm cursor-pointer"
               >
                 <span>Apply All Recommendations</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-3 h-3" />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
             {attentionItems.map((item) => (
               <div
                 key={item.item_id}
-                className="p-3.5 rounded-xl bg-surface dark:bg-surface-dark border border-ink-hairline dark:border-ink-dark-hairline text-xs flex flex-col justify-between space-y-2.5 shadow-xs"
+                className="p-3 rounded-xl bg-surface/90 dark:bg-surface-dark/90 border border-ink-hairline dark:border-ink-dark-hairline text-xs flex items-center justify-between gap-2 shadow-xs hover:border-persimmon/40 transition-colors"
               >
-                <div>
-                  <div className="flex items-start justify-between gap-1.5">
-                    <span className="font-serif font-bold text-ink dark:text-ink-dark text-sm flex items-center gap-1.5">
-                      <span>{getCategoryEmoji(item.category)}</span>
-                      <span>{item.item_name}</span>
-                    </span>
-                    <span
-                      className={`text-[9px] font-mono px-2 py-0.5 rounded-full uppercase font-bold shrink-0 ${
-                        item.risk_level === 'high'
-                          ? 'bg-berry/15 text-berry'
-                          : 'bg-yuzu/25 text-yuzu-dark'
-                      }`}
-                    >
-                      {item.risk_level}
-                    </span>
+                <div className="min-w-0 flex-1">
+                  <div className="font-serif font-bold text-ink dark:text-ink-dark text-xs truncate flex items-center gap-1">
+                    <span>{getCategoryEmoji(item.category)}</span>
+                    <span className="truncate">{item.item_name}</span>
                   </div>
-                  <div className="text-[11px] font-mono text-ink-muted mt-1">
-                    Plan: <span className="text-ink dark:text-ink-dark font-bold">{item.planned_portions}</span> • Rec: <span className="text-matcha dark:text-matcha-light font-bold">{item.recommended_portions}</span>
+                  <div className="text-[11px] font-mono text-ink-muted mt-0.5">
+                    Plan <span className="text-ink dark:text-ink-dark font-bold">{item.planned_portions}</span> → Rec <span className="text-matcha dark:text-matcha-light font-bold">{item.recommended_portions}</span>
                   </div>
-                  <p className="text-[11px] text-ink-muted leading-tight mt-1.5">
-                    {item.risk_reason || item.buffer_rationale}
-                  </p>
                 </div>
 
-                <div className="pt-2 border-t border-ink-hairline dark:border-ink-dark-hairline flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-ink-muted">
-                    Buffer: +{item.recommended_portions - item.predicted_demand}
-                  </span>
-                  <button
-                    onClick={() => handleApplySingle(item.item_id, item.recommended_portions)}
-                    className="btn-tactile px-3 py-1 rounded-xl bg-matcha hover:bg-matcha-hover text-white text-[11px] font-bold cursor-pointer"
-                  >
-                    Bump to {item.recommended_portions} 🚀
-                  </button>
-                </div>
+                <button
+                  onClick={() => handleApplySingle(item.item_id, item.recommended_portions)}
+                  className="btn-tactile px-2.5 py-1 rounded-lg bg-matcha hover:bg-matcha-hover text-white text-[11px] font-bold cursor-pointer shrink-0"
+                  title="Bump to recommended portions"
+                >
+                  Bump 🚀
+                </button>
               </div>
             ))}
           </div>
@@ -330,24 +303,29 @@ export const PlanPage: React.FC<PlanPageProps> = ({
                           <span className="text-base select-none">{getCategoryEmoji(item.category)}</span>
                           <span>{item.item_name}</span>
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-canvas-subtle dark:bg-white/5 border border-ink-hairline text-ink-muted">
-                            {item.category}
-                          </span>
-                          <span className="text-[11px] font-mono font-bold text-ink-muted">
-                            ₹{item.price}
-                          </span>
-                          {/* History Status Badge */}
+                        <div className="flex items-center gap-2 mt-0.5 text-xs text-ink-muted dark:text-ink-dark-muted font-sans">
+                          <span className="capitalize">{item.category}</span>
+                          <span className="opacity-40">•</span>
+                          <span className="font-mono font-semibold text-ink dark:text-ink-dark">₹{item.price}</span>
+                          <span className="opacity-40">•</span>
                           <span
-                            className={`text-[9px] font-mono px-2 py-0.5 rounded-full font-bold uppercase ${
+                            className={`inline-flex items-center gap-1 font-mono text-[10px] ${
                               item.history_status === 'sufficient'
-                                ? 'bg-matcha/10 text-matcha dark:text-matcha-light'
+                                ? 'text-matcha dark:text-matcha-light font-medium'
                                 : item.history_status === 'low_history'
-                                ? 'bg-yuzu/20 text-yuzu-dark font-bold'
-                                : 'bg-berry/15 text-berry font-bold'
+                                ? 'text-yuzu-dark font-bold'
+                                : 'text-berry font-bold'
                             }`}
+                            title={`History calibration: ${item.history_status.replace('_', ' ')}`}
                           >
-                            {item.history_status.replace('_', ' ')}
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              item.history_status === 'sufficient'
+                                ? 'bg-matcha'
+                                : item.history_status === 'low_history'
+                                ? 'bg-yuzu'
+                                : 'bg-berry'
+                            }`} />
+                            <span>{item.history_status === 'sufficient' ? 'Calibrated' : item.history_status === 'low_history' ? 'Low History' : 'Tier 4 Fallback'}</span>
                           </span>
                         </div>
                       </td>

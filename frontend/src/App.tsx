@@ -246,10 +246,6 @@ export const App: React.FC = () => {
         onGenerateForecast={loadForecastData}
         onOpenPrintSheet={() => setIsPrepSheetModalOpen(true)}
         isGenerating={isGenerating}
-        modelVersion="v3.production"
-        isClockSynced={isClockSynced}
-        onToggleClockSync={handleToggleClockSync}
-        currentTimeStr={currentTimeStr}
       />
 
       {/* 3. Global Error Banner */}
