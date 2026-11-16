@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field, field_validator
-from typing import List, Optional, Dict, Any
 from datetime import datetime
+from typing import List, Optional
+
+from pydantic import BaseModel, Field, field_validator
+
 
 # --- Menu Items ---
 class MenuItemBase(BaseModel):

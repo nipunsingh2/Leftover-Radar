@@ -123,6 +123,8 @@ def test_bulk_close_out_success_and_invariant_enforcement():
     data = res.json()
     assert data["status"] == "success"
     assert data["items_processed"] == 2
+    assert isinstance(data["upserted_count"], int)
+    assert "details" in data
 
     # Case 2: Invariant violation (sold > prepared) must return 422
     invalid_payload = {
@@ -197,6 +199,11 @@ def test_calendar_and_settings_endpoints():
 
 def test_menu_items_patch_and_export_sheet():
     """Test PATCH /menu-items toggle and GET /export/forecast-sheet layout."""
+    # PATCH empty payload should be a no-op 200 rather than crashing
+    empty_res = client.patch("/api/menu-items/chicken_biryani", json={})
+    assert empty_res.status_code == 200
+    assert "Chicken Biryani" in empty_res.json()["name"]
+
     # PATCH price and active
     patch_res = client.patch("/api/menu-items/chicken_biryani", json={"price": 145.0, "active": True})
     assert patch_res.status_code == 200

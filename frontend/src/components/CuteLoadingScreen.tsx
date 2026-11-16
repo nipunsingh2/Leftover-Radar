@@ -25,10 +25,16 @@ export const CuteLoadingScreen: React.FC<CuteLoadingScreenProps> = ({
 
     const interval = setInterval(() => {
       setActivePhraseIndex((prev) => (prev + 1) % phrases.length);
-    }, 700);
+    }, 500);
 
-    return () => clearInterval(interval);
-  }, [isLoading, phrases.length]);
+    const handleKey = () => onDismiss();
+    window.addEventListener('keydown', handleKey);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('keydown', handleKey);
+    };
+  }, [isLoading, phrases.length, onDismiss]);
 
   // Handle smooth exit transition
   useEffect(() => {

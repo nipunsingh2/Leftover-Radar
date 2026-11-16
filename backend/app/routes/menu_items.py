@@ -105,7 +105,10 @@ def update_menu_item(item_id: str, payload: MenuItemUpdatePayload) -> Dict[str, 
     if payload.active is not None:
         update_fields["active"] = payload.active
 
+    if not update_fields:
+        return item
+
     col = get_menu_col()
     col.update_one({"_id": item_id}, {"$set": update_fields})
     updated = get_menu_item(item_id)
-    return updated or {}
+    return updated or item

@@ -1,18 +1,17 @@
 import React from 'react';
 import {
   CalendarDays,
-  CheckSquare,
   TrendingUp,
-  Cpu,
   Sliders,
   Radio,
   Clock,
   Zap,
   Moon,
   Sun,
+  Keyboard,
 } from 'lucide-react';
 
-export type TabId = 'plan' | 'closeout' | 'history' | 'model_lab' | 'data_settings';
+export type TabId = 'plan' | 'history' | 'data_settings';
 
 interface TopNavigationBarProps {
   activeTab: TabId;
@@ -23,6 +22,7 @@ interface TopNavigationBarProps {
   onToggleClockSync: () => void;
   currentTimeStr: string;
   activeServicePeriod: 'breakfast' | 'lunch' | 'dinner';
+  onOpenShortcuts?: () => void;
 }
 
 export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
@@ -34,13 +34,12 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   onToggleClockSync,
   currentTimeStr,
   activeServicePeriod,
+  onOpenShortcuts,
 }) => {
-  const navItems: Array<{ id: TabId; label: string; icon: React.ElementType; badge?: string }> = [
+  const navItems: Array<{ id: TabId; label: string; icon: React.ElementType }> = [
     { id: 'plan', label: 'Preparation Ledger', icon: CalendarDays },
-    { id: 'closeout', label: 'Daily Close-Out', icon: CheckSquare },
-    { id: 'history', label: 'Radar Telemetry', icon: TrendingUp },
-    { id: 'model_lab', label: 'Model Diagnostics', icon: Cpu, badge: 'Ridge log1p' },
-    { id: 'data_settings', label: 'Economics & Config', icon: Sliders },
+    { id: 'history', label: 'Telemetry & Verification', icon: TrendingUp },
+    { id: 'data_settings', label: 'Unit Economics', icon: Sliders },
   ];
 
   return (
@@ -86,14 +85,6 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
                 <span className="font-sans font-bold text-xs tracking-tight">
                   {item.label}
                 </span>
-
-                {item.badge && (
-                  <span className={`hidden xl:inline-block text-[9px] font-mono px-1.5 py-0.2 rounded-full font-bold ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-matcha/10 text-matcha dark:text-matcha-light'
-                  }`}>
-                    {item.badge}
-                  </span>
-                )}
 
                 {isActive && (
                   <span className="w-1.5 h-1.5 rounded-full bg-persimmon animate-pulse shadow-sm" />
@@ -145,7 +136,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
           <button
             onClick={onToggleDarkMode}
             className="liquid-glass-pill p-2 rounded-full text-ink-muted hover:text-ink dark:text-cream/80 dark:hover:text-cream cursor-pointer transition-all flex items-center justify-center"
-            title={isDarkMode ? 'Switch to Daytime Kitchen' : 'Switch to Midnight Diner'}
+            title={isDarkMode ? 'Switch to Daytime Kitchen' : 'Switch to Midnight Diner (D)'}
           >
             {isDarkMode ? (
               <Moon className="w-4 h-4 text-yuzu" strokeWidth={2} />
@@ -153,6 +144,17 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
               <Sun className="w-4 h-4 text-persimmon" strokeWidth={2} />
             )}
           </button>
+
+          {/* Keyboard Shortcuts Help Button */}
+          {onOpenShortcuts && (
+            <button
+              onClick={onOpenShortcuts}
+              className="liquid-glass-pill p-2 rounded-full text-ink-muted hover:text-ink dark:text-cream/80 dark:hover:text-cream cursor-pointer transition-all flex items-center justify-center"
+              title="Keyboard Shortcuts (?)"
+            >
+              <Keyboard className="w-4 h-4 text-matcha" strokeWidth={2} />
+            </button>
+          )}
         </div>
 
       </div>

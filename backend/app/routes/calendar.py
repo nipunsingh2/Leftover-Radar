@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Literal, Optional
 
 from fastapi import APIRouter, Query
 from pydantic import BaseModel, Field
@@ -12,9 +12,11 @@ from backend.app.repositories.calendar_repository import (
 
 router = APIRouter(prefix="/calendar", tags=["Calendar Context"])
 
+WeatherType = Literal["sunny", "clear", "cloudy", "rainy", "hot"]
+
 
 class CalendarDayUpdatePayload(BaseModel):
-    weather: Optional[str] = Field(default="clear", description="clear, rainy, stormy, cloudy, hot")
+    weather: Optional[WeatherType] = Field(default="clear", description="sunny, clear, cloudy, rainy, hot")
     campus_event: Optional[bool] = Field(default=False, description="Campus event/fest scheduled")
     event_name: Optional[str] = None
     exam_week: Optional[bool] = Field(default=False, description="Midterms or finals week")

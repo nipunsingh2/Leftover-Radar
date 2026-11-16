@@ -1,23 +1,23 @@
 {
-  "model_version": "v3.202611130802",
+  "model_version": "v3.202611160622",
   "model_class": "RidgeRegressor (log1p)",
-  "trained_at": "2026-11-13T08:02:08.250053+00:00",
-  "training_records": 3019,
+  "trained_at": "2026-11-16T06:22:07.096838+00:00",
+  "training_records": 2282,
   "validation_records": 799,
   "test_records": 616,
   "validation_start": "2026-09-10",
   "validation_end": "2026-10-15",
   "test_start": "2026-10-16",
   "test_end": "2026-11-11",
-  "mae": 14.44,
-  "rmse": 17.92,
-  "wape": 0.2712,
-  "bias": 0.79,
+  "mae": 16.3,
+  "rmse": 20.22,
+  "wape": 0.3062,
+  "bias": 9.53,
   "baseline_mae": 18.13,
   "baseline_wape": 0.3405,
-  "coverage_80": 0.8133,
-  "coverage_95": 0.9773,
-  "empirical_coverage": 0.9773,
+  "coverage_80": 0.8117,
+  "coverage_95": 0.9805,
+  "empirical_coverage": 0.9805,
   "theoretical_floor_wape": 0.065,
   "censoring_strategy": "exclude",
   "features": [
@@ -51,102 +51,102 @@
   "breakdowns": {
     "period_breakdown": {
       "breakfast": {
-        "mae": 14.17,
-        "rmse": 17.42,
-        "wape": 0.2805,
-        "bias": 0.45
+        "mae": 15.67,
+        "rmse": 18.71,
+        "wape": 0.3101,
+        "bias": 7.41
       },
       "dinner": {
-        "mae": 13.76,
-        "rmse": 16.98,
-        "wape": 0.266,
-        "bias": 2.4
+        "mae": 16.51,
+        "rmse": 20.5,
+        "wape": 0.3192,
+        "bias": 11.2
       },
       "lunch": {
-        "mae": 15.18,
-        "rmse": 18.98,
-        "wape": 0.269,
-        "bias": -0.27
+        "mae": 16.6,
+        "rmse": 21.03,
+        "wape": 0.294,
+        "bias": 9.71
       }
     },
     "category_breakdown": {
       "beverage": {
-        "mae": 11.32,
-        "rmse": 14.61,
-        "wape": 0.2869,
-        "bias": 1.2
+        "mae": 13.5,
+        "rmse": 16.27,
+        "wape": 0.3423,
+        "bias": 7.02
       },
       "breakfast": {
-        "mae": 15.78,
-        "rmse": 19.05,
-        "wape": 0.2723,
-        "bias": 1.08
+        "mae": 17.56,
+        "rmse": 20.57,
+        "wape": 0.3029,
+        "bias": 9.06
       },
       "dessert": {
-        "mae": 10.12,
-        "rmse": 12.21,
-        "wape": 0.2957,
-        "bias": -2.64
+        "mae": 9.51,
+        "rmse": 12.08,
+        "wape": 0.2778,
+        "bias": 3.3
       },
       "main": {
-        "mae": 17.45,
-        "rmse": 21.09,
-        "wape": 0.267,
-        "bias": 2.35
+        "mae": 20.41,
+        "rmse": 24.63,
+        "wape": 0.3123,
+        "bias": 14.11
       },
       "snack": {
-        "mae": 10.43,
-        "rmse": 12.58,
-        "wape": 0.2728,
-        "bias": -1.35
+        "mae": 10.99,
+        "rmse": 13.2,
+        "wape": 0.2875,
+        "bias": 4.45
       }
     },
     "history_split": {
       "low_history": {
-        "mae": 19.3,
-        "rmse": 20.71,
-        "wape": 0.6605,
-        "bias": 17.73
+        "mae": 19.74,
+        "rmse": 20.99,
+        "wape": 0.6756,
+        "bias": 18.46
       },
       "normal_history": {
-        "mae": 14.17,
-        "rmse": 17.75,
-        "wape": 0.2598,
-        "bias": -0.14
+        "mae": 16.12,
+        "rmse": 20.17,
+        "wape": 0.2954,
+        "bias": 9.04
       },
       "low_history_count": 32,
       "normal_history_count": 584
     },
     "calibration_bins": [
       {
-        "bin_range": "18-43",
-        "predicted_mean": 33.6,
-        "actual_mean": 30.8,
-        "count": 221
+        "bin_range": "22-50",
+        "predicted_mean": 39.3,
+        "actual_mean": 31.4,
+        "count": 224
       },
       {
-        "bin_range": "43-67",
-        "predicted_mean": 54.1,
-        "actual_mean": 52.9,
-        "count": 242
+        "bin_range": "50-78",
+        "predicted_mean": 62.1,
+        "actual_mean": 52.4,
+        "count": 235
       },
       {
-        "bin_range": "67-92",
-        "predicted_mean": 77.2,
-        "actual_mean": 78.0,
-        "count": 126
+        "bin_range": "78-106",
+        "predicted_mean": 90.0,
+        "actual_mean": 77.3,
+        "count": 128
       },
       {
-        "bin_range": "92-117",
-        "predicted_mean": 102.6,
-        "actual_mean": 118.7,
+        "bin_range": "106-134",
+        "predicted_mean": 116.4,
+        "actual_mean": 113.4,
         "count": 16
       },
       {
-        "bin_range": "117-142",
-        "predicted_mean": 126.9,
-        "actual_mean": 132.7,
-        "count": 11
+        "bin_range": "134-163",
+        "predicted_mean": 146.4,
+        "actual_mean": 134.2,
+        "count": 13
       }
     ]
   },

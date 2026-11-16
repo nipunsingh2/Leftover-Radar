@@ -142,16 +142,23 @@ def generate_item_explanation(
             })
 
     # 3. Newsvendor buffer inputs
+    from backend.app.repositories.settings_repository import get_settings
+    current_settings = get_settings()
+    waste_cost = float(features.get("waste_cost", current_settings.get("waste_cost", 30.0)))
+    stockout_cost = float(features.get("stockout_cost", current_settings.get("stockout_cost", 70.0)))
+    cap_pct = float(features.get("buffer_cap_percent", current_settings.get("buffer_cap_percent", 0.15)))
+    cf = round(stockout_cost / (stockout_cost + waste_cost), 2) if (stockout_cost + waste_cost) > 0 else 0.70
+
     buffer_portions = max(0, recommended_prep - pred_demand)
     buffer_inputs = {
-        "waste_cost": float(features.get("waste_cost", 30.0)),
-        "stockout_cost": float(features.get("stockout_cost", 70.0)),
-        "critical_fractile": round(70.0 / (70.0 + 30.0), 2),
+        "waste_cost": waste_cost,
+        "stockout_cost": stockout_cost,
+        "critical_fractile": cf,
         "raw_buffer": buffer_portions,
-        "buffer_cap_percent": float(features.get("buffer_cap_percent", 0.15)),
+        "buffer_cap_percent": cap_pct,
         "capped_buffer": buffer_portions,
         "recommended_prep": recommended_prep,
-        "rationale": f"Optimal safety buffer of +{buffer_portions} portions based on ₹70 stockout cost vs ₹30 waste cost.",
+        "rationale": f"Optimal safety buffer of +{buffer_portions} portions based on ₹{int(stockout_cost)} stockout cost vs ₹{int(waste_cost)} waste cost.",
     }
 
     # 4. Fallback Explanation Text

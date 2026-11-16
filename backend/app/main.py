@@ -146,9 +146,13 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
 @app.exception_handler(Exception)
 async def general_error_handler(request: Request, exc: Exception):
     req_id = getattr(request.state, "request_id", str(uuid.uuid4()))
+    logger.exception(f"Unhandled exception on request {req_id}: {exc}")
+    message = "An unexpected internal server error occurred."
+    if getattr(settings, "DEBUG", False):
+        message = f"An unexpected internal error occurred: {str(exc)}"
     return format_error_response(
         code="INTERNAL_SERVER_ERROR",
-        message=f"An unexpected internal error occurred: {str(exc)}",
+        message=message,
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         request_id=req_id,
         retryable=True
@@ -205,7 +209,6 @@ api_routers = [
 
 for r in api_routers:
     app.include_router(r, prefix="/api")
-    app.include_router(r)
 
 # Mount frontend production build if present
 dist_path = ROOT_DIR / "frontend" / "dist"

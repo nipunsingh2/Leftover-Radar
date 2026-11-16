@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Printer, Sparkles, Loader2, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Printer, Sparkles, Loader2, Calendar, UtensilsCrossed } from 'lucide-react';
 
 interface HeaderStripProps {
   serviceDate: string;
@@ -8,6 +8,7 @@ interface HeaderStripProps {
   onPeriodChange: (period: 'breakfast' | 'lunch' | 'dinner') => void;
   onGenerateForecast: () => void;
   onOpenPrintSheet?: () => void;
+  onOpenAllDayMenu?: () => void;
   isGenerating?: boolean;
 }
 
@@ -18,20 +19,25 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
   onPeriodChange,
   onGenerateForecast,
   onOpenPrintSheet,
+  onOpenAllDayMenu,
   isGenerating = false,
 }) => {
-  // Format date e.g. "Sat, Nov 14, 2026"
-  const dateObj = new Date(serviceDate + 'T00:00:00');
-  const formattedDay = !isNaN(dateObj.getTime())
-    ? dateObj.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+  // Format date safely without UTC timezone shift (e.g. "Sat, Nov 14, 2026")
+  const [yearNum, monthNum, dayNum] = serviceDate.split('-').map(Number);
+  const localDateObj = new Date(yearNum, (monthNum || 1) - 1, dayNum || 1);
+  const formattedDay = !isNaN(localDateObj.getTime())
+    ? localDateObj.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
     : serviceDate;
   const periodLabel = servicePeriod.charAt(0).toUpperCase() + servicePeriod.slice(1);
 
   const handleStepDay = (deltaDays: number) => {
-    const cur = new Date(serviceDate + 'T00:00:00');
-    cur.setDate(cur.getDate() + deltaDays);
-    const iso = cur.toISOString().split('T')[0];
-    onDateChange(iso);
+    // Pure local date arithmetic avoiding UTC offset jumping
+    const [y, m, d] = serviceDate.split('-').map(Number);
+    const nextDate = new Date(y, (m || 1) - 1, (d || 1) + deltaDays);
+    const nextY = nextDate.getFullYear();
+    const nextM = String(nextDate.getMonth() + 1).padStart(2, '0');
+    const nextD = String(nextDate.getDate()).padStart(2, '0');
+    onDateChange(`${nextY}-${nextM}-${nextD}`);
   };
 
   return (
@@ -99,6 +105,18 @@ export const HeaderStrip: React.FC<HeaderStripProps> = ({
             );
           })}
         </div>
+
+        {/* All-Day Menu Schedule Button */}
+        {onOpenAllDayMenu && (
+          <button
+            onClick={onOpenAllDayMenu}
+            className="btn-tactile flex items-center gap-1.5 px-3 py-1 rounded-full border border-matcha/30 dark:border-matcha/40 bg-matcha/10 dark:bg-matcha/20 hover:bg-matcha/20 text-xs font-bold text-matcha-dark dark:text-cream cursor-pointer transition-all shadow-xs"
+            title="View entire cafeteria menu segmented by meal time"
+          >
+            <UtensilsCrossed className="w-3.5 h-3.5 text-matcha" strokeWidth={2} />
+            <span>All-Day Menu</span>
+          </button>
+        )}
 
         {/* Print Prep Sheet Button */}
         {onOpenPrintSheet && (

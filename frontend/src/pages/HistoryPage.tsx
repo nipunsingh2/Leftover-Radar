@@ -16,6 +16,8 @@ import { Loader2, Filter, TrendingUp } from 'lucide-react';
 export const HistoryPage: React.FC = () => {
   const [selectedService, setSelectedService] = useState<string>('lunch');
   const [selectedItem, setSelectedItem] = useState<string>('');
+  const [rollingDays, setRollingDays] = useState<number>(30);
+  const [menuItems, setMenuItems] = useState<Array<{ id: string; name: string }>>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,13 +26,22 @@ export const HistoryPage: React.FC = () => {
   const [accuracy, setAccuracy] = useState<AccuracySummary | null>(null);
 
   useEffect(() => {
+    api
+      .getMenuItems()
+      .then((items) => {
+        setMenuItems(items.map((i) => ({ id: i.id, name: i.name })));
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
     let isMounted = true;
     setLoading(true);
     setError(null);
 
     Promise.all([
       api.compareForecastsVsActuals({ service: selectedService, item: selectedItem || undefined }),
-      api.getRollingWaste(45),
+      api.getRollingWaste(rollingDays),
       api.getAccuracyMetrics(),
     ])
       .then(([compRes, wasteRes, accRes]) => {
@@ -50,22 +61,70 @@ export const HistoryPage: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [selectedService, selectedItem]);
+  }, [selectedService, selectedItem, rollingDays]);
 
-  // Format forecast vs actual chart data
-  const forecastActualChartData = comparisons
-    .filter((c) => c.actual_recorded && c.actual_sold !== null)
-    .slice(0, 30)
-    .reverse()
-    .map((c) => ({
-      date: c.service_date.slice(5),
-      item: c.item_id,
-      actual: c.actual_sold,
-      predicted: c.predicted_demand,
-      lower: c.lower_estimate,
-      upper: c.upper_estimate,
-      waste: c.waste,
-    }));
+  // Format forecast vs actual chart data with aggregation to prevent multi-dish collisions
+  const validComparisons = comparisons.filter(
+    (c) => c.actual_recorded && c.actual_sold !== null
+  );
+
+  let forecastActualChartData: Array<{
+    date: string;
+    item: string;
+    actual: number;
+    predicted: number;
+    lower: number;
+    upper: number;
+    waste: number;
+  }>;
+
+  if (selectedItem) {
+    forecastActualChartData = [...validComparisons]
+      .sort((a, b) => a.service_date.localeCompare(b.service_date))
+      .slice(-30)
+      .map((c) => ({
+        date: c.service_date.slice(5),
+        item: c.item_id,
+        actual: c.actual_sold ?? 0,
+        predicted: c.predicted_demand,
+        lower: c.lower_estimate,
+        upper: c.upper_estimate,
+        waste: c.waste,
+      }));
+  } else {
+    // Group all dishes by service_date to prevent multi-point collisions and zig-zagging
+    const byDate = new Map<string, {
+      actual: number;
+      predicted: number;
+      lower: number;
+      upper: number;
+      waste: number;
+    }>();
+
+    for (const c of validComparisons) {
+      const dt = c.service_date.slice(5);
+      const existing = byDate.get(dt) || { actual: 0, predicted: 0, lower: 0, upper: 0, waste: 0 };
+      existing.actual += c.actual_sold || 0;
+      existing.predicted += c.predicted_demand || 0;
+      existing.lower += c.lower_estimate || 0;
+      existing.upper += c.upper_estimate || 0;
+      existing.waste += c.waste || 0;
+      byDate.set(dt, existing);
+    }
+
+    forecastActualChartData = Array.from(byDate.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-30)
+      .map(([date, d]) => ({
+        date,
+        item: 'All Dishes (Daily Total)',
+        actual: d.actual,
+        predicted: d.predicted,
+        lower: d.lower,
+        upper: d.upper,
+        waste: d.waste,
+      }));
+  }
 
   return (
     <div className="p-8 space-y-6 max-w-7xl mx-auto">
@@ -79,24 +138,44 @@ export const HistoryPage: React.FC = () => {
             Historical Trends & Forecast Verification
           </h1>
           <p className="text-xs text-ink-muted mt-0.5">
-            PyMongo Aggregations: Pipeline 2 (Forecast vs Actual Join), Pipeline 3 (Accuracy Facets), Pipeline 4 (7-Day Rolling Waste Moving Window).
+            Historical demand telemetry, out-of-sample accuracy metrics, and 95% conformal prediction intervals across 4,000+ service observations.
           </p>
         </div>
 
         {/* Filter Capsule */}
-        <div className="flex items-center gap-2 bg-canvas-subtle/80 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline rounded-2xl px-3 py-1.5 text-xs shadow-tactile">
-          <Filter className="w-3.5 h-3.5 text-persimmon" />
-          <span className="font-bold text-ink-muted">Service Filter:</span>
-          <select
-            value={selectedService}
-            onChange={(e) => setSelectedService(e.target.value)}
-            className="font-mono font-bold bg-transparent text-ink dark:text-ink-dark outline-none cursor-pointer"
-          >
-            <option value="breakfast">Breakfast</option>
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
-            <option value="all">All Services</option>
-          </select>
+        <div className="flex flex-wrap items-center gap-3 bg-canvas-subtle/80 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline rounded-2xl px-3 py-1.5 text-xs shadow-tactile">
+          <div className="flex items-center gap-2">
+            <Filter className="w-3.5 h-3.5 text-persimmon" />
+            <span className="font-bold text-ink-muted">Service:</span>
+            <select
+              value={selectedService}
+              onChange={(e) => setSelectedService(e.target.value)}
+              className="font-mono font-bold bg-transparent text-ink dark:text-ink-dark outline-none cursor-pointer"
+            >
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="all">All Services</option>
+            </select>
+          </div>
+
+          <div className="h-4 w-px bg-ink-hairline dark:bg-ink-dark-hairline" />
+
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-ink-muted">Dish Filter:</span>
+            <select
+              value={selectedItem}
+              onChange={(e) => setSelectedItem(e.target.value)}
+              className="font-mono font-bold bg-transparent text-ink dark:text-ink-dark outline-none cursor-pointer max-w-[200px] truncate"
+            >
+              <option value="">All Dishes (Aggregated)</option>
+              {menuItems.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -171,11 +250,11 @@ export const HistoryPage: React.FC = () => {
             </section>
           )}
 
-          {/* Chart 1: Actual Sales vs Predicted Demand with 80% Conformal Interval (Pipeline 2) */}
+          {/* Chart 1: Actual Sales vs Predicted Demand with 95% Conformal Interval */}
           <section aria-label="Actual vs Forecast Comparison" className="quirky-card p-6 space-y-4">
             <div>
               <span className="sticker-badge bg-matcha/10 text-matcha dark:text-matcha-light border-matcha/30">
-                Pipeline 2 ($lookup & $project)
+                Forecast vs Realized Demand
               </span>
               <h2 className="font-serif text-xl font-bold text-ink dark:text-ink-dark mt-1">
                 Realized Sales vs. Model Forecast Range (95% Conformal Band)
@@ -211,23 +290,42 @@ export const HistoryPage: React.FC = () => {
             </div>
           </section>
 
-          {/* Chart 2: Daily Waste & 7-Day Rolling Moving Average (Pipeline 4) */}
+          {/* Chart 2: Daily Waste & 7-Day Rolling Moving Average */}
           <section aria-label="Rolling Waste Window Fields" className="quirky-card p-6 space-y-4">
-            <div>
-              <span className="sticker-badge bg-yuzu/20 text-yuzu-dark border-yuzu/40">
-                Pipeline 4 ($setWindowFields)
-              </span>
-              <h2 className="font-serif text-xl font-bold text-ink dark:text-ink-dark mt-1">
-                Daily Cafeteria Leftover Portions & 7-Day Rolling Moving Average
-              </h2>
-              <p className="text-xs text-ink-muted">
-                Daily unconsumed preparation leftovers (amber bars) with 7-day trailing moving average curve to track kitchen waste reduction.
-              </p>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <span className="sticker-badge bg-yuzu/20 text-yuzu-dark border-yuzu/40">
+                  Moving Average Trend
+                </span>
+                <h2 className="font-serif text-xl font-bold text-ink dark:text-ink-dark mt-1">
+                  Daily Cafeteria Leftover Portions & 7-Day Rolling Moving Average
+                </h2>
+                <p className="text-xs text-ink-muted">
+                  Daily unconsumed preparation leftovers (amber bars) with 7-day trailing moving average curve to track kitchen waste reduction.
+                </p>
+              </div>
+
+              {/* Time Horizon Selector Pills */}
+              <div className="flex items-center gap-1 bg-canvas-subtle/80 dark:bg-white/5 border border-ink-hairline dark:border-ink-dark-hairline rounded-xl p-1 text-xs">
+                {[7, 14, 30, 45].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setRollingDays(d)}
+                    className={`px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold cursor-pointer transition-all ${
+                      rollingDays === d
+                        ? 'bg-persimmon text-white shadow-xs'
+                        : 'text-ink-muted hover:text-ink hover:bg-canvas-subtle'
+                    }`}
+                  >
+                    {d}D
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="h-80 w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={rollingWaste.slice(-30)} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
+                <ComposedChart data={rollingWaste.slice(-rollingDays)} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(25, 28, 26, 0.08)" />
                   <XAxis dataKey="service_date" stroke="#96A09A" fontSize={11} fontFamily="monospace" tickFormatter={(v) => v.slice(5)} />
                   <YAxis stroke="#96A09A" fontSize={11} fontFamily="monospace" />

@@ -202,19 +202,20 @@ def train_and_evaluate_pipeline(seed: int = 42) -> Dict[str, Any]:
     best_cv = cv_scores[best_model_name]
     print(f"\n  -> Best Candidate Selected: '{best_model_name}' (CV WAPE: {best_cv['wape']*100:.1f}%)")
 
-    # 5. Fit Final Model on Dev Split (Train + Validation) & Calibrate Conformal Intervals
-    print("\n[Fitting Production Model & Conformal Interval Calibration]")
+    # 5. Fit Production Model on Training Split & Calibrate Conformal Intervals on Independent Holdout
+    print("\n[Fitting Production Model & Conformal Interval Calibration (Strict Independent Holdout)]")
     final_pipeline = cv_scores[best_model_name]["pipe"]
 
     # Prepare dev split features
     feat_dev, _ = build_features_dataframe(dev_df, censoring_strategy=selected_censoring_strategy)
-    dev_clean = feat_dev[(feat_dev["service_date"].isin(dev_dates)) & (~feat_dev["sold_out"])].copy()
+    # Fit strictly on training split (no leakage of validation calibration set)
+    train_clean = feat_dev[(feat_dev["service_date"].isin(dates_train)) & (~feat_dev["sold_out"])].copy()
 
-    X_dev_tr = dev_clean[ALL_FEATURES]
-    y_dev_tr = dev_clean["portions_sold"].values
-    final_pipeline.fit(X_dev_tr, y_dev_tr)
+    X_train = train_clean[ALL_FEATURES]
+    y_train = train_clean["portions_sold"].values
+    final_pipeline.fit(X_train, y_train)
 
-    # Validation predictions for conformal calibration
+    # Independent holdout validation predictions for conformal calibration
     feat_val = feat_dev[feat_dev["service_date"].isin(dates_val)].copy()
     X_val = feat_val[ALL_FEATURES]
     y_val = feat_val["portions_sold"].values
@@ -297,7 +298,7 @@ def train_and_evaluate_pipeline(seed: int = 42) -> Dict[str, Any]:
         "model_version": model_version,
         "model_class": best_model_name,
         "trained_at": artifact["trained_at"],
-        "training_records": len(dev_clean),
+        "training_records": len(train_clean),
         "validation_records": len(y_val),
         "test_records": len(y_test),
         "validation_start": artifact["validation_start"],
@@ -330,7 +331,7 @@ def train_and_evaluate_pipeline(seed: int = 42) -> Dict[str, Any]:
         log_model_run({
             "model_version": model_version,
             "trained_at": datetime.now(timezone.utc),
-            "training_records": len(dev_clean),
+            "training_records": len(train_clean),
             "validation_records": len(y_val),
             "validation_start": artifact["validation_start"],
             "validation_end": artifact["validation_end"],

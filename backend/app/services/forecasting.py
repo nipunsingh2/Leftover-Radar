@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 import joblib
@@ -82,11 +82,34 @@ def generate_forecast_service(
             status_code=404,
         )
 
+    obs_col = get_collection("service_observations")
     if items and len(items) > 0:
         requested_items = items
     else:
-        # Default to all active menu items
-        requested_items = [
+        # Filter active menu items appropriate for this specific service period
+        # Prefer actual observed items for this service period from historical logs
+        observed_period_items = set(obs_col.distinct("item_id", {"service_period": period}))
+        period_items = []
+        if observed_period_items:
+            for m_id, m in active_menu.items():
+                if not m.get("active", True):
+                    continue
+                if m_id in observed_period_items:
+                    period_items.append({"item_id": m_id, "planned_portions": None})
+        else:
+            for m_id, m in active_menu.items():
+                if not m.get("active", True):
+                    continue
+                cat = (m.get("category") or "").lower()
+                tags = [t.lower() for t in m.get("tags") or []]
+                if period == "breakfast":
+                    if cat == "breakfast" or "breakfast" in tags or cat in ["beverage", "snack"]:
+                        period_items.append({"item_id": m_id, "planned_portions": None})
+                elif period in ["lunch", "dinner"]:
+                    if cat != "breakfast" and "breakfast" not in tags:
+                        period_items.append({"item_id": m_id, "planned_portions": None})
+
+        requested_items = period_items if period_items else [
             {"item_id": m_id, "planned_portions": None}
             for m_id, m in active_menu.items()
             if m.get("active", True)
@@ -129,20 +152,49 @@ def generate_forecast_service(
     # Count items in menu for competition feature
     menu_item_count = len(requested_items)
 
+    # Performance optimization: Batch pre-fetch observations for all requested items
+    # Eliminates N+1 query pattern (15-30 round-trips reduced to 1-2)
+    requested_item_ids = [req["item_id"] for req in requested_items]
+    batch_item_cursor = obs_col.find({
+        "service_date": {"$lt": target_dt},
+        "service_period": period,
+        "item_id": {"$in": requested_item_ids},
+    }).sort("service_date", -1)
+
+    item_docs_map: Dict[str, List[Dict[str, Any]]] = {iid: [] for iid in requested_item_ids}
+    for doc in batch_item_cursor:
+        iid = doc.get("item_id")
+        if iid in item_docs_map and len(item_docs_map[iid]) < 60:
+            item_docs_map[iid].append(doc)
+
+    # Check which items might need category fallback and pre-fetch category pools in one query
+    needed_categories = set()
+    for req in requested_items:
+        iid = req["item_id"]
+        valid_count = len([d for d in item_docs_map.get(iid, []) if not d.get("sold_out", False)])
+        if valid_count < 3:
+            cat = active_menu.get(iid, {}).get("category", "main")
+            needed_categories.add(cat)
+
+    cat_docs_map: Dict[str, List[Dict[str, Any]]] = {c: [] for c in needed_categories}
+    if needed_categories:
+        batch_cat_cursor = obs_col.find({
+            "service_date": {"$lt": target_dt},
+            "service_period": period,
+            "category": {"$in": list(needed_categories)},
+        }).sort("service_date", -1)
+        for doc in batch_cat_cursor:
+            cat = doc.get("category")
+            if cat in cat_docs_map and len(cat_docs_map[cat]) < 60:
+                cat_docs_map[cat].append(doc)
+
     for req_item in requested_items:
         item_id = req_item["item_id"]
         item_meta = active_menu[item_id]
         category = item_meta.get("category", "main")
         price = float(item_meta.get("price", 50.0))
 
-        # Query strictly past observations: service_date < target_dt
-        cursor = obs_col.find({
-            "service_date": {"$lt": target_dt},
-            "service_period": period,
-            "item_id": item_id,
-        }).sort("service_date", -1).limit(60)
-
-        hist_docs = list(cursor)
+        hist_docs = item_docs_map.get(item_id, [])
         valid_past = [d for d in hist_docs if not d.get("sold_out", False)]
         if not valid_past and hist_docs:
             valid_past = hist_docs
@@ -161,15 +213,10 @@ def generate_forecast_service(
             history_status = "low_history"
             is_widened = True
         else:
-            # Check category fallback
-            cat_cursor = obs_col.find({
-                "service_date": {"$lt": target_dt},
-                "service_period": period,
-                "category": category,
-            }).sort("service_date", -1).limit(60)
-            cat_docs = [d for d in cat_cursor if not d.get("sold_out", False)]
-            if not cat_docs and cat_cursor:
-                cat_docs = list(cat_cursor)
+            cat_pool = cat_docs_map.get(category, [])
+            cat_docs = [d for d in cat_pool if not d.get("sold_out", False)]
+            if not cat_docs and cat_pool:
+                cat_docs = cat_pool
 
             if len(cat_docs) >= 3:
                 # Tier 3: Category fallback (new item)
@@ -184,39 +231,84 @@ def generate_forecast_service(
 
         # Compute point prediction and conformal intervals
         if prediction_method == "model":
-            # Build feature row for model inference
-            sold_vals = [float(d["portions_sold"]) for d in valid_past]
-            dates_past = [d["service_date"] for d in valid_past]
+            # Build feature row for model inference with chronological ordering
+            # Sort past records chronologically ascending (oldest -> newest) to match features.py exactly
+            valid_past_asc = sorted(valid_past, key=lambda d: d["service_date"])
+            sold_vals = [float(d["portions_sold"]) for d in valid_past_asc]
+            dates_past = [d["service_date"] for d in valid_past_asc]
 
-            mean_7d = float(np.mean(sold_vals[:4])) if sold_vals else 50.0
-            mean_14d = float(np.mean(sold_vals[:8])) if len(sold_vals) >= 4 else mean_7d
-            mean_28d = float(np.mean(sold_vals)) if sold_vals else mean_7d
+            target_dt_utc = target_dt.replace(tzinfo=timezone.utc) if target_dt.tzinfo is None else target_dt
+            p_dates_utc = [
+                d.replace(tzinfo=timezone.utc) if d.tzinfo is None else d
+                for d in dates_past
+            ]
+
+            d7_cutoff = target_dt_utc - timedelta(days=7)
+            d14_cutoff = target_dt_utc - timedelta(days=14)
+            d28_cutoff = target_dt_utc - timedelta(days=28)
+
+            d7_vals = [s for s, dt in zip(sold_vals, p_dates_utc) if dt >= d7_cutoff]
+            d14_vals = [s for s, dt in zip(sold_vals, p_dates_utc) if dt >= d14_cutoff]
+            d28_vals = [s for s, dt in zip(sold_vals, p_dates_utc) if dt >= d28_cutoff]
+
+            mean_7d = float(np.mean(d7_vals)) if d7_vals else (float(np.mean(sold_vals[-3:])) if len(sold_vals) >= 3 else float(np.mean(sold_vals)))
+            mean_14d = float(np.mean(d14_vals)) if d14_vals else float(np.mean(sold_vals))
+            mean_28d = float(np.mean(d28_vals)) if d28_vals else float(np.mean(sold_vals))
 
             target_dow = target_dt.weekday()
             dow_matches = [
                 float(d["portions_sold"])
-                for d in valid_past
+                for d in valid_past_asc
                 if d["service_date"].weekday() == target_dow
             ]
-            same_dow_mean = float(np.mean(dow_matches)) if dow_matches else mean_28d
+            same_dow_mean = float(np.mean(dow_matches[-4:])) if dow_matches else mean_28d
 
+            # Exponentially weighted mean: newest observation (index -1) receives highest weight exp(0) = 1.0
             weights = np.exp(np.linspace(-1.0, 0.0, len(sold_vals)))
             weights /= weights.sum()
-            ewm_mean = float(np.sum(sold_vals * weights)) if sold_vals else mean_28d
+            ewm_mean = float(np.sum(np.array(sold_vals, dtype=float) * weights)) if sold_vals else mean_28d
 
+            # Rolling std of the 14 most recent services
             rolling_std = float(np.std(sold_vals[-14:])) if len(sold_vals) >= 3 else 8.0
-            last_sold = float(sold_vals[0]) if sold_vals else mean_28d
+            last_sold = float(sold_vals[-1]) if sold_vals else mean_28d
+
+            def _to_naive_dt(val: Any) -> Optional[datetime]:
+                if isinstance(val, datetime):
+                    return val.replace(tzinfo=None)
+                if isinstance(val, str):
+                    try:
+                        return datetime.strptime(val.strip()[:10], "%Y-%m-%d")
+                    except Exception:
+                        return None
+                return None
+
+            d_target = target_dt.replace(tzinfo=None) if isinstance(target_dt, datetime) else datetime.strptime(str(target_dt)[:10], "%Y-%m-%d")
             if dates_past:
-                d_target = target_dt.replace(tzinfo=None)
-                d_past = dates_past[0].replace(tzinfo=None) if hasattr(dates_past[0], "replace") else dates_past[0]
+                d_past = _to_naive_dt(dates_past[-1]) or d_target
                 days_since_served = float(max(0, (d_target - d_past).days))
             else:
                 days_since_served = 1.0
 
-            # Sell through
-            preps = [max(1, int(d.get("portions_prepared", d["portions_sold"]))) for d in valid_past]
+            # Sell through ratio on trailing 14 observations
+            preps = [max(1, int(d.get("portions_prepared", d["portions_sold"]))) for d in valid_past_asc]
             ratios = [s / p for s, p in zip(sold_vals, preps)]
-            sell_through = float(np.mean(ratios[:14])) if ratios else 0.85
+            sell_through = float(np.mean(ratios[-14:])) if ratios else 0.85
+
+            # Dynamic days since introduced
+            intro_date = item_meta.get("introduced_date")
+            d_intro = _to_naive_dt(intro_date)
+            if d_intro:
+                days_since_intro = float(max(0, (d_target - d_intro).days))
+            elif valid_past_asc:
+                d_first = _to_naive_dt(valid_past_asc[0]["service_date"]) or d_target
+                days_since_intro = float(max(0, (d_target - d_first).days))
+            else:
+                days_since_intro = 100.0
+
+            # Price ratio vs trailing median
+            past_prices = [float(d.get("price", price)) for d in valid_past_asc]
+            median_price = float(np.median(past_prices)) if past_prices else price
+            price_ratio = round(price / median_price, 3) if median_price > 0 else 1.0
 
             feat_dict = {
                 "item_id": item_id,
@@ -225,7 +317,7 @@ def generate_forecast_service(
                 "day_of_week": target_dow,
                 "weather": weather,
                 "price": price,
-                "price_ratio": 1.0,
+                "price_ratio": price_ratio,
                 "is_weekend": 1 if target_dow >= 5 else 0,
                 "month": target_dt.month,
                 "campus_event": 1 if campus_event else 0,
@@ -241,7 +333,7 @@ def generate_forecast_service(
                 "rolling_std": rolling_std,
                 "last_observed_sold": last_sold,
                 "days_since_last_served": days_since_served,
-                "days_since_introduced": 100,
+                "days_since_introduced": days_since_intro,
                 "sell_through_trailing_mean": sell_through,
                 "history_depth": history_count,
                 "category_period_trailing_mean": mean_28d,

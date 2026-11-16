@@ -7,13 +7,14 @@ import {
 import { TopNavigationBar, TabId } from './components/TopNavigationBar';
 import { HeaderStrip } from './components/HeaderStrip';
 import { PlanPage } from './pages/PlanPage';
-import { CloseOutPage } from './pages/CloseOutPage';
 import { HistoryPage } from './pages/HistoryPage';
-import { ModelLabPage } from './pages/ModelLabPage';
 import { DataSettingsPage } from './pages/DataSettingsPage';
 import { PrepSheetModal } from './components/PrepSheetModal';
 import { CuteLoadingScreen } from './components/CuteLoadingScreen';
+import { AllDayMenuModal } from './components/AllDayMenuModal';
+import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { AlertCircle, RotateCcw, Sparkles } from 'lucide-react';
+import { saveDraftPortions, loadDraftPortions } from './utils/localStorageCache';
 
 export const App: React.FC = () => {
   // Navigation
@@ -40,8 +41,14 @@ export const App: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [isClockSynced, setIsClockSynced] = useState<boolean>(true);
 
-  // Service Context: Initialize service period based on live clock
-  const [serviceDate, setServiceDate] = useState<string>('2026-11-14');
+  // Service Context: Initialize service date using local timezone without UTC offset
+  const [serviceDate, setServiceDate] = useState<string>(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  });
   const [servicePeriod, setServicePeriod] = useState<'breakfast' | 'lunch' | 'dinner'>(() => {
     return getPeriodFromTime(new Date());
   });
@@ -54,6 +61,13 @@ export const App: React.FC = () => {
   const [forecastItems, setForecastItems] = useState<ForecastItemResult[]>([]);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [simulationContext, setSimulationContext] = useState<{
+    weather?: string;
+    campus_event?: boolean;
+    exam_week?: boolean;
+    holiday?: boolean;
+    active: boolean;
+  }>({ active: false });
 
   // Undo History for "Apply All Recommendations"
   const [undoStack, setUndoStack] = useState<ForecastItemResult[] | null>(null);
@@ -61,14 +75,66 @@ export const App: React.FC = () => {
 
   // Modals & Overlays
   const [isPrepSheetModalOpen, setIsPrepSheetModalOpen] = useState<boolean>(false);
-  const [showCuteLoading, setShowCuteLoading] = useState<boolean>(true);
+  const [isAllDayMenuOpen, setIsAllDayMenuOpen] = useState<boolean>(false);
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState<boolean>(false);
+  const [showCuteLoading, setShowCuteLoading] = useState<boolean>(() => {
+    try {
+      return !sessionStorage.getItem('leftover_radar_welcomed');
+    } catch {
+      return true;
+    }
+  });
 
-  // Auto-dismiss initial cute loading screen after first visit
+  // Snappy startup splash auto-dismiss and persist session
   useEffect(() => {
+    if (!showCuteLoading) return;
     const timer = setTimeout(() => {
       setShowCuteLoading(false);
-    }, 2200);
+      try {
+        sessionStorage.setItem('leftover_radar_welcomed', '1');
+      } catch {}
+    }, 700);
     return () => clearTimeout(timer);
+  }, [showCuteLoading]);
+
+  // Global Keyboard Shortcuts Listener for Commercial Kitchen Workstations
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable)
+      ) {
+        if (e.key === 'Escape') {
+          target.blur();
+        }
+        return;
+      }
+
+      if (e.key === '1') {
+        setActiveTab('plan');
+      } else if (e.key === '2') {
+        setActiveTab('history');
+      } else if (e.key === '3') {
+        setActiveTab('data_settings');
+      } else if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        setIsShortcutsModalOpen((prev) => !prev);
+      } else if (e.key === 'd' || e.key === 'D') {
+        setIsDarkMode((prev) => !prev);
+      } else if (e.key === 'p' || e.key === 'P') {
+        setIsPrepSheetModalOpen(true);
+      } else if (e.key === 'Escape') {
+        setIsShortcutsModalOpen(false);
+        setIsAllDayMenuOpen(false);
+        setIsPrepSheetModalOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // 1. Initialize Dark Mode and Menu Items
@@ -125,23 +191,79 @@ export const App: React.FC = () => {
     setServicePeriod(newPeriod);
   };
 
+  // Helper to strictly ensure only items appropriate for the period are retained
+  const filterItemsByPeriod = (items: ForecastItemResult[], period: 'breakfast' | 'lunch' | 'dinner') => {
+    const breakfastOnly = new Set([
+      'masala_dosa', 'idli_sambar', 'poha', 'aloo_paratha', 'avocado_toast', 'avocado_sourdough'
+    ]);
+    return items.filter((item) => {
+      const cat = (item.category || '').toLowerCase();
+      const iid = (item.item_id || '').toLowerCase();
+      const isBreakfastOnly = cat === 'breakfast' || breakfastOnly.has(iid);
+      if (period === 'breakfast') {
+        return isBreakfastOnly || cat === 'beverage' || cat === 'snack';
+      }
+      if (period === 'lunch' || period === 'dinner') {
+        return !isBreakfastOnly;
+      }
+      return true;
+    });
+  };
+
   // 3. Fetch or Generate Forecast when date/service changes
-  const loadForecastData = async () => {
+  const loadForecastData = async (simOverrides?: {
+    weather?: string;
+    campus_event?: boolean;
+    exam_week?: boolean;
+    holiday?: boolean;
+  }) => {
     setIsGenerating(true);
     setErrorMessage(null);
     try {
-      // Check if a saved forecast snapshot exists
-      const savedRes = await api.getSavedForecasts(serviceDate, servicePeriod);
-      if (savedRes.items && savedRes.items.length > 0) {
-        setForecastItems(savedRes.items);
-      } else {
-        // Automatically generate baseline forecast for the active date and service
+      let rawItems: ForecastItemResult[] = [];
+      if (simOverrides) {
         const genRes = await api.generateForecast({
           service_date: serviceDate,
           service_period: servicePeriod,
+          ...simOverrides,
         });
-        setForecastItems(genRes.items);
+        rawItems = genRes.items;
+      } else {
+        // Check if a saved forecast snapshot exists
+        const savedRes = await api.getSavedForecasts(serviceDate, servicePeriod);
+        if (savedRes.items && savedRes.items.length > 0) {
+          rawItems = savedRes.items;
+        } else {
+          // Automatically generate baseline forecast for the active date and service
+          const genRes = await api.generateForecast({
+            service_date: serviceDate,
+            service_period: servicePeriod,
+          });
+          rawItems = genRes.items;
+        }
       }
+
+      let filtered = filterItemsByPeriod(rawItems, servicePeriod);
+
+      // Restore custom draft adjustments from localStorage if present
+      const draft = loadDraftPortions(serviceDate, servicePeriod);
+      if (draft && Object.keys(draft).length > 0) {
+        filtered = filtered.map((item) => {
+          if (draft[item.item_id] !== undefined) {
+            const customPlanned = draft[item.item_id];
+            const pred = item.predicted_demand || 0;
+            return {
+              ...item,
+              planned_portions: customPlanned,
+              estimated_leftovers: Math.max(0, customPlanned - pred),
+              estimated_shortfall: Math.max(0, pred - customPlanned),
+            };
+          }
+          return item;
+        });
+      }
+
+      setForecastItems(filtered);
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to load forecast data.');
     } finally {
@@ -155,8 +277,8 @@ export const App: React.FC = () => {
 
   // 4. Live Local Recompute on Operator Plan Edit (Section 9.5: Zero API calls)
   const handleUpdatePlannedPortions = (itemId: string, newPlanned: number) => {
-    setForecastItems((prev) =>
-      prev.map((item) => {
+    setForecastItems((prev) => {
+      const updatedList = prev.map((item) => {
         if (item.item_id !== itemId) return item;
 
         const pred = item.predicted_demand || 0;
@@ -169,14 +291,14 @@ export const App: React.FC = () => {
 
         // Risk recalculation
         let risk: 'low' | 'watch' | 'high' = 'low';
-        let riskReason = 'Well-calibrated within 80% interval.';
+        let riskReason = 'Well-calibrated within 95% interval.';
 
         if (newPlanned < p80Low) {
           risk = 'high';
-          riskReason = `Under-prep risk: planned (${newPlanned}) is below 80% demand floor (${p80Low}). Likely stock-out.`;
+          riskReason = `Under-prep risk: planned (${newPlanned}) is below 95% demand floor (${p80Low}). Likely stock-out.`;
         } else if (newPlanned > p80High) {
           risk = 'high';
-          riskReason = `Over-prep risk: planned (${newPlanned}) exceeds 80% demand ceiling (${p80High}). High waste expected.`;
+          riskReason = `Over-prep risk: planned (${newPlanned}) exceeds 95% demand ceiling (${p80High}). High waste expected.`;
         } else if (newPlanned > pred * 1.15 && newPlanned > rec) {
           risk = 'watch';
           riskReason = `Elevated prep: planned (${newPlanned}) exceeds Newsvendor recommended buffer (${rec}).`;
@@ -193,28 +315,89 @@ export const App: React.FC = () => {
           risk_level: risk,
           risk_reason: riskReason,
         };
-      })
-    );
+      });
+
+      // Auto-save draft portions to localStorage
+      const draftMap: Record<string, number> = {};
+      updatedList.forEach((it) => {
+        draftMap[it.item_id] = it.planned_portions;
+      });
+      saveDraftPortions(serviceDate, servicePeriod, draftMap);
+
+      return updatedList;
+    });
   };
 
-  // 5. Apply All Recommendations with Floating Undo Toast
-  const handleApplyAllRecommendations = () => {
+  // 5. Presets: Balanced (Newsvendor q*), Conservative (predicted demand y_hat), Zero Stock-out (upper 95% ceiling)
+  const handleApplyPreset = (mode: 'conservative' | 'balanced' | 'zero_stockout') => {
     setUndoStack([...forecastItems]);
     setShowUndoToast(true);
-    setForecastItems((prev) =>
-      prev.map((item) => {
-        const rec = item.recommended_portions || item.predicted_demand || 0;
+    setTimeout(() => {
+      setShowUndoToast(false);
+    }, 2000);
+
+    setForecastItems((prev) => {
+      const updatedList = prev.map((item) => {
         const pred = item.predicted_demand || 0;
+        let targetPortions = item.recommended_portions || pred;
+
+        if (mode === 'conservative') {
+          // Zero waste cushion: cook strictly the predicted median demand
+          targetPortions = pred;
+        } else if (mode === 'zero_stockout') {
+          // Maximum protection: cook to upper 95% conformal bound
+          targetPortions = item.upper_estimate || pred + 15;
+        } else {
+          // Balanced Newsvendor
+          targetPortions = item.recommended_portions || pred;
+        }
+
+        const estLeftovers = Math.max(0, targetPortions - pred);
+        const estShortfall = Math.max(0, pred - targetPortions);
+
         return {
           ...item,
-          planned_portions: rec,
-          estimated_leftovers: Math.max(0, rec - pred),
-          estimated_shortfall: Math.max(0, pred - rec),
-          risk_level: 'low',
-          risk_reason: 'Optimal Newsvendor recommended buffer applied.',
+          planned_portions: targetPortions,
+          estimated_leftovers: estLeftovers,
+          estimated_shortfall: estShortfall,
+          risk_level: (mode === 'conservative' ? 'watch' : 'low') as 'low' | 'watch',
+          risk_reason:
+            mode === 'conservative'
+              ? 'Conservative preset: Zero safety buffer planned. Risk of minor stockout if demand surges.'
+              : mode === 'zero_stockout'
+              ? 'Zero-Stockout preset: Upper 95% demand ceiling covered.'
+              : 'Optimal Newsvendor recommended buffer applied.',
         };
-      })
-    );
+      });
+
+      // Update draft
+      const draftMap: Record<string, number> = {};
+      updatedList.forEach((it) => {
+        draftMap[it.item_id] = it.planned_portions;
+      });
+      saveDraftPortions(serviceDate, servicePeriod, draftMap);
+
+      return updatedList;
+    });
+  };
+
+  const handleApplyAllRecommendations = () => {
+    handleApplyPreset('balanced');
+  };
+
+  const handleSimulateScenario = (params: {
+    weather: string;
+    campus_event: boolean;
+    exam_week: boolean;
+    holiday: boolean;
+  }) => {
+    setSimulationContext({ ...params, active: true });
+    loadForecastData(params);
+  };
+
+  const handleResetSimulation = () => {
+    setSimulationContext({ active: false });
+    loadForecastData();
   };
 
   const handleUndoApplyAll = () => {
@@ -242,6 +425,7 @@ export const App: React.FC = () => {
         onToggleClockSync={handleToggleClockSync}
         currentTimeStr={currentTimeStr}
         activeServicePeriod={servicePeriod}
+        onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
       />
 
       {/* 2. Top Header Strip with Service Controls */}
@@ -250,8 +434,9 @@ export const App: React.FC = () => {
         onDateChange={setServiceDate}
         servicePeriod={servicePeriod}
         onPeriodChange={handleManualPeriodChange}
-        onGenerateForecast={loadForecastData}
+        onGenerateForecast={() => loadForecastData()}
         onOpenPrintSheet={() => setIsPrepSheetModalOpen(true)}
+        onOpenAllDayMenu={() => setIsAllDayMenuOpen(true)}
         isGenerating={isGenerating}
       />
 
@@ -263,7 +448,7 @@ export const App: React.FC = () => {
             <span className="font-sans font-medium">{errorMessage}</span>
           </div>
           <button
-            onClick={loadForecastData}
+            onClick={() => loadForecastData()}
             className="btn-tactile px-3 py-1.5 rounded-card bg-berry text-white text-xs font-bold cursor-pointer shadow-tactile"
           >
             Retry
@@ -280,23 +465,22 @@ export const App: React.FC = () => {
             forecastItems={forecastItems}
             onUpdatePlannedPortions={handleUpdatePlannedPortions}
             onApplyAllRecommendations={handleApplyAllRecommendations}
+            onApplyPreset={handleApplyPreset}
             onUndoApplyAll={handleUndoApplyAll}
             canUndo={Boolean(undoStack)}
-          />
-        )}
-
-        {activeTab === 'closeout' && (
-          <CloseOutPage
-            serviceDate={serviceDate}
-            servicePeriod={servicePeriod}
-            menuItems={menuItems}
-            forecastItems={forecastItems}
+            onOpenAllDayMenu={() => setIsAllDayMenuOpen(true)}
+            onSimulateScenario={handleSimulateScenario}
+            onResetSimulation={handleResetSimulation}
+            isSimulating={isGenerating}
+            currentWeather={simulationContext.weather || 'clear'}
+            isCampusEvent={simulationContext.campus_event || false}
+            isExamWeek={simulationContext.exam_week || false}
+            isHoliday={simulationContext.holiday || false}
+            onSelectDate={setServiceDate}
           />
         )}
 
         {activeTab === 'history' && <HistoryPage />}
-
-        {activeTab === 'model_lab' && <ModelLabPage />}
 
         {activeTab === 'data_settings' && <DataSettingsPage />}
       </main>
@@ -339,7 +523,23 @@ export const App: React.FC = () => {
         onClose={() => setIsPrepSheetModalOpen(false)}
       />
 
-      {/* 7. Cute Kitchen Radar Initial Loading Screen Overlay */}
+      {/* 7. All-Day Meal Schedule Modal */}
+      <AllDayMenuModal
+        isOpen={isAllDayMenuOpen}
+        onClose={() => setIsAllDayMenuOpen(false)}
+        menuItems={menuItems}
+        onSelectPeriod={(period) => {
+          handleManualPeriodChange(period);
+        }}
+      />
+
+      {/* 8. Keyboard Shortcuts Modal */}
+      <KeyboardShortcutsModal
+        isOpen={isShortcutsModalOpen}
+        onClose={() => setIsShortcutsModalOpen(false)}
+      />
+
+      {/* 9. Cute Kitchen Radar Initial Loading Screen Overlay */}
       <CuteLoadingScreen
         isLoading={showCuteLoading}
         onDismiss={() => setShowCuteLoading(false)}

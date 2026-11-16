@@ -169,14 +169,16 @@ def bulk_close_out(payload: BulkCloseOutRequest) -> Dict[str, Any]:
             "source": "manual_entry",
         })
 
-    upserted_count = bulk_upsert_observations(docs_to_upsert)
+    upsert_stats = bulk_upsert_observations(docs_to_upsert)
+    upserted_total = int(upsert_stats.get("upserted", 0)) + int(upsert_stats.get("modified", 0))
 
     return {
         "status": "success",
         "service_date": payload.service_date,
         "service_period": period,
         "items_processed": len(payload.items),
-        "upserted_count": upserted_count,
+        "upserted_count": upserted_total,
+        "details": upsert_stats,
     }
 
 

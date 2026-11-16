@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Query
 from pydantic import BaseModel, Field
 
+from backend.app.database import get_collection
 from backend.app.errors import AppError
 from backend.app.repositories.forecast_repository import get_saved_forecasts
 from backend.app.repositories.menu_repository import list_menu_items
@@ -69,17 +70,34 @@ def list_or_get_forecasts(
     menu_catalog = {m["id"]: m for m in list_menu_items(active_only=False)}
 
     saved_items = get_saved_forecasts(date, period_clean)
+    filtered_saved = []
+    obs_col = get_collection("service_observations")
+    observed_period_items = set(obs_col.distinct("item_id", {"service_period": period_clean}))
     for doc in saved_items:
         meta = menu_catalog.get(doc["item_id"], {})
         doc["item_name"] = meta.get("name", doc["item_id"].replace("_", " ").title())
         doc["category"] = meta.get("category", "main")
         doc["price"] = float(meta.get("price", 50.0))
+        if observed_period_items:
+            if doc["item_id"] in observed_period_items:
+                filtered_saved.append(doc)
+        else:
+            cat = (meta.get("category") or "").lower()
+            tags = [t.lower() for t in meta.get("tags") or []]
+            if period_clean == "breakfast":
+                if cat == "breakfast" or "breakfast" in tags or cat in ["beverage", "snack"]:
+                    filtered_saved.append(doc)
+            elif period_clean in ["lunch", "dinner"]:
+                if cat != "breakfast" and "breakfast" not in tags:
+                    filtered_saved.append(doc)
+            else:
+                filtered_saved.append(doc)
 
     return {
         "service_date": date,
         "service_period": period_clean,
-        "count": len(saved_items),
-        "items": saved_items,
+        "count": len(filtered_saved),
+        "items": filtered_saved,
     }
 
 
